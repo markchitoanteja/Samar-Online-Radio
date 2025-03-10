@@ -24,12 +24,28 @@ class Admin extends BaseController
             return redirect()->to(base_url('/admin/login'));
         }
 
-        return view('_admin/dashboard');
+        session()->set("title", "Dashboard");
+        session()->set("current_tab", "dashboard");
+
+        $header = view('_admin/templates/header');
+        $body = view('_admin/dashboard');
+        $footer = view('_admin/templates/footer');
+
+        return $header . $body . $footer;
     }
 
     public function login()
     {
+        session()->set("current_tab", "login");
+
         return view('_admin/login');
+    }
+
+    public function logout()
+    {
+        session()->remove('user_id');
+
+        return redirect()->to(base_url('/admin/login'));
     }
 
     public function get_user_data()
