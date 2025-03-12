@@ -27,11 +27,16 @@ class Admin extends BaseController
         session()->set("title", "Dashboard");
         session()->set("current_tab", "dashboard");
 
-        $header = view('_admin/templates/header');
+        $User_Model = new User_Model();
+
+        $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
+
+        $header = view('_admin/templates/header', $data);
         $body = view('_admin/dashboard');
+        $modals = view('_admin/modals/profile_modal');
         $footer = view('_admin/templates/footer');
 
-        return $header . $body . $footer;
+        return $header . $body . $modals . $footer;
     }
 
     public function login()
@@ -83,5 +88,16 @@ class Admin extends BaseController
         session()->setFlashdata("response", $response);
 
         return json_encode($success);
+    }
+    
+    public function get_user_data_by_id()
+    {
+        $user_id = $this->request->getPost("user_id");
+        
+        $User_Model = new User_Model();
+
+        $user_data = $User_Model->where("id", $user_id)->findAll(1)[0];
+
+        return json_encode($user_data);
     }
 }

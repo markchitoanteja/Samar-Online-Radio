@@ -14,7 +14,8 @@
 <body>
     <div class="background">
         <div class="content">
-            <img src="public/home/dist/img/logo.webp" alt="Logo" class="logo-kasugbong">
+            <img src="public/home/dist/img/logo.webp" alt="Logo" class="logo-kasugbong" style="margin-bottom: 4em; max-width: 350px; height: auto;">
+            
             <div class="iframe-container">
                 <iframe src="https://radio.969fmcanavid.com/public/kasugbongfm/embed?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; min-height: 150px; border: 0;"></iframe>
             </div>

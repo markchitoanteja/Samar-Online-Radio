@@ -10,6 +10,7 @@
     </div>
 
     <script>
+        const user_id = "<?= session()->get("user_id") ?>";
         const base_url = "<?= base_url() ?>";
         const current_tab = "<?= session()->get("current_tab") ?>";
     </script>
@@ -21,7 +22,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.2"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.5"></script>
 </body>
 
 </html>

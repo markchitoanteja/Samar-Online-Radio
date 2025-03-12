@@ -45,6 +45,77 @@ jQuery(document).ready(function () {
         });
     })
 
+    $("#profile_image").change(function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profile_image_preview').attr('src', e.target.result).show();
+            }
+            reader.readAsDataURL(file);
+        } else {
+            $('#profile_image_preview').hide();
+        }
+    })
+
+    $("#profile").click(function () {
+        loading(true);
+
+        $("#profile_modal").modal("show");
+
+        var formData = new FormData();
+
+        formData.append('user_id', user_id);
+
+        $.ajax({
+            url: '../get_user_data_by_id',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    $("#profile_image_preview").attr("src", "../public/admin/dist/img/uploads/" + response.image);
+                    $("#profile_name").val(response.name);
+                    $("#profile_email").val(response.email);
+
+                    loading(false);
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    })
+
+    $("#profile_form").submit(function () {
+        const name = $("#profile_name").val();
+        const email = $("#profile_email").val();
+        const password = $("#profile_password").val();
+        const confirm_password = $("#profile_confirm_password").val();
+        const image = $("#profile_image")[0].files[0];
+
+        if ((password || confirm_password) && (password != confirm_password)) {
+            $("#profile_password").addClass("is-invalid");
+            $("#profile_confirm_password").addClass("is-invalid");
+
+            $("#error_profile_password").removeClass("d-none");
+        }
+    })
+
+    function loading(enabled) {
+        if (enabled) {
+            $(".main-form").addClass("d-none");
+            $(".loading").removeClass("d-none");
+            $(".btn-submit").attr("disabled", true);
+        } else {
+            $(".main-form").removeClass("d-none");
+            $(".loading").addClass("d-none");
+            $(".btn-submit").attr("disabled", false);
+        }
+    }
+
     function display_chart() {
         const sales_chart_options = {
             series: [{

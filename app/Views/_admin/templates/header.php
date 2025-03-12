@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css" />
+    <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -31,19 +31,19 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img src="../public/admin/dist/img/uploads/default-user-image.png" class="user-image rounded-circle shadow" alt="User Image" />
-                            <span class="d-none d-md-inline">Mark Chito Anteja</span>
+                            <img src="../public/admin/dist/img/uploads/<?= $user["image"] ?>" class="user-image rounded-circle shadow" alt="User Image" />
+                            <span class="d-none d-md-inline"><?= $user["name"] ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <li class="user-header text-bg-primary">
-                                <img src="../public/admin/dist/img/uploads/default-user-image.png" class="rounded-circle shadow" alt="User Image" />
+                                <img src="../public/admin/dist/img/uploads/<?= $user["image"] ?>" class="rounded-circle shadow" alt="User Image" />
                                 <p>
-                                    Mark Chito Anteja
+                                    <?= $user["name"] ?>
                                     <small>Administrator</small>
                                 </p>
                             </li>
                             <li class="user-footer">
-                                <a href="javascript:void(0)" class="btn btn-default btn-flat">Profile</a>
+                                <a href="javascript:void(0)" class="btn btn-default btn-flat" id="profile">Profile</a>
                                 <a href="<?= base_url("/admin/logout") ?>" class="btn btn-default btn-flat float-end">Sign Out</a>
                             </li>
                         </ul>
