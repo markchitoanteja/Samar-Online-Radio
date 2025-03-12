@@ -80,6 +80,11 @@ jQuery(document).ready(function () {
                     $("#profile_name").val(response.name);
                     $("#profile_email").val(response.email);
 
+                    $("#profile_id").val(response.id);
+                    $("#profile_old_email").val(response.email);
+                    $("#profile_old_password").val(response.password);
+                    $("#profile_old_image").val(response.image);
+
                     loading(false);
                 }
             },
@@ -92,15 +97,51 @@ jQuery(document).ready(function () {
     $("#profile_form").submit(function () {
         const name = $("#profile_name").val();
         const email = $("#profile_email").val();
-        const password = $("#profile_password").val();
+        let password = $("#profile_password").val();
         const confirm_password = $("#profile_confirm_password").val();
         const image = $("#profile_image")[0].files[0];
+
+        const id = $("#profile_id").val();
+        const old_email = $("#profile_old_email").val();
+        const old_password = $("#profile_old_password").val();
+        const old_image = $("#profile_old_image").val();
 
         if ((password || confirm_password) && (password != confirm_password)) {
             $("#profile_password").addClass("is-invalid");
             $("#profile_confirm_password").addClass("is-invalid");
 
             $("#error_profile_password").removeClass("d-none");
+        } else {
+            if (!password) {
+                password = null;
+            }
+
+            var formData = new FormData();
+
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('image', image);
+
+            formData.append('id', id);
+            formData.append('old_email', old_email);
+            formData.append('old_password', old_password);
+            formData.append('old_image', old_image);
+
+            $.ajax({
+                url: '../update_user',
+                data: formData,
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (_, _, error) {
+                    console.error(error);
+                }
+            });
         }
     })
 

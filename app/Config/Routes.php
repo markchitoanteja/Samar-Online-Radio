@@ -20,3 +20,4 @@ $routes->get('/admin/dashboard', 'Admin::dashboard');
 /*** SERVER ***/
 $routes->post('/get_user_data', 'Admin::get_user_data');
 $routes->post('/get_user_data_by_id', 'Admin::get_user_data_by_id');
+$routes->post('/update_user', 'Admin::update_user');

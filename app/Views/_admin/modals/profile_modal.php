@@ -38,6 +38,11 @@
                             <label for="profile_confirm_password" class="form-label">Confirm Password</label>
                             <input type="password" class="form-control" id="profile_confirm_password" placeholder="Leave blank if you don't want to change your password">
                         </div>
+
+                        <input type="hidden" id="profile_id">
+                        <input type="hidden" id="profile_old_email">
+                        <input type="hidden" id="profile_old_password">
+                        <input type="hidden" id="profile_old_image">
                     </form>
                 </div>
             </div>

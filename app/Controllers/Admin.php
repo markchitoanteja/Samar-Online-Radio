@@ -6,6 +6,18 @@ use App\Models\User_Model;
 
 class Admin extends BaseController
 {
+    private function upload_image($image)
+    {
+        if ($image && $image->isValid() && !$image->hasMoved()) {
+            $newName = $image->getRandomName();
+            $image->move(FCPATH . 'public/admin/dist/img/uploads', $newName);
+
+            return $newName;
+        }
+
+        return false;
+    }
+
     public function index()
     {
         return session()->get("user_id") ? redirect()->to(base_url('/admin/dashboard')) : redirect()->to(base_url('/admin/login'));
@@ -41,6 +53,7 @@ class Admin extends BaseController
 
     public function login()
     {
+        session()->set("title", "Login");
         session()->set("current_tab", "login");
 
         return view('_admin/login');
@@ -89,15 +102,60 @@ class Admin extends BaseController
 
         return json_encode($success);
     }
-    
+
     public function get_user_data_by_id()
     {
         $user_id = $this->request->getPost("user_id");
-        
+
         $User_Model = new User_Model();
 
         $user_data = $User_Model->where("id", $user_id)->findAll(1)[0];
 
         return json_encode($user_data);
+    }
+
+    public function update_user()
+    {
+        $name = $this->request->getPost("name");
+        $email = $this->request->getPost("email");
+        $password = $this->request->getPost("password");
+        $image = $this->request->getFile("image");
+
+        $id = $this->request->getPost("id");
+        $old_email = $this->request->getPost("old_email");
+        $old_password = $this->request->getPost("old_password");
+        $old_image = $this->request->getPost("old_image");
+
+        if ($password != "null") {
+            $password = password_hash($password, PASSWORD_BCRYPT);
+        } else {
+            $password = $old_password;
+        }
+
+        if ($image) {
+            $image = $this->upload_image($image);
+        } else {
+            $image = $old_image;
+        }
+
+        $User_Model = new User_Model();
+
+        $email_exists = $User_Model->where("email", $email)->where("id !=", $id)->findAll();
+
+        if ($email_exists) {
+            $notification = [
+                "alert_type" => "danger",
+                "message" => "Email already exists!"
+            ];
+        } else {
+            $data = [
+                "name" => $name,
+                "email" => $email,
+                "password" => $password,
+                "image" => $image
+            ];
+
+            $User_Model->update($id, $data);
+        }
     }
 }

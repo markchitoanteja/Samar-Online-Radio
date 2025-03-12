@@ -3,7 +3,7 @@
             <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
             <strong>
                 Copyright &copy; 2023-2025
-                <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Kasugbong FM Can-Avid</a>.
+                <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Integrated News</a>.
             </strong>
             All rights reserved.
         </footer>
@@ -22,7 +22,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.5"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.6"></script>
 </body>
 
 </html>

@@ -5,7 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>96.9 Kasugbong FM Can-Avid - <?= session()->get("title") ?></title>
+    <title>Samar Online Radio - <?= session()->get("title") ?></title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!">
+    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio">
+    <meta name="author" content="Samar Online Radio Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Samar Online Radio - <?= session()->get("title") ?>">
+    <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!">
+    <meta property="og:image" content="../public/img/cover.webp">
+    <meta property="og:url" content="https://samaronlineradio.com">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Samar Online Radio - <?= session()->get("title") ?>">
+    <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio.">
+    <meta name="twitter:image" content="../public/img/cover.webp">
 
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
 
@@ -54,8 +72,8 @@
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand">
                 <a href="" class="brand-link">
-                    <img src="../public/admin/dist/img/logo.webp" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
-                    <span class="brand-text fw-light">96.9 Kasugbong FM</span>
+                    <img src="../public/img/logo.webp" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
+                    <span class="brand-text fw-light">Samar Online Radio</span>
                 </a>
             </div>
             <div class="sidebar-wrapper">

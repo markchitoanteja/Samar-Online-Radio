@@ -5,10 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>96.9 Kasugbong FM Can-Avid - Login</title>
+    <title>Samar Online Radio - <?= session()->get("title") ?></title>
 
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!">
+    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio">
+    <meta name="author" content="Samar Online Radio Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Samar Online Radio - <?= session()->get("title") ?>">
+    <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!">
+    <meta property="og:image" content="../public/img/cover.webp">
+    <meta property="og:url" content="https://samaronlineradio.com">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Samar Online Radio - <?= session()->get("title") ?>">
+    <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio.">
+    <meta name="twitter:image" content="../public/img/cover.webp">
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
 
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
@@ -24,7 +44,7 @@
 
         <div class="card">
             <div class="card-header text-center">
-                <img src="../public/home/dist/img/logo.webp" alt="Kasugbong Logo" class="img-fluid" style="max-width: 200px;" />
+                <img src="../public/img/logo.webp" alt="Kasugbong Logo" class="img-fluid" style="max-width: 200px;" />
             </div>
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Please log in to continue</p>
