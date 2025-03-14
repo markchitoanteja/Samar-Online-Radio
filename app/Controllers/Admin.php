@@ -10,7 +10,7 @@ class Admin extends BaseController
     {
         if ($image && $image->isValid() && !$image->hasMoved()) {
             $newName = $image->getRandomName();
-            $image->move(FCPATH . 'public/admin/dist/img/uploads', $newName);
+            $image->move(FCPATH . 'public/img/uploads', $newName);
 
             return $newName;
         }
@@ -126,28 +126,27 @@ class Admin extends BaseController
         $old_password = $this->request->getPost("old_password");
         $old_image = $this->request->getPost("old_image");
 
-        if ($password != "null") {
-            $password = password_hash($password, PASSWORD_BCRYPT);
-        } else {
-            $password = $old_password;
-        }
-
-        if ($image) {
-            $image = $this->upload_image($image);
-        } else {
-            $image = $old_image;
-        }
-
         $User_Model = new User_Model();
 
-        $email_exists = $User_Model->where("email", $email)->where("id !=", $id)->findAll();
+        $email_exists = $User_Model->where("email", $email)->where("id !=", $id)->where("email !=", $old_email)->findAll();
 
-        if ($email_exists) {
-            $notification = [
-                "alert_type" => "danger",
-                "message" => "Email already exists!"
-            ];
-        } else {
+        $success = false;
+
+        if (!$email_exists) {
+            $success = true;
+
+            if ($password != "null") {
+                $password = password_hash($password, PASSWORD_BCRYPT);
+            } else {
+                $password = $old_password;
+            }
+    
+            if ($image) {
+                $image = $this->upload_image($image);
+            } else {
+                $image = $old_image;
+            }
+
             $data = [
                 "name" => $name,
                 "email" => $email,
@@ -156,6 +155,16 @@ class Admin extends BaseController
             ];
 
             $User_Model->update($id, $data);
+
+            $notification = [
+                "title" => "Success!",
+                "text" => "Profile updated successfully!",
+                "icon" => "success",
+            ];
+
+            session()->setFlashdata("notification", $notification);
         }
+
+        return json_encode($success);
     }
 }

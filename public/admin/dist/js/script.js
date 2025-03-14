@@ -1,7 +1,16 @@
 jQuery(document).ready(function () {
+    preventDevTools(false);
+    preventMobileAccess();
+
     if (current_tab == "dashboard") {
         display_chart();
     }
+
+    if (notification) {
+        display_notification(notification);
+    }
+
+    $("#current_year").text(new Date().getFullYear());
 
     $("#login_form").submit(function () {
         const email = $("#login_email").val();
@@ -76,7 +85,7 @@ jQuery(document).ready(function () {
             contentType: false,
             success: function (response) {
                 if (response) {
-                    $("#profile_image_preview").attr("src", "../public/admin/dist/img/uploads/" + response.image);
+                    $("#profile_image_preview").attr("src", "../public/img/uploads/" + response.image);
                     $("#profile_name").val(response.name);
                     $("#profile_email").val(response.email);
 
@@ -112,6 +121,8 @@ jQuery(document).ready(function () {
 
             $("#error_profile_password").removeClass("d-none");
         } else {
+            loading(true);
+
             if (!password) {
                 password = null;
             }
@@ -136,7 +147,14 @@ jQuery(document).ready(function () {
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    console.log(response);
+                    if (response) {
+                        location.reload();
+                    } else {
+                        loading(false);
+
+                        $("#profile_email").addClass("is-invalid");
+                        $("#error_profile_email").removeClass("d-none");
+                    }
                 },
                 error: function (_, _, error) {
                     console.error(error);
@@ -144,6 +162,34 @@ jQuery(document).ready(function () {
             });
         }
     })
+
+    $("#profile_email").keydown(function () {
+        $("#profile_email").removeClass("is-invalid");
+
+        $("#error_profile_email").addClass("d-none");
+    })
+
+    $("#profile_password").keydown(function () {
+        $("#profile_password").removeClass("is-invalid");
+        $("#profile_confirm_password").removeClass("is-invalid");
+
+        $("#error_profile_password").addClass("d-none");
+    })
+
+    $("#profile_confirm_password").keydown(function () {
+        $("#profile_password").removeClass("is-invalid");
+        $("#profile_confirm_password").removeClass("is-invalid");
+
+        $("#error_profile_password").addClass("d-none");
+    })
+
+    function display_notification(notification) {
+        Swal.fire({
+            title: notification.title,
+            text: notification.text,
+            icon: notification.icon
+        });
+    }
 
     function loading(enabled) {
         if (enabled) {
@@ -209,5 +255,57 @@ jQuery(document).ready(function () {
             sales_chart_options,
         );
         sales_chart.render();
+    }
+
+    function preventDevTools(enable) {
+        if (!enable) return;
+
+        document.addEventListener('contextmenu', (e) => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Right click is disabled for security reasons.'
+            });
+
+            e.preventDefault()
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p') || e.key === 'F12') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'DevTools is disabled for security reasons.'
+                });
+
+                e.preventDefault();
+            }
+        });
+
+        setInterval(() => {
+            const devtools = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+
+            if (devtools) {
+                console.clear();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'DevTools is disabled for security reasons.'
+                });
+            }
+        }, 1000);
+    }
+
+    function preventMobileAccess() {
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            document.body.innerHTML = `
+            <div style="display: flex; height: 100vh; align-items: center; justify-content: center; background-color: #f8d7da; color: #721c24; text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+                <div>
+                    <h1 style="font-size: 3rem;">Access Denied</h1>
+                    <p style="font-size: 1.5rem;">This page is not accessible on mobile devices.</p>
+                </div>
+            </div>`;
+        }
     }
 })

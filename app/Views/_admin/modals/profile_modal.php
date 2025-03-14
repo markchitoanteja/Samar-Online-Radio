@@ -17,7 +17,7 @@
                     <form id="profile_form" action="javascript:void(0)">
                         <div class="mb-3">
                             <div class="mb-2 d-flex justify-content-center">
-                                <img id="profile_image_preview" src="../public/admin/dist/img/uploads/default-user-image.png" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; display: block;">
+                                <img id="profile_image_preview" src="../public/img/uploads/default-user-image.png" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; display: block;">
                             </div>
                             <input type="file" class="form-control" id="profile_image" accept="image/*">
                         </div>
@@ -28,6 +28,7 @@
                         <div class="mb-3">
                             <label for="profile_email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="profile_email" placeholder="Enter your email" required>
+                            <small class="text-danger d-none" id="error_profile_email">Email already exists</small>
                         </div>
                         <div class="mb-3">
                             <label for="profile_password" class="form-label">Password</label>

@@ -2,7 +2,7 @@
         <footer class="app-footer">
             <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
             <strong>
-                Copyright &copy; 2023-2025
+                Copyright &copy; 2023-<span id="current_year"></span>
                 <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Integrated News</a>.
             </strong>
             All rights reserved.
@@ -13,6 +13,7 @@
         const user_id = "<?= session()->get("user_id") ?>";
         const base_url = "<?= base_url() ?>";
         const current_tab = "<?= session()->get("current_tab") ?>";
+        const notification = <?= json_encode(session()->get("notification") ?? null) ?>;
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ=" crossorigin="anonymous"></script>
@@ -22,7 +23,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.6"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.9"></script>
 </body>
 
 </html>

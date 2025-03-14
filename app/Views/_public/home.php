@@ -25,7 +25,7 @@
     <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio.">
     <meta name="twitter:image" content="public/img/cover.webp">
 
-    <link rel="shortcut icon" href="favicon.ico?v=1.0.1" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico?v=1.0.2" type="image/x-icon">
 
     <link rel="stylesheet" href="public/home/dist/css/styles.css">
 </head>
@@ -33,7 +33,7 @@
 <body>
     <div class="background">
         <div class="content">
-            <img src="public/img/logo.webp?v=1.0.1" alt="Logo" class="logo-kasugbong" style="margin-bottom: 4em; max-width: 350px; height: auto;">
+            <img src="public/img/logo.webp?v=1.0.2" alt="Logo" class="logo-kasugbong" style="margin-bottom: 4em; max-width: 350px;">
 
             <div class="iframe-container">
                 <iframe src="https://radio.969fmcanavid.com/public/kasugbongfm/embed?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; min-height: 150px; border: 0;"></iframe>

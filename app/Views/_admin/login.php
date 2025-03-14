@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css" />
-    <link rel="stylesheet" href="../public/admin/dist/css/styles.css" />
+    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.0" />
 </head>
 
 <body class="login-page bg-body-secondary">
@@ -66,7 +66,7 @@
 
                     <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" value="" id="login_remember_me" />
-                        <label class="form-check-label" for="login_remember_me"> Remember Me </label>
+                        <label class="form-check-label" for="login_remember_me" role="button"> Remember Me </label>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100" id="login_submit">Sign In</button>
@@ -83,6 +83,7 @@
     <script>
         const base_url = "<?= base_url() ?>";
         const current_tab = "<?= session()->get("current_tab") ?>";
+        const notification = <?= json_encode(null) ?>;
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ=" crossorigin="anonymous"></script>
@@ -91,7 +92,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.1"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.2"></script>
 </body>
 
 </html>

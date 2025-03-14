@@ -49,12 +49,12 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img src="../public/admin/dist/img/uploads/<?= $user["image"] ?>" class="user-image rounded-circle shadow" alt="User Image" />
+                            <img src="../public/img/uploads/<?= $user["image"] ?>" class="user-image rounded-circle shadow" alt="User Image" />
                             <span class="d-none d-md-inline"><?= $user["name"] ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <li class="user-header text-bg-primary">
-                                <img src="../public/admin/dist/img/uploads/<?= $user["image"] ?>" class="rounded-circle shadow" alt="User Image" />
+                                <img src="../public/img/uploads/<?= $user["image"] ?>" class="rounded-circle shadow" alt="User Image" />
                                 <p>
                                     <?= $user["name"] ?>
                                     <small>Administrator</small>
@@ -94,13 +94,25 @@
                         <li class="nav-item">
                             <a href="music_files" class="nav-link <?= session()->get("current_tab") == "music_files" ? "active" : null ?>">
                                 <i class="nav-icon bi bi-music-note-list"></i>
-                                <p>Music Files</p>
+                                <p>
+                                    Music Files &nbsp;
+                                    <span class="badge bg-danger">inactive</span>
+                                </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="playlists" class="nav-link <?= session()->get("current_tab") == "playlists" ? "active" : null ?>">
                                 <i class="nav-icon bi bi-music-player"></i>
-                                <p>Playlists</p>
+                                <p>
+                                    Playlists &nbsp;
+                                    <span class="badge bg-danger">inactive</span>
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="https://radio.969fmcanavid.com/public/kasugbongfm/dj" class="nav-link" target="_blank" rel="noopener noreferrer">
+                                <i class="nav-icon bi bi-mic"></i>
+                                <p>Live Streaming</p>
                             </a>
                         </li>
                         <li class="nav-item">

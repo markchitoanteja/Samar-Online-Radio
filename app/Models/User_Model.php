@@ -11,8 +11,9 @@ class User_Model extends Model
     protected $allowedFields = [
         'uuid',
         'name',
-        'username',
+        'email',
         'password',
+        'image',
         'user_type',
         'created_at',
         'updated_at',
