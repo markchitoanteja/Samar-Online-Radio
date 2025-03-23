@@ -27,11 +27,20 @@
 
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
+    <?php if (is_internet_available()): ?>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
+    <?php else: ?>
+        <link rel="stylesheet" href="../public/admin/dist/css/fonts.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons.min.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/apexcharts.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/jsvectormap.min.css" />
+    <?php endif ?>
+
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />
 </head>
 
@@ -71,7 +80,7 @@
         </nav>
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand">
-                <a href="" class="brand-link">
+                <a href="<?= base_url("admin") ?>" class="brand-link">
                     <img src="../public/img/logo.webp" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
                     <span class="brand-text fw-light">Samar Online Radio</span>
                 </a>
@@ -88,16 +97,16 @@
                         <li class="nav-item">
                             <a href="https://samaronlineradio.com" class="nav-link" target="_blank" rel="noopener noreferrer">
                                 <i class="nav-icon bi bi-globe"></i>
-                                <p>Public Page</p>
+                                <p>
+                                    Public Page
+                                    <small class="bi bi-box-arrow-up-right ms-1"></small>
+                                </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="music_files" class="nav-link <?= session()->get("current_tab") == "music_files" ? "active" : null ?>">
                                 <i class="nav-icon bi bi-music-note-list"></i>
-                                <p>
-                                    Music Files &nbsp;
-                                    <span class="badge bg-danger">inactive</span>
-                                </p>
+                                <p>Music Files</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -112,7 +121,10 @@
                         <li class="nav-item">
                             <a href="https://radio.969fmcanavid.com/public/kasugbongfm/dj" class="nav-link" target="_blank" rel="noopener noreferrer">
                                 <i class="nav-icon bi bi-mic"></i>
-                                <p>Live Streaming</p>
+                                <p>
+                                    Live Streaming
+                                    <small class="bi bi-box-arrow-up-right ms-1"></small>
+                                </p>
                             </a>
                         </li>
                         <li class="nav-item">
