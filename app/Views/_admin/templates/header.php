@@ -34,11 +34,11 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
     <?php else: ?>
-        <link rel="stylesheet" href="../public/admin/dist/css/fonts.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons.min.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/apexcharts.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/jsvectormap.min.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/fonts.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons/font/bootstrap-icons.min.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/apexcharts.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/jsvectormap.min.css?v=1.0.2" />
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />

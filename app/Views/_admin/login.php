@@ -34,12 +34,12 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg=" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
     <?php else: ?>
-        <link rel="stylesheet" href="../public/admin/dist/css/fonts.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css" />
-        <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons.min.css" />
+        <link rel="stylesheet" href="../public/admin/dist/css/fonts.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons/font/bootstrap-icons.min.css?v=1.0.2" />
     <?php endif ?>
 
-    <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css" />
+    <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.2" />
     <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.2" />
 </head>
 
