@@ -50,7 +50,7 @@ class Admin extends BaseController
 
         return $header . $body . $modals . $footer;
     }
-    
+
     public function music_files()
     {
         if (!session()->get("user_id")) {
@@ -73,7 +73,7 @@ class Admin extends BaseController
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/music_files');
-        $modals = view('_admin/modals/profile_modal');
+        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/upload_music_modal');
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;
@@ -168,7 +168,7 @@ class Admin extends BaseController
             } else {
                 $password = $old_password;
             }
-    
+
             if ($image) {
                 $image = $this->upload_image($image);
             } else {
@@ -194,5 +194,26 @@ class Admin extends BaseController
         }
 
         return json_encode($success);
+    }
+
+    public function upload_music()
+    {
+        $title = $this->request->getPost("title");
+        $music = $this->request->getFile("music");
+
+        $response = [
+            "title" => $title,
+            "music" => $music
+        ];
+
+        $notification = [
+            "title" => "Success!",
+            "text" => "Music uploaded successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode($response);
     }
 }

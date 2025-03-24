@@ -18,7 +18,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <button class="btn btn-primary d-flex align-items-center gap-2 float-end">
+                    <button class="btn btn-primary d-flex align-items-center gap-2 float-end" data-bs-toggle="modal" data-bs-target="#uploadMusicModal">
                         <i class="bi bi-upload"></i>
                         Upload Music
                     </button>

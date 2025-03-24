@@ -183,6 +183,37 @@ jQuery(document).ready(function () {
         $("#error_profile_password").addClass("d-none");
     })
 
+    $("#upload_music_form").submit(function () {
+        const title = $("#music_title").val();
+        const file = $("#music_file")[0].files[0];
+
+        loading(true);
+
+        var formData = new FormData();
+        
+        formData.append('title', title);
+        formData.append('file', file);
+        
+        $.ajax({
+            url: '../upload_music',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response) {
+                    location.reload();
+                } else {
+                    loading(false);
+                }
+            },
+            error: function(_, _, error) {
+                console.error(error);
+            }
+        });
+    })
+
     function display_notification(notification) {
         Swal.fire({
             title: notification.title,

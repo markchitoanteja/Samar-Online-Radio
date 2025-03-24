@@ -33,7 +33,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.9"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.1.1"></script>
 </body>
 
 </html>
