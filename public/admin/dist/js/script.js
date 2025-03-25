@@ -218,7 +218,8 @@ jQuery(document).ready(function () {
         Swal.fire({
             title: notification.title,
             text: notification.text,
-            icon: notification.icon
+            icon: notification.icon,
+            confirmButtonColor: '#0d6efd' 
         });
     }
 
@@ -339,4 +340,15 @@ jQuery(document).ready(function () {
             </div>`;
         }
     }
+    
+    $('.datatable').DataTable({
+        autoWidth: false,
+        paging: true,
+        searching: true,
+        ordering: false,
+        info: true,
+        language: {
+            search: "Search Music"
+        }
+    });
 })

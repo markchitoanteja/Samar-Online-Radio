@@ -23,6 +23,12 @@
         <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js" integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8=" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        
+         <!-- ✅ Add online DataTables -->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <?php else: ?>
         <script src="../public/admin/dist/js/overlayscrollbars.browser.es6.min.js"></script>
         <script src="../public/admin/dist/js/popper.min.js"></script>
@@ -30,10 +36,17 @@
         <script src="../public/admin/dist/js/apexcharts.min.js"></script>
         <script src="../public/admin/dist/js/jquery-3.7.1.min.js"></script>
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
+
+        
+        <!-- ✅ Add offline DataTables -->
+        <!-- <link rel="stylesheet" href="../public/admin/dist/css/jquery.dataTables.min.css">
+        <script src="../public/admin/dist/js/jquery.dataTables.min.js"></script> -->
+        
     <?php endif ?>
 
+
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.1.1"></script>
+    <script src="../public/admin/dist/js/script.js?v=3.3.3"></script>
 </body>
 
 </html>
