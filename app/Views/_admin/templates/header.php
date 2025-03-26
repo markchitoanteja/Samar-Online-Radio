@@ -112,10 +112,7 @@
                         <li class="nav-item">
                             <a href="playlists" class="nav-link <?= session()->get("current_tab") == "playlists" ? "active" : null ?>">
                                 <i class="nav-icon bi bi-music-player"></i>
-                                <p>
-                                    Playlists &nbsp;
-                                    <span class="badge bg-danger">inactive</span>
-                                </p>
+                                <p>Playlists</p>
                             </a>
                         </li>
                         <li class="nav-item">
