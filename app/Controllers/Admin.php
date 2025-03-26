@@ -79,6 +79,33 @@ class Admin extends BaseController
         return $header . $body . $modals . $footer;
     }
 
+    public function playlists()
+    {
+        if (!session()->get("user_id")) {
+            $response = [
+                "alert_type" => "danger",
+                "message" => "You need to login first!"
+            ];
+    
+            session()->setFlashdata("response", $response);
+    
+            return redirect()->to(base_url('/admin/login'));
+        }
+    
+        session()->set("title", "Playlists");
+        session()->set("current_tab", "playlists");
+    
+        $User_Model = new User_Model();
+    
+        $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
+    
+        $header = view('_admin/templates/header', $data);
+        $body = view('_admin/playlists');
+        $modals = view('_admin/modals/add_playlist_modal') . view('_admin/modals/edit_playlist_modal');
+        $footer = view('_admin/templates/footer');
+    
+        return $header . $body . $modals . $footer;
+    }
     public function login()
     {
         session()->set("title", "Login");

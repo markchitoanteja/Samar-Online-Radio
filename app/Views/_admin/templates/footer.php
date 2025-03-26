@@ -25,9 +25,10 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         
-         <!-- ✅ Add online DataTables -->
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <!-- ✅ Add online DataTables -->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" integrity="sha384-w9ufcIOKS67vY4KePhJtmWDp4+Ai5DMaHvqqF85VvjaGYSW2AhIbqorgKYqIJopv" crossorigin="anonymous">
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" integrity="sha384-k5vbMeKHbxEZ0AEBTSdR7UjAgWCcUfrS8c0c5b2AfIh7olfhNkyCZYwOfzOQhauK" crossorigin="anonymous"></script>
+
 
     <?php else: ?>
         <script src="../public/admin/dist/js/overlayscrollbars.browser.es6.min.js"></script>
@@ -42,6 +43,16 @@
         <!-- <link rel="stylesheet" href="../public/admin/dist/css/jquery.dataTables.min.css">
         <script src="../public/admin/dist/js/jquery.dataTables.min.js"></script> -->
         
+    <?php endif ?>
+
+
+    <?php if (session()->get('current_tab') === 'music_files'): ?>
+        <script src="../public/admin/dist/js/musicfile.cb.script.js?v=2.2.2"></script>
+    <?php endif ?>
+
+
+    <?php if (session()->get('current_tab') === 'playlists'): ?>
+        <script src="../public/admin/dist/js/playlist.cb.script.js?v=2.2.2"></script>
     <?php endif ?>
 
 

@@ -15,6 +15,7 @@ $routes->get('/public', 'Home::index');
 $routes->get('/admin', 'Admin::index');
 $routes->get('/admin/dashboard', 'Admin::dashboard');
 $routes->get('/admin/music_files', 'Admin::music_files');
+$routes->get('/admin/playlists', 'Admin::playlists');
 $routes->get('/admin/login', 'Admin::login');
 $routes->get('/admin/logout', 'Admin::logout');
 

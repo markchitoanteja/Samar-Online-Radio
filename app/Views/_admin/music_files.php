@@ -1,20 +1,23 @@
 
 <main class="app-main">
     <div class="app-content-header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3 class="mb-0">Music Files</h3>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="<?= base_url("admin") ?>">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Music Files</li>
-                    </ol>
+        <div class="border-bottom">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="mb-0">Music Files</h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-end">
+                            <li class="breadcrumb-item"><a href="<?= base_url("admin") ?>">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Music Files</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+   
     <div class="app-content">
         <div class="container-fluid">
             <div class="card">
@@ -25,16 +28,25 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body table-responsive">
                     <!-- Playlist Action Button -->
                     <div id="playlistButtonContainer" class="mb-3 d-none">
-                        <button class="btn btn-success">Add to Playlist</button>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-plus-lg me-1"></i> Add to Playlist
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">My Playlist 1</a></li>
+                                <li><a class="dropdown-item" href="#">My Playlist 2</a></li>
+                                <li><a class="dropdown-item" href="#">My Playlist 3</a></li>
+                            </ul>
+                        </div>
                     </div>
 
                     <!-- Table -->
-                    <table class="table table-responsive table-striped table-bordered datatable">
+                    <table class="table table-hover align-middle mb-0 datatable">
                         <thead>
-                            <tr class="vertical-align-center">
+                            <tr class="table-light vertical-align-center">
                                 <th class="text-center align-middle">
                                     <input class="form-check-input select-all" type="checkbox" id="selectAllCheckbox">
                                     <label class="form-check-label ms-2 mb-0" for="selectAllCheckbox">All</label>
@@ -48,16 +60,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="text-center align-middle">
+                            <tr class="align-middle">
+                                <td class="text-center">
                                     <input class="form-check-input row-checkbox" type="checkbox">
+                                    <label class="form-check-label ms-2 mb-0">1</label>
                                 </td>
-                                <td class="align-middle">Song Name.mp3</td>
-                                <td class="align-middle">3:45</td>
-                                <td class="align-middle">5.2 MB</td>
-                                <td class="align-middle">2025-03-18</td>
-                                <td class="align-middle">My Playlist</td>
-                                <td class="align-middle">
+                                <td>Song Name.mp3</td>
+                                <td>3:45</td>
+                                <td>5.2 MB</td>
+                                <td>2025-03-18</td>
+                                <td>My Playlist</td>
+                                <td class="btn-group">
                                     <button class="btn btn-outline-primary btn-sm">Edit</button>
                                     <button class="btn btn-outline-danger btn-sm">Delete</button>
                                 </td>
