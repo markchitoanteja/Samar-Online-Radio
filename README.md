@@ -63,4 +63,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 For any inquiries or support, please contact:
 - **Email:** 00anteja23@gmail.com
-- **Website:** [Samar Online Radio](http://localhost/Samar-Online-Radio/)
+- **Website:** [Samar Online Radio](http://samaronlineradio.com/)
