@@ -47,7 +47,7 @@
 
 
     <?php if (session()->get('current_tab') === 'music_files'): ?>
-        <script src="../public/admin/dist/js/musicfile.cb.script.js?v=2.2.2"></script>
+        <script src="../public/admin/dist/js/musicfile.cb.script.js?v=3.3.3"></script>
     <?php endif ?>
 
 
