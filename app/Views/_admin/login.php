@@ -50,6 +50,10 @@
         </div>
         <div class="col-4">
             <div class="container">
+                <?php if (session()->get("response")): ?>
+                    <div class="text-center alert alert-<?= session()->get("response")["alert_type"] ?>"><?= session()->get("response")["message"] ?></div>
+                <?php endif ?>
+
                 <div class="card">
                     <div class="card-header text-center">
                         <img src="../public/img/logo.webp?v=1.0.1" alt="Samar Online Radio Logo" class="img-fluid" style="width: 200px;">
@@ -111,7 +115,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.2"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.3"></script>
 </body>
 
 </html>

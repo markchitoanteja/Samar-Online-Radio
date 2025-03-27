@@ -118,6 +118,13 @@ class Admin extends BaseController
     {
         session()->remove('user_id');
 
+        $response = [
+            "alert_type" => "success",
+            "message" => "You have been logged out!"
+        ];
+
+        session()->setFlashdata("response", $response);
+
         return redirect()->to(base_url('/admin/login'));
     }
 

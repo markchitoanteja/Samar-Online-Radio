@@ -21,16 +21,13 @@
     <div class="app-content">
         <div class="container-fluid">
             <div class="card">
-                
                 <div class="card-body table-responsive">
                     <table class="table table-hover align-middle mb-0 datatable">
                         <thead class="table-light">
                             <tr class="align-middle">
                                 <th>
                                     Playlist
-                                    <button class="btn btn-sm btn-outline-primary ms-2"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#addPlaylistModal">
+                                    <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#addPlaylistModal">
                                         <i class="bi bi-plus-lg"></i>
                                     </button>
                                 </th>

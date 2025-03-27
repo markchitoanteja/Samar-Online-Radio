@@ -6,6 +6,21 @@ jQuery(document).ready(function () {
         display_chart();
     }
 
+    if (current_tab != "login") {
+        $('.datatable').DataTable({
+            responsive: false,
+            autoWidth: false,
+            lengthChange: false,
+            paging: true,
+            searching: true,
+            ordering: false,
+            info: true,
+            language: {
+                search: "Search"
+            }
+        })
+    }
+
     if (notification) {
         display_notification(notification);
     }
@@ -190,10 +205,10 @@ jQuery(document).ready(function () {
         loading(true);
 
         var formData = new FormData();
-        
+
         formData.append('title', title);
         formData.append('file', file);
-        
+
         $.ajax({
             url: '../upload_music',
             data: formData,
@@ -201,14 +216,14 @@ jQuery(document).ready(function () {
             dataType: 'JSON',
             processData: false,
             contentType: false,
-            success: function(response) {
+            success: function (response) {
                 if (response) {
                     location.reload();
                 } else {
                     loading(false);
                 }
             },
-            error: function(_, _, error) {
+            error: function (_, _, error) {
                 console.error(error);
             }
         });
@@ -219,7 +234,7 @@ jQuery(document).ready(function () {
             title: notification.title,
             text: notification.text,
             icon: notification.icon,
-            confirmButtonColor: '#0d6efd' 
+            confirmButtonColor: '#0d6efd'
         });
     }
 
@@ -238,11 +253,11 @@ jQuery(document).ready(function () {
     function display_chart() {
         const sales_chart_options = {
             series: [{
-                name: 'Digital Goods',
+                name: 'Current Listeners',
                 data: [28, 48, 40, 19, 86, 27, 90],
             },
             {
-                name: 'Electronics',
+                name: 'Average Listeners',
                 data: [65, 59, 80, 81, 56, 55, 40],
             },
             ],
@@ -340,20 +355,4 @@ jQuery(document).ready(function () {
             </div>`;
         }
     }
-    
-    $('.datatable').DataTable({
-        responsive: false,
-        autoWidth: false,
-        lengthChange: false,
-        paging: true,
-        searching: true,
-        ordering: false,
-        info: true,
-        language: {
-            search: "Search"
-        }
-    });
-
-    
-    
 })

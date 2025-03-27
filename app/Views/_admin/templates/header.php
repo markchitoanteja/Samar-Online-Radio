@@ -25,7 +25,7 @@
     <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio.">
     <meta name="twitter:image" content="../public/img/cover.webp">
 
-    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../favicon.ico?v=1.0.0" type="image/x-icon">
 
     <?php if (is_internet_available()): ?>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" />
@@ -33,12 +33,14 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" integrity="sha384-w9ufcIOKS67vY4KePhJtmWDp4+Ai5DMaHvqqF85VvjaGYSW2AhIbqorgKYqIJopv" crossorigin="anonymous">
     <?php else: ?>
         <link rel="stylesheet" href="../public/admin/dist/css/fonts.css?v=1.0.2" />
         <link rel="stylesheet" href="../public/admin/dist/css/overlayscrollbars.min.css?v=1.0.2" />
         <link rel="stylesheet" href="../public/admin/dist/css/bootstrap-icons/font/bootstrap-icons.min.css?v=1.0.2" />
         <link rel="stylesheet" href="../public/admin/dist/css/apexcharts.css?v=1.0.2" />
         <link rel="stylesheet" href="../public/admin/dist/css/jsvectormap.min.css?v=1.0.2" />
+        <link rel="stylesheet" href="../public/admin/dist/css/jquery.dataTables.min.css">
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />

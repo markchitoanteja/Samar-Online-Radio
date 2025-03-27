@@ -128,5 +128,4 @@
             cb.addEventListener("change", togglePlaylistButton);
         });
     }
-    
 </script>
