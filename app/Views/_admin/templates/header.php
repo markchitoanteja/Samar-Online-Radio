@@ -44,6 +44,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />
+    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.0" />
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">

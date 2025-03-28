@@ -1,17 +1,17 @@
-html,
-body {
+.login-html,
+.login-body {
     height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
 }
 
-.col-8,
-.col-4 {
+.login-col-8,
+.login-col-4 {
     min-height: 100vh;
 }
 
-.col-4 {
+.login-col-4 {
     background-color: #00AFF0;
     display: flex;
     justify-content: center;
@@ -23,4 +23,8 @@ body {
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.dataTables_filter {
+    margin-bottom: 10px;
 }

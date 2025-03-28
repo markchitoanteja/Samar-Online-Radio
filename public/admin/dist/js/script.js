@@ -7,7 +7,7 @@ jQuery(document).ready(function () {
     }
 
     if (current_tab != "login") {
-        $('.datatable').DataTable({
+        var table = $('.datatable').DataTable({
             responsive: false,
             autoWidth: false,
             lengthChange: false,
@@ -16,9 +16,13 @@ jQuery(document).ready(function () {
             ordering: false,
             info: true,
             language: {
-                search: "Search"
+                search: 'Search Title:',
             }
-        })
+        });
+
+        $('.dataTables_filter input').unbind().on('keyup', function () {
+            table.column(1).search(this.value).draw();
+        });
     }
 
     if (notification) {
@@ -49,8 +53,8 @@ jQuery(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                if (response) {
-                    location.href = "dashboard";
+                if (response.success) {
+                    location.href = response.redirect_url;
                 } else {
                     location.reload();
                 }

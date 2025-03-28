@@ -26,6 +26,8 @@ class Admin extends BaseController
     public function dashboard()
     {
         if (!session()->get("user_id")) {
+            session()->set("redirect_after_login", base_url(uri_string()));
+
             $response = [
                 "alert_type" => "danger",
                 "message" => "You need to login first!"
@@ -54,6 +56,8 @@ class Admin extends BaseController
     public function music_files()
     {
         if (!session()->get("user_id")) {
+            session()->set("redirect_after_login", base_url(uri_string()));
+
             $response = [
                 "alert_type" => "danger",
                 "message" => "You need to login first!"
@@ -82,6 +86,8 @@ class Admin extends BaseController
     public function playlists()
     {
         if (!session()->get("user_id")) {
+            session()->set("redirect_after_login", base_url(uri_string()));
+
             $response = [
                 "alert_type" => "danger",
                 "message" => "You need to login first!"
@@ -106,6 +112,7 @@ class Admin extends BaseController
 
         return $header . $body . $modals . $footer;
     }
+
     public function login()
     {
         session()->set("title", "Login");
@@ -138,6 +145,7 @@ class Admin extends BaseController
 
         $email_exists = $User_Model->where("email", $email)->findAll();
 
+        $redirect_url = "dashboard";
         $success = false;
 
         $response = [
@@ -158,11 +166,19 @@ class Admin extends BaseController
 
             session()->set("remember_me", $remember_me_session);
             session()->set("user_id", "1");
+
+            if (session()->get("redirect_after_login")) {
+                $redirect_url = session()->get("redirect_after_login");
+                session()->remove("redirect_after_login");
+            }
         }
 
         session()->setFlashdata("response", $response);
 
-        return json_encode($success);
+        return json_encode([
+            "success" => $success,
+            "redirect_url" => $redirect_url
+        ]);
     }
 
     public function get_user_data_by_id()

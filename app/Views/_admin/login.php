@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="login-html">
 
 <head>
     <meta charset="UTF-8">
@@ -40,15 +40,15 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.2" />
-    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.2" />
+    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.4" />
 </head>
 
-<body>
+<body class="login-body">
     <div class="row">
-        <div class="col-8 cover-page">
+        <div class="login-col-8 col-8 cover-page">
             <!-- SPACE -->
         </div>
-        <div class="col-4">
+        <div class="login-col-4 col-4">
             <div class="container">
                 <?php if (session()->get("response")): ?>
                     <div class="text-center alert alert-<?= session()->get("response")["alert_type"] ?>"><?= session()->get("response")["message"] ?></div>
@@ -77,7 +77,7 @@
                             </div>
 
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="login_remember_me" />
+                                <input class="form-check-input" type="checkbox" value="" id="login_remember_me" <?= session()->get("remember_me") ? "checked" : null ?> />
                                 <label class="form-check-label" for="login_remember_me" role="button"> Remember Me </label>
                             </div>
 
