@@ -1,11 +1,29 @@
 <?php
-
 namespace App\Controllers;
 
 use App\Models\User_Model;
+use App\Models\Song_Model;
+use App\Models\Playlist_Model;
 
 class Admin extends BaseController
 {
+    public function __construct()
+    {
+        date_default_timezone_set('Asia/Manila');
+    }
+
+    private function upload_music_file($music)
+    {
+        if ($music && $music->isValid() && !$music->hasMoved()) {
+            $newName = $music->getRandomName();
+            $music->move(FCPATH . 'public/songs/', $newName);
+
+            return $newName;
+        }
+
+        return false;
+    }
+
     private function upload_image($image)
     {
         if ($image && $image->isValid() && !$image->hasMoved()) {
@@ -16,6 +34,11 @@ class Admin extends BaseController
         }
 
         return false;
+    }
+
+    private function generate_uuid()
+    {
+        return bin2hex(random_bytes(16));
     }
 
     public function index()
@@ -72,8 +95,11 @@ class Admin extends BaseController
         session()->set("current_tab", "music_files");
 
         $User_Model = new User_Model();
+        $Song_Model = new Song_Model();
+        $Playlist_Model = new Playlist_Model();
 
         $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
+        $data["songs"] = $Song_Model->select('songs.*, playlists.name as playlist_name')->join('playlists', 'songs.playlist_id = playlists.id', 'left')->findAll();
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/music_files');
@@ -249,21 +275,42 @@ class Admin extends BaseController
     public function upload_music()
     {
         $title = $this->request->getPost("title");
-        $music = $this->request->getFile("music");
+        $duration = $this->request->getPost("duration");
+        $size = $this->request->getPost("size");
+        $file = $this->request->getFile("file");
 
-        $response = [
-            "title" => $title,
-            "music" => $music
-        ];
+        $uploadedFile = $this->upload_music_file($file);
 
-        $notification = [
-            "title" => "Success!",
-            "text" => "Music uploaded successfully!",
-            "icon" => "success",
-        ];
+        if ($uploadedFile) {
+            $data = [
+                "uuid" => $this->generate_uuid(),
+                "title" => $title,
+                "duration" => $duration,
+                "size" => $size,
+                "file" => $uploadedFile,
+                "created_at" => date("Y-m-d H:i:s"),
+                "updated_at" => date("Y-m-d H:i:s")
+            ];
+
+            $Song_Model = new Song_Model();
+
+            $Song_Model->insert($data);
+
+            $notification = [
+                "title" => "Success!",
+                "text" => "Music uploaded successfully!",
+                "icon" => "success",
+            ];
+        } else {
+            $notification = [
+                "title" => "Error!",
+                "text" => "Failed to upload music!",
+                "icon" => "error",
+            ];
+        }
 
         session()->setFlashdata("notification", $notification);
 
-        return json_encode($response);
+        return json_encode(true);
     }
 }

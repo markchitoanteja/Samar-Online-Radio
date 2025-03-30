@@ -20,10 +20,10 @@
     <div class="app-content">
         <div class="container-fluid">
             <div class="d-flex justify-content-end mb-3">
-                <button class="btn btn-primary me-2">
+                <button class="btn btn-primary me-2" id="upload_music_btn">
                     <i class="bi bi-upload"></i> Upload Music
                 </button>
-                <button class="btn btn-secondary d-none">
+                <button class="btn btn-secondary d-none" id="add_to_playlist_btn">
                     <i class="bi bi-music-note-list"></i> Add to Playlist
                 </button>
             </div>
@@ -35,7 +35,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">
-                                    <input class="form-check-input" type="checkbox">
+                                    <input class="form-check-input" type="checkbox" role="button">
                                 </th>
                                 <th>Music Title</th>
                                 <th>Duration</th>
@@ -46,24 +46,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="text-center">
-                                    <input class="form-check-input" type="checkbox">
-                                </td>
-                                <td>Song A</td>
-                                <td>3:45</td>
-                                <td>4.5 MB</td>
-                                <td>2023-10-01</td>
-                                <td>Playlist 1</td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm btn-success" onclick="editMusic('Song A')">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteMusic('Song A')">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </td>
-                            </tr>
+                            <?php if ($songs): ?>
+                                <?php foreach ($songs as $song): ?>
+                                    <tr>
+                                        <td class="text-center">
+                                            <input class="form-check-input" type="checkbox" value="<?= $song['id'] ?>" role="button">
+                                        </td>
+                                        <td><?= htmlspecialchars($song['title'], ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($song['duration'], ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= htmlspecialchars($song['size'], ENT_QUOTES, 'UTF-8') ?></td>
+                                        <td><?= date('F j, Y, g:i a', strtotime($song['updated_at'])) ?></td>
+                                        <td>
+                                            <?= isset($song['playlist_name']) && !empty($song['playlist_name']) ? htmlspecialchars($song['playlist_name'], ENT_QUOTES, 'UTF-8') : "Not Yet Available" ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                            <?php endif ?>
                         </tbody>
                     </table>
                 </div>

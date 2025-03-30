@@ -1,5 +1,5 @@
-<div class="modal fade" id="uploadMusicModal" tabindex="-1" aria-labelledby="uploadMusicModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="upload_music_modal" tabindex="-1" aria-labelledby="uploadMusicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="uploadMusicModalLabel">Upload Music</h5>
@@ -14,42 +14,26 @@
             </div>
             <div class="main-form">
                 <div class="modal-body">
-                    <form action="javascript:void(0)" method="POST" id="upload_music_form" enctype="multipart/form-data">
-                        <!-- Music Title -->
-                        <div class="mb-3">
-                            <label for="music_title" class="form-label">Music Title</label>
-                            <input type="text" class="form-control" id="music_title" name="music_title" placeholder="Enter music title" required>
-                        </div>
-                        
-                        <!-- this is a test comment -->
-
-                        <!-- Music File -->
+                    <form action="javascript:void(0)" id="upload_music_form">
                         <div class="mb-3">
                             <label for="music_file" class="form-label">Music File</label>
-                            <input type="file" class="form-control" id="music_file" name="music_file" accept="audio/*" required>
+                            <input type="file" class="form-control" id="music_file" accept="audio/*" required>
                         </div>
-
-                        <!-- Hidden Fields -->
-                        <input type="hidden" id="music_duration" name="music_duration">
-                        <input type="hidden" id="music_size" name="music_size">
-
-                        <!-- Display Duration -->
                         <div class="mb-3">
-                            <label for="display_duration" class="form-label">Duration</label>
-                            <input type="text" class="form-control" id="display_duration" readonly>
+                            <label for="music_title" class="form-label">Music Title</label>
+                            <input type="text" class="form-control" id="music_title" required>
                         </div>
-
-                        <!-- Display Size -->
-                        <div class="mb-3">
-                            <label for="display_size" class="form-label">File Size</label>
-                            <input type="text" class="form-control" id="display_size" readonly>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label for="music_duration" class="form-label">Duration</label>
+                                <input type="text" class="form-control" id="music_duration" readonly required>
+                            </div>
+                            <div class="col-6">
+                                <label for="music_size" class="form-label">File Size</label>
+                                <input type="text" class="form-control" id="music_size" readonly required>
+                            </div>
                         </div>
                     </form>
-
-                    <!-- Hidden Audio for Metadata -->
-                    <audio id="audio_preview" style="display: none;"></audio>
-
-
                 </div>
             </div>
             <div class="modal-footer">
@@ -59,4 +43,3 @@
         </div>
     </div>
 </div>
-

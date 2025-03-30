@@ -1,11 +1,11 @@
-        <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
-            <strong>
-                Copyright &copy; 2023-<span id="current_year"></span>
-                <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Integrated News</a>.
-            </strong>
-            All rights reserved.
-        </footer>
+            <footer class="app-footer">
+                <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
+                <strong>
+                    Copyright &copy; 2023-<span id="current_year"></span>
+                    <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Integrated News</a>.
+                </strong>
+                All rights reserved.
+            </footer>
         </div>
 
         <script>
@@ -34,6 +34,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.3.6"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.4.2"></script>
     </body>
 </html>

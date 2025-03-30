@@ -1,4 +1,10 @@
-jQuery(document).ready(function () {
+$(document).ready(function () {
+    let selectAll = $('.table thead input[type="checkbox"]');
+    let checkboxes = $('.table tbody input[type="checkbox"]');
+    let uploadBtn = $('#upload_music_btn');
+    let playlistBtn = $('#add_to_playlist_btn');
+    let isUploading = false;
+
     preventDevTools(false);
     preventMobileAccess();
 
@@ -28,6 +34,38 @@ jQuery(document).ready(function () {
     if (notification) {
         display_notification(notification);
     }
+
+    selectAll.on('change', function () {
+        checkboxes.prop('checked', $(this).prop('checked'));
+
+        toggleButtons();
+    })
+
+    checkboxes.on('change', function () {
+        let totalCheckboxes = checkboxes.length;
+        let checkedCheckboxes = checkboxes.filter(':checked').length;
+
+        selectAll.prop('checked', totalCheckboxes === checkedCheckboxes);
+
+        toggleButtons();
+    })
+
+    $("input").each(function () {
+        let inputId = $(this).attr("id");
+        let label = $("label[for='" + inputId + "']");
+
+        if (label.length) {
+            if ($(this).prop("required")) {
+                if (!label.find(".required-mark").length) {
+                    label.append(" <span class='required-mark' style='color: red;'>*</span>");
+                }
+            } else {
+                if (!label.find(".optional-text").length) {
+                    label.append(" <small class='optional-text' style='color: gray;'>(Optional)</small>");
+                }
+            }
+        }
+    })
 
     $("#current_year").text(new Date().getFullYear());
 
@@ -202,15 +240,20 @@ jQuery(document).ready(function () {
         $("#error_profile_password").addClass("d-none");
     })
 
-    $("#upload_music_form").submit(function () {
+    $("#upload_music_form").submit(function (e) {
         const title = $("#music_title").val();
+        const duration = $("#music_duration").val();
+        const size = $("#music_size").val();
         const file = $("#music_file")[0].files[0];
 
         loading(true);
 
-        var formData = new FormData();
+        isUploading = true;
 
+        var formData = new FormData();
         formData.append('title', title);
+        formData.append('duration', duration);
+        formData.append('size', size);
         formData.append('file', file);
 
         $.ajax({
@@ -225,13 +268,62 @@ jQuery(document).ready(function () {
                     location.reload();
                 } else {
                     loading(false);
+
+                    isUploading = false;
                 }
             },
             error: function (_, _, error) {
                 console.error(error);
+
+                loading(false);
+
+                isUploading = false;
             }
         });
     })
+
+    $('#upload_music_modal').on('hide.bs.modal', function (e) {
+        if (isUploading) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
+
+    $("#upload_music_btn").click(function () {
+        $("#upload_music_modal").modal("show");
+    })
+
+    $("#music_file").on("change", function (event) {
+        var file = event.target.files[0];
+
+        if (file) {
+            var fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+            $('#music_size').val(fileSize);
+
+            var audio = new Audio();
+
+            audio.src = URL.createObjectURL(file);
+            audio.onloadedmetadata = function () {
+                var minutes = Math.floor(audio.duration / 60);
+                var seconds = Math.floor(audio.duration % 60);
+                var duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+
+                $('#music_duration').val(duration);
+            };
+        }
+    })
+
+    function toggleButtons() {
+        if (checkboxes.filter(':checked').length > 0) {
+            uploadBtn.prop('disabled', true);
+            playlistBtn.removeClass('d-none');
+        } else {
+            uploadBtn.prop('disabled', false);
+            playlistBtn.addClass('d-none');
+        }
+    }
 
     function display_notification(notification) {
         Swal.fire({
