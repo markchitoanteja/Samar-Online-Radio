@@ -76,6 +76,14 @@ $(document).ready(function () {
         }
     })
 
+    $(".no-function").click(function () {
+        Swal.fire({
+            title: "No Function",
+            text: "This function is not available yet.",
+            icon: "info",
+        });
+    })
+
     $("#login_form").submit(function () {
         const email = $("#login_email").val();
         const password = $("#login_password").val();
@@ -317,6 +325,8 @@ $(document).ready(function () {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
+                is_page_loading(true);
+
                 var formData = new FormData();
 
                 formData.append('music_id', music_id);
@@ -469,7 +479,7 @@ $(document).ready(function () {
 
         if (selectedSongs.length > 0) {
             $("#selectedSongs").html(selectedSongs.join('')).hide().fadeIn();
-            $("#selectedSongIds").val(selectedIds);
+            $("#add_to_playlist_selected_song_ids").val(selectedIds);
             $("#songCount").text(selectedSongs.length);
             $("#add_to_playlist_modal").modal("show");
         } else {
@@ -495,20 +505,6 @@ $(document).ready(function () {
         }
     })
 
-    $("#addPlaylistForm").submit(function (e) {
-        if ($(".day-checkbox:checked").length === 0) {
-            e.preventDefault();
-
-            Swal.fire({
-                icon: "warning",
-                title: "No Days Selected",
-                text: "Please select at least one day for the schedule.",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "OK"
-            });
-        }
-    })
-
     $("#add_playlist_form").submit(function (e) {
         const name = $("#playlist_name").val();
         const start_time = $("#playlist_start_time").val();
@@ -518,6 +514,7 @@ $(document).ready(function () {
         }).get().join(',');
 
         const time_range = start_time + " - " + end_time;
+
         const schedule = selected_days.split(',').map(day => {
             if (day.toLowerCase() === 'thursday') return 'Th';
             if (day.toLowerCase() === 'saturday') return 'Sa';
@@ -549,12 +546,12 @@ $(document).ready(function () {
                 dataType: 'JSON',
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     if (response) {
                         location.reload();
                     }
                 },
-                error: function(_, _, error) {
+                error: function (_, _, error) {
                     console.error(error);
                 }
             });
@@ -566,14 +563,231 @@ $(document).ready(function () {
         $("#playlist_end_time").removeClass("is-invalid");
 
         $("#time_error_message").addClass("d-none");
-    });
+    })
 
     $("#playlist_end_time").on("input", function () {
         $("#playlist_start_time").removeClass("is-invalid");
         $("#playlist_end_time").removeClass("is-invalid");
 
         $("#time_error_message").addClass("d-none");
-    });
+    })
+
+    $("#add_to_playlist_form").submit(function () {
+        const selected_song_ids = $("#add_to_playlist_selected_song_ids").val();
+        const playlist_id = $("#add_to_playlist_playlist_id").val();
+
+        loading(true);
+
+        var formData = new FormData();
+
+        formData.append('selected_song_ids', selected_song_ids);
+        formData.append('playlist_id', playlist_id);
+
+        $.ajax({
+            url: '../add_to_playlist',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    })
+
+    $(document).on("click", ".delete_playlist_btn", function () {
+        const playlist_id = $(this).data("id");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                is_page_loading(true);
+
+                var formData = new FormData();
+
+                formData.append('playlist_id', playlist_id);
+
+                $.ajax({
+                    url: '../delete_playlist',
+                    data: formData,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response) {
+                            location.reload();
+                        }
+                    },
+                    error: function (_, _, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        })
+    })
+
+    $(document).on("click", ".edit_playlist_btn", function () {
+        const playlist_id = $(this).data("id");
+
+        loading(true);
+
+        $("#edit_playlist_modal").modal("show");
+
+        var formData = new FormData();
+        formData.append('playlist_id', playlist_id);
+
+        $.ajax({
+            url: '../get_playlist_by_id',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    $(".day-checkbox").prop("checked", false);
+
+                    const schedule = response.schedule.split("-").map(day => {
+                        if (day === 'M') return 'Monday';
+                        if (day === 'T') return 'Tuesday';
+                        if (day === 'W') return 'Wednesday';
+                        if (day === 'Th') return 'Thursday';
+                        if (day === 'F') return 'Friday';
+                        if (day === 'Sa') return 'Saturday';
+                        if (day === 'Su') return 'Sunday';
+                        return day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
+                    });
+
+                    const selectedDays = [];
+
+                    schedule.forEach(dayRange => {
+                        if (dayRange.includes('-')) {
+                            const [startDay, endDay] = dayRange.split('-');
+                            let currentDay = startDay;
+                            while (currentDay !== endDay) {
+                                selectedDays.push(currentDay);
+                                currentDay = getNextDay(currentDay);
+                            }
+                            selectedDays.push(endDay);
+                        } else {
+                            selectedDays.push(dayRange);
+                        }
+                    });
+
+                    selectedDays.forEach(day => {
+                        const checkbox = document.getElementById(`edit_${day.toLowerCase()}`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+
+                    const time_range = response.time_range.split(" - ");
+                    const start_time = time_range[0];
+                    const end_time = time_range[1];
+
+                    $("#edit_playlist_name").val(response.name);
+                    $("#edit_playlist_start_time").val(start_time);
+                    $("#edit_playlist_end_time").val(end_time);
+                    $("#edit_playlist_id").val(response.id);
+
+                    loading(false);
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    })
+
+    $("#edit_checkAllDays").change(function () {
+        $(".day-checkbox").prop("checked", $(this).prop("checked"));
+    })
+
+    $(".day-checkbox").change(function () {
+        if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
+            $("#edit_checkAllDays").prop("checked", true);
+        } else {
+            $("#edit_checkAllDays").prop("checked", false);
+        }
+    })
+
+    $("#edit_playlist_form").submit(function (e) {
+        const playlist_id = $("#edit_playlist_id").val();
+        const name = $("#edit_playlist_name").val();
+        const start_time = $("#edit_playlist_start_time").val();
+        const end_time = $("#edit_playlist_end_time").val();
+        const selected_days = $(".day-checkbox:checked").map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        const time_range = start_time + " - " + end_time;
+
+        const schedule = selected_days.split(',').map(day => {
+            if (day.toLowerCase() === 'thursday') return 'Th';
+            if (day.toLowerCase() === 'saturday') return 'Sa';
+            if (day.toLowerCase() === 'sunday') return 'Su';
+            return day.charAt(0).toUpperCase();
+        }).join('-');
+
+        const startTime = new Date("1970-01-01T" + start_time + "Z");
+        const endTime = new Date("1970-01-01T" + end_time + "Z");
+
+        if (startTime >= endTime) {
+            $("#edit_playlist_start_time").addClass("is-invalid");
+            $("#edit_playlist_end_time").addClass("is-invalid");
+            $("#edit_time_error_message").removeClass("d-none");
+        } else {
+            $("#edit_playlist_start_time").removeClass("is-invalid");
+            $("#edit_playlist_end_time").removeClass("is-invalid");
+            $("#edit_time_error_message").addClass("d-none");
+
+            loading(true);
+
+            var formData = new FormData();
+            formData.append('playlist_id', playlist_id);
+            formData.append('name', name);
+            formData.append('schedule', schedule);
+            formData.append('time_range', time_range);
+
+            $.ajax({
+                url: '../edit_playlist',
+                data: formData,
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response) {
+                        location.reload();
+                    }
+                },
+                error: function (_, _, error) {
+                    console.error(error);
+                }
+            });
+        }
+    })
+
+    function getNextDay(currentDay) {
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const index = daysOfWeek.indexOf(currentDay);
+
+        return daysOfWeek[(index + 1) % 7];
+    }
 
     function is_page_loading(enabled) {
         if (enabled) {

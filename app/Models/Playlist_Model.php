@@ -12,6 +12,8 @@ class Playlist_Model extends Model
         'uuid',
         'name',
         'schedule',
+        'time_range',
+        'song_ids',
         'created_at',
         'updated_at',
     ];

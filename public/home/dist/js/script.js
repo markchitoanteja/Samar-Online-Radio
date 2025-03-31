@@ -5,7 +5,7 @@ jQuery(document).ready(function () {
     let mode = 0;
     const musicPlayer = document.getElementById('music_player');
 
-    preventDevTools(false);
+    preventDevTools(true);
 
     for (let i = 0; i < totalBars; i++) {
         const $bar = $('<div></div>');

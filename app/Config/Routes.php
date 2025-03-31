@@ -27,3 +27,8 @@ $routes->post('/upload_music', 'Admin::upload_music');
 $routes->post('/delete_music', 'Admin::delete_music');
 $routes->post('/get_music_by_id', 'Admin::get_music_by_id');
 $routes->post('/update_music', 'Admin::update_music');
+$routes->post('/add_playlist', 'Admin::add_playlist');
+$routes->post('/add_to_playlist', 'Admin::add_to_playlist');
+$routes->post('/delete_playlist', 'Admin::delete_playlist');
+$routes->post('/get_playlist_by_id', 'Admin::get_playlist_by_id');
+$routes->post('/edit_playlist', 'Admin::edit_playlist');

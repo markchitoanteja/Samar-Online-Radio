@@ -100,7 +100,7 @@ class Admin extends BaseController
         $Playlist_Model = new Playlist_Model();
 
         $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
-        $data["songs"] = $Song_Model->select('songs.*, playlists.name as playlist_name')->join('playlists', 'songs.playlist_id = playlists.id', 'left')->orderBy('songs.id', 'desc')->findAll();
+        $data["songs"] = $Song_Model->orderBy('id', 'desc')->findAll();
         $data["playlists"] = $Playlist_Model->orderBy('name', 'desc')->findAll();
 
         $header = view('_admin/templates/header', $data);
@@ -130,8 +130,10 @@ class Admin extends BaseController
         session()->set("current_tab", "playlists");
 
         $User_Model = new User_Model();
+        $Playlist_Model = new Playlist_Model();
 
         $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
+        $data["playlists"] = $Playlist_Model->orderBy('id', 'desc')->findAll();
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/playlists');
@@ -413,5 +415,200 @@ class Admin extends BaseController
         session()->setFlashdata("notification", $notification);
 
         return json_encode(true);
+    }
+
+    public function add_playlist()
+    {
+        $name = $this->request->getPost("name");
+        $schedule = $this->request->getPost("schedule");
+        $time_range = $this->request->getPost("time_range");
+
+        $Playlist_Model = new Playlist_Model();
+
+        $data = [
+            "uuid" => $this->generate_uuid(),
+            "name" => $name,
+            "time_range" => $time_range,
+            "schedule" => $schedule,
+            "created_at" => date("Y-m-d H:i:s"),
+            "updated_at" => date("Y-m-d H:i:s")
+        ];
+
+        $Playlist_Model->insert($data);
+
+        $notification = [
+            "title" => "Success!",
+            "text" => "Playlist added successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
+    }
+
+    public function add_to_playlist()
+    {
+        $playlist_id = $this->request->getPost("playlist_id");
+        $song_ids = $this->request->getPost("selected_song_ids");
+
+        $Playlist_Model = new Playlist_Model();
+        $Song_Model = new Song_Model();
+
+        if (!is_array($song_ids)) {
+            $song_ids = !empty($song_ids) ? explode(",", $song_ids) : [];
+        }
+
+        foreach ($song_ids as $song_id) {
+            $song = $Song_Model->find($song_id);
+
+            if ($song) {
+                $current_playlist_ids = !empty($song["playlist_ids"]) ? explode(",", $song["playlist_ids"]) : [];
+
+                if (!in_array($playlist_id, $current_playlist_ids)) {
+                    $current_playlist_ids[] = $playlist_id;
+
+                    $data = [
+                        "playlist_ids" => implode(",", $current_playlist_ids),
+                        "updated_at" => date("Y-m-d H:i:s")
+                    ];
+
+                    if (!$Song_Model->update($song_id, $data)) {
+                        error_log("Failed to update song_id: $song_id");
+                    }
+                }
+            }
+        }
+
+        $playlist = $Playlist_Model->find($playlist_id);
+
+        if ($playlist) {
+            $current_song_ids = !empty($playlist["song_ids"]) ? explode(",", $playlist["song_ids"]) : [];
+
+            foreach ($song_ids as $song_id) {
+                if (!in_array($song_id, $current_song_ids)) {
+                    $current_song_ids[] = $song_id;
+                }
+            }
+
+            $playlist_data = [
+                "song_ids" => implode(",", $current_song_ids),
+                "updated_at" => date("Y-m-d H:i:s")
+            ];
+
+            if (!$Playlist_Model->update($playlist_id, $playlist_data)) {
+                error_log("Failed to update playlist_id: $playlist_id");
+            }
+        }
+
+        $notification = [
+            "title" => "Success!",
+            "text" => "Songs added to playlist successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
+    }
+
+    public function delete_playlist()
+    {
+        $id = $this->request->getPost("playlist_id");
+
+        $Playlist_Model = new Playlist_Model();
+        $Song_Model = new Song_Model();
+
+        $playlist = $Playlist_Model->where("id", $id)->findAll(1)[0];
+
+        if ($playlist) {
+            $songs = $Song_Model->findAll();
+
+            foreach ($songs as $song) {
+                $playlist_ids = !empty($song["playlist_ids"]) ? explode(",", $song["playlist_ids"]) : [];
+                if (in_array($id, $playlist_ids)) {
+                    $playlist_ids = array_filter($playlist_ids, function ($pid) use ($id) {
+                        return $pid != $id;
+                    });
+
+                    $data = [
+                        "playlist_ids" => implode(",", $playlist_ids),
+                        "updated_at" => date("Y-m-d H:i:s")
+                    ];
+
+                    $Song_Model->update($song["id"], $data);
+                }
+            }
+
+            $Playlist_Model->delete($id);
+
+            $notification = [
+                "title" => "Success!",
+                "text" => "Playlist deleted successfully!",
+                "icon" => "success",
+            ];
+        } else {
+            $notification = [
+                "title" => "Error!",
+                "text" => "Failed to delete playlist!",
+                "icon" => "error",
+            ];
+        }
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
+    }
+
+    public function get_playlist_by_id()
+    {
+        $id = $this->request->getPost("playlist_id");
+
+        $Playlist_Model = new Playlist_Model();
+
+        $playlist = $Playlist_Model->where("id", $id)->findAll(1)[0];
+
+        return json_encode($playlist);
+    }
+
+    public function edit_playlist()
+    {
+        $playlist_id = $this->request->getPost("playlist_id");
+        $name = $this->request->getPost("name");
+        $schedule = $this->request->getPost("schedule");
+        $time_range = $this->request->getPost("time_range");
+
+        $Playlist_Model = new Playlist_Model();
+
+        $playlist = $Playlist_Model->find($playlist_id);
+
+        if (!$playlist) {
+            return json_encode([
+                "status" => "error",
+                "message" => "Playlist not found"
+            ]);
+        }
+
+        $data = [
+            "name" => $name,
+            "time_range" => $time_range,
+            "schedule" => $schedule,
+            "updated_at" => date("Y-m-d H:i:s")
+        ];
+
+        $Playlist_Model->update($playlist_id, $data);
+
+        $notification = [
+            "title" => "Success!",
+            "text" => "Playlist updated successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode([
+            "status" => "success",
+            "message" => "Playlist updated successfully!"
+        ]);
     }
 }

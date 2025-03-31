@@ -32,14 +32,31 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Playlist Name</th>
-                                    <th>Schedule</th>
-                                    <th>Time Range</th>
-                                    <th>Songs</th>
+                                    <th>Playback Days</th>
+                                    <th>Playback Time</th>
+                                    <th>Total Songs</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                <?php if ($playlists): ?>
+                                    <?php foreach ($playlists as $playlist): ?>
+                                        <tr id="playlist_<?= $playlist['id'] ?>">
+                                            <td><?= $playlist['name'] ?></td>
+                                            <td><?= $playlist['schedule'] ?></td>
+                                            <td><?= date("g:i A", strtotime(explode('-', $playlist['time_range'])[0])) . ' - ' . date("g:i A", strtotime(explode('-', $playlist['time_range'])[1])) ?></td>
+                                            <td><?= ($songCount = count(array_filter(explode(',', trim($playlist['song_ids']))))) === 0 ? "No Song" : ($songCount === 1 ? "1 Song" : "$songCount Songs") ?></td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-success edit_playlist_btn" title="Edit Playlist" data-id="<?= $playlist['id'] ?>">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger delete_playlist_btn" title="Delete Playlist" data-id="<?= $playlist['id'] ?>">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach ?>
+                                <?php endif ?>
                             </tbody>
                         </table>
                     </div>

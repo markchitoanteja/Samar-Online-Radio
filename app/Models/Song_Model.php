@@ -13,7 +13,7 @@ class Song_Model extends Model
         'title',
         'duration',
         'size',
-        'playlist_id',
+        'playlist_ids',
         'filename',
         'created_at',
         'updated_at',

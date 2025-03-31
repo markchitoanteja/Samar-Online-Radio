@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2025 at 04:03 PM
+-- Generation Time: Mar 31, 2025 at 07:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,6 +33,7 @@ CREATE TABLE `playlists` (
   `name` varchar(255) NOT NULL,
   `schedule` varchar(255) NOT NULL,
   `time_range` varchar(255) NOT NULL,
+  `song_ids` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -49,7 +50,7 @@ CREATE TABLE `songs` (
   `title` varchar(255) NOT NULL,
   `duration` varchar(255) NOT NULL,
   `size` varchar(5) NOT NULL,
-  `playlist_id` int(11) NOT NULL DEFAULT 0,
+  `playlist_ids` varchar(255) NOT NULL,
   `filename` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
@@ -78,7 +79,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `uuid`, `name`, `email`, `password`, `image`, `user_type`, `created_at`, `updated_at`) VALUES
-(1, 'bb4124935c348e8a89924b2798d8b0fe', 'Mark Chito Anteja', 'administrator@samaronlineradio.com', '$2y$10$gakH7g5jJifH5.hfz9E1e.HPOWoHsrMJ8XQIF3KoAxUm63qfgh95G', 'default-user-image.png', 'admin', '2025-01-29 11:40:47', '2025-03-31 21:57:51'),
+(1, 'bb4124935c348e8a89924b2798d8b0fe', 'Administrator', 'administrator@samaronlineradio.com', '$2y$10$gakH7g5jJifH5.hfz9E1e.HPOWoHsrMJ8XQIF3KoAxUm63qfgh95G', 'default-user-image.png', 'admin', '2025-01-29 11:40:47', '2025-04-01 00:20:32'),
 (2, '6a4bc023868f0a3bd422e998f6ec0c44', 'Mark Chito R. Anteja', 'dev_001@gmail.com', '$2y$10$KlaoYhrusgCS.4RY75Zbj.2aL5L35qvNRoUyrjMjJMUbHr5Sa6u5.', 'default-user-image.png', 'developer', '2025-01-29 11:40:47', '2025-03-07 19:30:31');
 
 --

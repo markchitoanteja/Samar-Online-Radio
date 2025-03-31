@@ -40,7 +40,7 @@
                                     <th>Duration</th>
                                     <th>Size</th>
                                     <th>Modified</th>
-                                    <th>Playlist</th>
+                                    <th class="text-center">Playlists</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -55,8 +55,12 @@
                                             <td><?= htmlspecialchars($song['duration'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($song['size'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= date('F j, Y, g:i a', strtotime($song['updated_at'])) ?></td>
-                                            <td>
-                                                <?= isset($song['playlist_name']) && !empty($song['playlist_name']) ? htmlspecialchars($song['playlist_name'], ENT_QUOTES, 'UTF-8') : "Not Yet Available" ?>
+                                            <td class="text-center">
+                                                <?php if (!empty($song['playlist_ids'])): ?>
+                                                    <a class="no-function" href="javascript:void(0)" data-playlist-ids="<?= $song['playlist_ids'] ?>">View</a>
+                                                <?php else: ?>
+                                                    <small class="text-muted">Not Yet Available</small>
+                                                <?php endif ?>
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-primary play_music_btn" title="Play Music" data-url="<?= base_url('../public/songs/' . htmlspecialchars($song['filename'], ENT_QUOTES, 'UTF-8')) ?>">
