@@ -77,7 +77,7 @@
                             </div>
 
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="login_remember_me" <?= session()->get("remember_me") ? "checked" : null ?> />
+                                <input class="form-check-input ignore-validation" type="checkbox" value="" id="login_remember_me" <?= session()->get("remember_me") ? "checked" : null ?> />
                                 <label class="form-check-label" for="login_remember_me" role="button"> Remember Me </label>
                             </div>
 
@@ -115,7 +115,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/script.js?v=1.0.3"></script>
+    <script src="../public/admin/dist/js/script.js?v=1.0.4"></script>
 </body>
 
 </html>

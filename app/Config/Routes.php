@@ -23,5 +23,7 @@ $routes->get('/admin/logout', 'Admin::logout');
 $routes->post('/get_user_data', 'Admin::get_user_data');
 $routes->post('/get_user_data_by_id', 'Admin::get_user_data_by_id');
 $routes->post('/update_user', 'Admin::update_user');
-                // API LINK     // CONTROLLER:METHOD
 $routes->post('/upload_music', 'Admin::upload_music');
+$routes->post('/delete_music', 'Admin::delete_music');
+$routes->post('/get_music_by_id', 'Admin::get_music_by_id');
+$routes->post('/update_music', 'Admin::update_music');

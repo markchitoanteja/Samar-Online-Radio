@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\User_Model;
@@ -99,11 +100,12 @@ class Admin extends BaseController
         $Playlist_Model = new Playlist_Model();
 
         $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
-        $data["songs"] = $Song_Model->select('songs.*, playlists.name as playlist_name')->join('playlists', 'songs.playlist_id = playlists.id', 'left')->findAll();
+        $data["songs"] = $Song_Model->select('songs.*, playlists.name as playlist_name')->join('playlists', 'songs.playlist_id = playlists.id', 'left')->orderBy('songs.id', 'desc')->findAll();
+        $data["playlists"] = $Playlist_Model->orderBy('name', 'desc')->findAll();
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/music_files');
-        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/upload_music_modal');
+        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/upload_music_modal') . view('_admin/modals/edit_music_modal') . view('_admin/modals/add_to_playlist_modal');
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;
@@ -287,7 +289,7 @@ class Admin extends BaseController
                 "title" => $title,
                 "duration" => $duration,
                 "size" => $size,
-                "file" => $uploadedFile,
+                "filename" => $uploadedFile,
                 "created_at" => date("Y-m-d H:i:s"),
                 "updated_at" => date("Y-m-d H:i:s")
             ];
@@ -305,6 +307,105 @@ class Admin extends BaseController
             $notification = [
                 "title" => "Error!",
                 "text" => "Failed to upload music!",
+                "icon" => "error",
+            ];
+        }
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
+    }
+
+    public function delete_music()
+    {
+        $id = $this->request->getPost("music_id");
+
+        $Song_Model = new Song_Model();
+
+        $song = $Song_Model->where("id", $id)->findAll(1)[0];
+
+        if ($song) {
+            unlink(FCPATH . 'public/songs/' . $song["filename"]);
+
+            $Song_Model->delete($id);
+
+            $notification = [
+                "title" => "Success!",
+                "text" => "Music deleted successfully!",
+                "icon" => "success",
+            ];
+        } else {
+            $notification = [
+                "title" => "Error!",
+                "text" => "Failed to delete music!",
+                "icon" => "error",
+            ];
+        }
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
+    }
+
+    public function get_music_by_id()
+    {
+        $id = $this->request->getPost("music_id");
+
+        $Song_Model = new Song_Model();
+
+        $song = $Song_Model->where("id", $id)->findAll(1)[0];
+
+        return json_encode($song);
+    }
+
+    public function update_music()
+    {
+        $title = $this->request->getPost("title");
+        $duration = $this->request->getPost("duration");
+        $size = $this->request->getPost("size");
+        $file = $this->request->getFile("file");
+
+        $id = $this->request->getPost("id");
+        $old_file = $this->request->getPost("old_file");
+
+        $upload_success = false;
+
+        if ($file) {
+            unlink(FCPATH . 'public/songs/' . $old_file);
+
+            $uploadedFile = $this->upload_music_file($file);
+
+            if ($uploadedFile) {
+                $upload_success = true;
+            } else {
+                $upload_success = false;
+            }
+        } else {
+            $uploadedFile = $old_file;
+        }
+
+        if ($upload_success || !$file) {
+            $data = [
+                "title" => $title,
+                "duration" => $duration,
+                "size" => $size,
+                "filename" => $uploadedFile,
+                "updated_at" => date("Y-m-d H:i:s")
+            ];
+
+            $Song_Model = new Song_Model();
+
+            $Song_Model->update($id, $data);
+
+            $notification = [
+                "title" => "Success!",
+                "text" => "Music updated successfully!",
+                "icon" => "success",
+            ];
+        } else {
+            $notification = [
+                "title" => "Error!",
+                "text" => "Failed to update music!",
                 "icon" => "error",
             ];
         }

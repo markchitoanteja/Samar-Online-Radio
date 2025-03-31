@@ -1,12 +1,11 @@
 $(document).ready(function () {
-    let selectAll = $('.table thead input[type="checkbox"]');
-    let checkboxes = $('.table tbody input[type="checkbox"]');
-    let uploadBtn = $('#upload_music_btn');
-    let playlistBtn = $('#add_to_playlist_btn');
-    let isUploading = false;
+    let is_form_submitting = false;
+    let currentAudioPlayer = null;
+    let currentButton = null;
 
     preventDevTools(false);
     preventMobileAccess();
+    is_page_loading(false);
 
     if (current_tab == "dashboard") {
         display_chart();
@@ -35,22 +34,24 @@ $(document).ready(function () {
         display_notification(notification);
     }
 
-    selectAll.on('change', function () {
-        checkboxes.prop('checked', $(this).prop('checked'));
+    $("#current_year").text(new Date().getFullYear());
+
+    $('.table thead input[type="checkbox"]').on('change', function () {
+        $('.table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
 
         toggleButtons();
     })
 
-    checkboxes.on('change', function () {
-        let totalCheckboxes = checkboxes.length;
-        let checkedCheckboxes = checkboxes.filter(':checked').length;
+    $('.table tbody input[type="checkbox"]').on('change', function () {
+        let totalCheckboxes = $('.table tbody input[type="checkbox"]').length;
+        let checkedCheckboxes = $('.table tbody input[type="checkbox"]').filter(':checked').length;
 
-        selectAll.prop('checked', totalCheckboxes === checkedCheckboxes);
+        $('.table thead input[type="checkbox"]').prop('checked', totalCheckboxes === checkedCheckboxes);
 
         toggleButtons();
     })
 
-    $("input").each(function () {
+    $("input:not(.ignore-validation), select:not(.ignore-validation)").each(function () {
         let inputId = $(this).attr("id");
         let label = $("label[for='" + inputId + "']");
 
@@ -67,7 +68,13 @@ $(document).ready(function () {
         }
     })
 
-    $("#current_year").text(new Date().getFullYear());
+    $(document).on('hide.bs.modal', ".modal", function (e) {
+        if (is_form_submitting) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
 
     $("#login_form").submit(function () {
         const email = $("#login_email").val();
@@ -248,8 +255,6 @@ $(document).ready(function () {
 
         loading(true);
 
-        isUploading = true;
-
         var formData = new FormData();
         formData.append('title', title);
         formData.append('duration', duration);
@@ -268,30 +273,14 @@ $(document).ready(function () {
                     location.reload();
                 } else {
                     loading(false);
-
-                    isUploading = false;
                 }
             },
             error: function (_, _, error) {
                 console.error(error);
 
                 loading(false);
-
-                isUploading = false;
             }
         });
-    })
-
-    $('#upload_music_modal').on('hide.bs.modal', function (e) {
-        if (isUploading) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        }
-    })
-
-    $("#upload_music_btn").click(function () {
-        $("#upload_music_modal").modal("show");
     })
 
     $("#music_file").on("change", function (event) {
@@ -315,13 +304,292 @@ $(document).ready(function () {
         }
     })
 
-    function toggleButtons() {
-        if (checkboxes.filter(':checked').length > 0) {
-            uploadBtn.prop('disabled', true);
-            playlistBtn.removeClass('d-none');
+    $(document).on("click", ".delete_music_btn", function () {
+        const music_id = $(this).data("id");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var formData = new FormData();
+
+                formData.append('music_id', music_id);
+
+                $.ajax({
+                    url: '../delete_music',
+                    data: formData,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response) {
+                            location.reload();
+                        }
+                    },
+                    error: function (_, _, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        })
+    })
+
+    $(document).on("click", ".play_music_btn", function () {
+        const musicUrl = $(this).data("url");
+        const playIcon = '<i class="bi bi-play-fill"></i>';
+        const pauseIcon = '<i class="bi bi-stop-fill"></i>';
+
+        if (currentAudioPlayer && currentButton.is(this)) {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            currentAudioPlayer = null;
+            currentButton.html(playIcon).attr("title", "Play Music");
+            currentButton = null;
+            return;
+        }
+
+        if (currentAudioPlayer) {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            currentButton.html(playIcon).attr("title", "Play Music");
+        }
+
+        currentAudioPlayer = new Audio(musicUrl);
+        currentAudioPlayer.play();
+        $(this).html(pauseIcon).attr("title", "Stop Music");
+        currentButton = $(this);
+
+        currentAudioPlayer.onended = () => {
+            currentButton.html(playIcon).attr("title", "Play Music");
+            currentAudioPlayer = null;
+            currentButton = null;
+        };
+    })
+
+    $(document).on("click", ".edit_music_btn", function () {
+        const music_id = $(this).data("id");
+
+        loading(true);
+
+        var formData = new FormData();
+
+        formData.append('music_id', music_id);
+
+        $.ajax({
+            url: '../get_music_by_id',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    $("#edit_music_title").val(response.title);
+                    $("#edit_music_duration").val(response.duration);
+                    $("#edit_music_size").val(response.size);
+
+                    $("#edit_music_id").val(response.id);
+                    $("#edit_music_old_file").val(response.filename);
+
+                    loading(false);
+
+                    $("#edit_music_modal").modal("show");
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    })
+
+    $("#edit_music_form").submit(function () {
+        const title = $("#edit_music_title").val();
+        const duration = $("#edit_music_duration").val();
+        const size = $("#edit_music_size").val();
+        const file = $("#edit_music_file")[0].files[0];
+
+        const id = $("#edit_music_id").val();
+        const old_file = $("#edit_music_old_file").val();
+
+        loading(true);
+
+        var formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('duration', duration);
+        formData.append('size', size);
+        formData.append('file', file);
+
+        formData.append('id', id);
+        formData.append('old_file', old_file);
+
+        $.ajax({
+            url: '../update_music',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                } else {
+                    loading(false);
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+
+                loading(false);
+            }
+        });
+    })
+
+    $("#add_to_playlist_btn").click(function () {
+        const selectedCheckboxes = $('.table tbody input[type="checkbox"]:checked');
+
+        const selectedSongs = selectedCheckboxes.map(function () {
+            const row = $(this).closest('tr');
+            const songTitle = row.find('td:nth-child(2)').text().trim();
+            return `<li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-music-note-beamed text-primary me-2"></i> ${songTitle}
+                    </li>`;
+        }).get();
+
+        const selectedIds = selectedCheckboxes.map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        if (selectedSongs.length > 0) {
+            $("#selectedSongs").html(selectedSongs.join('')).hide().fadeIn();
+            $("#selectedSongIds").val(selectedIds);
+            $("#songCount").text(selectedSongs.length);
+            $("#add_to_playlist_modal").modal("show");
         } else {
-            uploadBtn.prop('disabled', false);
-            playlistBtn.addClass('d-none');
+            Swal.fire({
+                icon: "warning",
+                title: "No Music Selected",
+                text: "Please select at least one music to add to the playlist.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            });
+        }
+    })
+
+    $("#checkAllDays").change(function () {
+        $(".day-checkbox").prop("checked", $(this).prop("checked"));
+    })
+
+    $(".day-checkbox").change(function () {
+        if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
+            $("#checkAllDays").prop("checked", true);
+        } else {
+            $("#checkAllDays").prop("checked", false);
+        }
+    })
+
+    $("#addPlaylistForm").submit(function (e) {
+        if ($(".day-checkbox:checked").length === 0) {
+            e.preventDefault();
+
+            Swal.fire({
+                icon: "warning",
+                title: "No Days Selected",
+                text: "Please select at least one day for the schedule.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            });
+        }
+    })
+
+    $("#add_playlist_form").submit(function (e) {
+        const name = $("#playlist_name").val();
+        const start_time = $("#playlist_start_time").val();
+        const end_time = $("#playlist_end_time").val();
+        const selected_days = $(".day-checkbox:checked").map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        const time_range = start_time + " - " + end_time;
+        const schedule = selected_days.split(',').map(day => {
+            if (day.toLowerCase() === 'thursday') return 'Th';
+            if (day.toLowerCase() === 'saturday') return 'Sa';
+            if (day.toLowerCase() === 'sunday') return 'Su';
+            return day.charAt(0).toUpperCase();
+        }).join('-');
+
+        const startTime = new Date("1970-01-01T" + start_time + "Z");
+        const endTime = new Date("1970-01-01T" + end_time + "Z");
+
+        if (startTime >= endTime) {
+            $("#playlist_start_time").addClass("is-invalid");
+            $("#playlist_end_time").addClass("is-invalid");
+
+            $("#time_error_message").removeClass("d-none");
+        } else {
+            loading(true);
+
+            var formData = new FormData();
+
+            formData.append('name', name);
+            formData.append('schedule', schedule);
+            formData.append('time_range', time_range);
+
+            $.ajax({
+                url: '../add_playlist',
+                data: formData,
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response) {
+                        location.reload();
+                    }
+                },
+                error: function(_, _, error) {
+                    console.error(error);
+                }
+            });
+        }
+    })
+
+    $("#playlist_start_time").on("input", function () {
+        $("#playlist_start_time").removeClass("is-invalid");
+        $("#playlist_end_time").removeClass("is-invalid");
+
+        $("#time_error_message").addClass("d-none");
+    });
+
+    $("#playlist_end_time").on("input", function () {
+        $("#playlist_start_time").removeClass("is-invalid");
+        $("#playlist_end_time").removeClass("is-invalid");
+
+        $("#time_error_message").addClass("d-none");
+    });
+
+    function is_page_loading(enabled) {
+        if (enabled) {
+            $('#loading-overlay').addClass('d-flex').removeClass('d-none');
+        } else {
+            $('#loading-overlay').removeClass('d-flex').addClass('d-none');
+        }
+    }
+
+    function toggleButtons() {
+        if ($('.table tbody input[type="checkbox"]').filter(':checked').length > 0) {
+            $('#upload_music_btn').prop('disabled', true);
+            $('#add_to_playlist_btn').removeClass('d-none');
+        } else {
+            $('#upload_music_btn').prop('disabled', false);
+            $('#add_to_playlist_btn').addClass('d-none');
         }
     }
 
@@ -339,10 +607,14 @@ $(document).ready(function () {
             $(".main-form").addClass("d-none");
             $(".loading").removeClass("d-none");
             $(".btn-submit").attr("disabled", true);
+
+            is_form_submitting = true;
         } else {
             $(".main-form").removeClass("d-none");
             $(".loading").addClass("d-none");
             $(".btn-submit").attr("disabled", false);
+
+            is_form_submitting = false;
         }
     }
 

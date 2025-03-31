@@ -48,6 +48,14 @@
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div id="loading-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050; display: none;">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 fw-bold">Please wait, the page is loading...</p>
+        </div>
+    </div>
     <div class="app-wrapper">
         <nav class="app-header navbar navbar-expand bg-body">
             <div class="container-fluid">

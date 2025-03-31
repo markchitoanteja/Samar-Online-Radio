@@ -20,56 +20,29 @@
     </div>
     <div class="app-content">
         <div class="container-fluid">
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-primary" id="new_playlist_btn" data-bs-toggle="modal" data-bs-target="#add_playlist_modal">
+                    <i class="bi bi-plus-lg"></i> New Playlist
+                </button>
+            </div>
             <div class="card">
-                <div class="card-body table-responsive">
-                    <table class="table table-hover align-middle mb-0 datatable">
-                        <thead class="table-light">
-                            <tr class="align-middle">
-                                <th>
-                                    Playlist
-                                    <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#addPlaylistModal">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </th>
-                                <th>Schedule</th>
-                                <th>Time Range</th>
-                                <th># Songs</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>OPM</strong><br>
-                                    <span class="badge bg-secondary">Song-based</span>
-                                    <span class="badge bg-primary">Scheduled</span>
-                                </td>
-                                <td>
-                                    General Rotation<br>
-                                    M,W,TH
-                                </td>
-                                <td>
-                                    <small class="text-muted">(11 hours, 15 minutes, 37 seconds)</small>
-                                </td>
-                                <td>
-                                    <a href="#" class="text-decoration-none fw-bold text-primary">133</a><br>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                        data-bs-target="#editPlaylistModal">Edit</button>
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">More</button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">Details</a></li>
-                                            <li><a class="dropdown-item" href="#">Clone</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- More rows here -->
-                        </tbody>
-                    </table>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 datatable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Playlist Name</th>
+                                    <th>Schedule</th>
+                                    <th>Time Range</th>
+                                    <th>Songs</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

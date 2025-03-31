@@ -34,6 +34,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.4.2"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.4.9"></script>
     </body>
 </html>

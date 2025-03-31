@@ -32,12 +32,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="profile_password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="profile_password" placeholder="Leave blank if you don't want to change your password">
+                            <input type="password" class="form-control ignore-validation" id="profile_password" placeholder="Leave blank if you don't want to change your password">
                             <small class="text-danger d-none" id="error_profile_password">Passwords do not match</small>
                         </div>
                         <div class="mb-3">
                             <label for="profile_confirm_password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="profile_confirm_password" placeholder="Leave blank if you don't want to change your password">
+                            <input type="password" class="form-control ignore-validation" id="profile_confirm_password" placeholder="Leave blank if you don't want to change your password">
                         </div>
 
                         <input type="hidden" id="profile_id">
