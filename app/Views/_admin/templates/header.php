@@ -7,13 +7,11 @@
 
     <title>Samar Online Radio - <?= session()->get("title") ?></title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!">
     <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio">
     <meta name="author" content="Samar Online Radio Team">
     <meta name="robots" content="index, follow">
 
-    <!-- Social Media Meta Tags -->
     <meta property="og:title" content="Samar Online Radio - <?= session()->get("title") ?>">
     <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!">
     <meta property="og:image" content="../public/img/cover.webp">

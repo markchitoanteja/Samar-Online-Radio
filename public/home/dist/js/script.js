@@ -1,45 +1,55 @@
 jQuery(document).ready(function () {
-    preventDevTools(false);
-
-    const container = document.getElementById('progress-bars');
+    const $container = $('#progress-bars');
     const totalBars = 25;
     const bars = [];
+    let mode = 0;
+    const musicPlayer = document.getElementById('music_player');
+
+    preventDevTools(false);
 
     for (let i = 0; i < totalBars; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'progress-bar';
+        const $bar = $('<div></div>');
+        $bar.addClass('progress-bar');
 
         const pulseDuration = (Math.random() * 1 + 1).toFixed(2);
         const colorDuration = (Math.random() * 2 + 1).toFixed(2);
         const delay = (Math.random() * 1).toFixed(2);
 
-        bar.style.animation = `pulse ${pulseDuration}s ease-in-out infinite, colorChange ${colorDuration}s linear infinite`;
-        bar.style.animationDelay = `${delay}s`;
+        $bar.css({
+            animation: `pulse ${pulseDuration}s ease-in-out infinite, colorChange ${colorDuration}s linear infinite`,
+            animationDelay: `${delay}s`
+        });
 
-        bars.push(bar);
-        container.appendChild(bar);
+        bars.push($bar);
+        $container.append($bar);
     }
 
-    let mode = 0;
+    if (musicPlayer) {
+        musicPlayer.onload = () => {
+            is_page_loading(false);
+        };
+    }
+
     setInterval(() => {
         mode = (mode + 1) % 5;
 
-        bars.forEach(bar => {
-            bar.classList.remove('uniform', 'uniform-alt', 'uniform-green', 'uniform-pink');
+        bars.forEach($bar => {
+            $bar.removeClass('uniform uniform-alt uniform-green uniform-pink');
 
             if (mode === 1) {
-                bar.classList.add('uniform');
+                $bar.addClass('uniform');
             } else if (mode === 2) {
-                bar.classList.add('uniform-alt');
+                $bar.addClass('uniform-alt');
             } else if (mode === 3) {
-                bar.classList.add('uniform-green');
+                $bar.addClass('uniform-green');
             } else if (mode === 4) {
-                bar.classList.add('uniform-pink');
+                $bar.addClass('uniform-pink');
             }
         });
     }, 5000);
-    
-    
+
+    $("#current_year").text(new Date().getFullYear());
+
     function preventDevTools(enable) {
         if (!enable) return;
 
@@ -80,8 +90,11 @@ jQuery(document).ready(function () {
         }, 1000);
     }
 
-    
-
-    
-    
-})
+    function is_page_loading(enabled) {
+        if (enabled) {
+            $('#loading-overlay').addClass('d-flex').removeClass('d-none');
+        } else {
+            $('#loading-overlay').removeClass('d-flex').addClass('d-none');
+        }
+    }
+});
