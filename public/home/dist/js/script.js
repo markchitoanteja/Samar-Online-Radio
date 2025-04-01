@@ -1,9 +1,9 @@
 jQuery(document).ready(function () {
+    const musicPlayer = document.getElementById('music_player');
     const $container = $('#progress-bars');
     const totalBars = 25;
     const bars = [];
     let mode = 0;
-    const musicPlayer = document.getElementById('music_player');
 
     preventDevTools(true);
 
@@ -49,6 +49,14 @@ jQuery(document).ready(function () {
     }, 5000);
 
     $("#current_year").text(new Date().getFullYear());
+
+    $(".no-function").click(function () {
+        Swal.fire({
+            title: "No Function",
+            text: "This function is not available yet.",
+            icon: "info",
+        });
+    })
 
     function preventDevTools(enable) {
         if (!enable) return;

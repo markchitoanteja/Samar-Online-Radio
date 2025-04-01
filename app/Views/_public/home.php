@@ -32,7 +32,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />
-    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.2.5" />
+    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.3.8" />
 </head>
 
 <body>
@@ -45,59 +45,46 @@
         </div>
     </div>
 
-    <div class="content-wrapper">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="music-section">
-                    <img src="public/img/logo.webp?v=1.0.2" alt="Logo" class="logo-kasugbong" />
-
-                    <div class="iframe-container mt-5">
-                        <iframe id="music_player" src="https://radio.969fmcanavid.com/public/kasugbongfm/embed?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; min-height: 150px; border: 0;"></iframe>
-                    </div>
+    <div class="container">
+        <div class="card music-player bg-light">
+            <div class="card-header">
+                <div class="logo-container">
+                    <a href="https://www.facebook.com/share/16CqgDvcaT/?mibextid=qi2Omg" target="_blank" rel="noopener noreferrer">
+                        <img src="public/img/logo-1.webp?v=1.0.1" class="border" alt="Company 1">
+                    </a>
+                    <a href="https://www.facebook.com/share/1BmFsRijP1/" target="_blank" rel="noopener noreferrer">
+                        <img src="public/img/logo-2.webp?v=1.0.1" class="border" alt="Company 2">
+                    </a>
+                    <a href="https://www.facebook.com/share/1AFcs2Wxpy/" target="_blank" rel="noopener noreferrer">
+                        <img src="public/img/logo-3.webp?v=1.0.1" class="border" alt="Company 3">
+                    </a>
                 </div>
+                <div class="logo-container">
+                    <a href="https://www.facebook.com/share/154qdLKajt/" target="_blank" rel="noopener noreferrer">
+                        <img src="public/img/logo.webp?v=1.0.1" class="border" alt="Company 4">
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61572979705153&mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">
+                        <img src="public/img/logo-4.webp?v=1.0.1" class="border" alt="Company 5">
+                    </a>
+                </div>
+
+                <h3 class="text-center mt-3 mb-0">Samar Online Radio</h3>
             </div>
-            <div class="col-lg-12 mt-3">
-                <div class="progress-container" id="progress-bars"></div>
+            <div class="card-body">
+                <iframe id="music_player" src="https://radio.969fmcanavid.com/public/kasugbongfm/embed?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; border: 0; height: 105px;"></iframe>
             </div>
         </div>
     </div>
 
-    <footer class="main-footer bg-dark text-white py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="bi bi-info-circle"></i> About Samar Online Radio</h5>
-                    <p>Welcome to <strong>Samar Online Radio</strong>, your ultimate destination for non-stop music, live DJ sessions, and the latest hits. Connecting Samar to the world!</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact Information</h5>
-                    <ul class="list-unstyled">
-                        <li>Email: info@samaronlineradio.com</li>
-                        <li>Phone: +63 (912) 345 6789</li>
-                        <li>Address: Eastern Samar, Philippines</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Connect with Us</h5>
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="https://www.facebook.com/profile.php?id=61572979705153&mibextid=kFxxJD" class="text-white text-decoration-none" target="_blank" rel="noopener noreferrer">
-                                <i class="bi bi-facebook"></i>
-                                Facebook
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.youtube.com/@salvadord.e" class="text-white text-decoration-none" target="_blank" rel="noopener noreferrer">
-                                <i class="bi bi-youtube"></i>
-                                Youtube
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-3">
-            <p>Copyright <strong>&copy;</strong> <span id="current_year"></span> Samar Online Radio. All Rights Reserved.</p>
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="mb-0">&copy; 2025 Samar Online Radio.</p>
+            <p class="mt-0 mb-2">All rights reserved.</p>
+            <p class="footer-links-container">
+                <a class="footer-links no-function" href="javascript:void(0)">About Us</a> |
+                <a class="footer-links" href="https://www.facebook.com/profile.php?id=61572979705153&mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">Official Facebook Page</a> |
+                <a class="footer-links" href="https://youtube.com/@salvadord.e?si=Q4uZfjo_lp3pDhe6" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
+            </p>
         </div>
     </footer>
 
@@ -109,7 +96,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.3.7"></script>
+    <script src="public/home/dist/js/script.js?v=3.4.1"></script>
 </body>
 
 </html>

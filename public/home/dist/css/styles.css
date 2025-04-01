@@ -1,180 +1,96 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.music-player {
+    width: 100%;
+    max-width: 450px;
+    min-width: 300px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-html,
-body {
+.card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    /* Space between logos */
+}
+
+.card-header a {
+    display: flex;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 80px;
+    /* Increased size */
+    height: 80px;
+}
+
+.card-header img {
+    width: 100%;
     height: 100%;
-    width: 100%;
+    object-fit: cover;
+    /* Ensures the logos fit perfectly */
+    transition: transform 0.3s ease;
 }
 
-.logo-kasugbong {
-    max-width: 250px;
-    width: 100%;
-    height: auto;
-    margin: 0 auto 1em;
-    display: block;
+.card-header img:hover {
+    transform: scale(1.1);
+    /* Slight zoom effect on hover */
 }
 
-.iframe-container {
-    width: 100%;
-    border: none;
-    min-height: 150px;
-    max-height: 100%;
-    flex: 1 1 45%;
-}
-
-.content-wrapper {
+.container {
+    min-height: calc(100vh - 100px);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2em;
-    padding: 2em;
 }
 
-.music-section {
+.footer {
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    max-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
 
-.progress-container {
-    display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-    height: 50px; /* Optimal height for better alignment and responsiveness */
-    margin: 0 auto;
-}
-
-.progress-bar {
-    width: 1px;
-    height: 100%;
-    border-radius: 1px;
-    margin: 1px;
-    animation: pulse 1.5s ease-in-out infinite, colorChange 3s linear infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        height: 1px;
-        transform: translateY(0);
-    }
-    50% {
-        height: 100%;
-        transform: translateY(-50%);
+@media (max-width: 768px) {
+    .footer-links-container {
+        font-size: 13px !important;
     }
 }
 
-@keyframes colorChange {
-    0% {
-        background-color: #007bff;
-    }
-    25% {
-        background-color: #28a745;
-    }
-    50% {
-        background-color: #ffc107;
-    }
-    75% {
-        background-color: #dc3545;
-    }
-    100% {
-        background-color: #6610f2;
-    }
+.footer-links {
+    text-decoration: none;
+    color: #007bff;
 }
 
-@keyframes uniformColor {
-    0%, 100% {
-        background-color: #ff4d4d;
-    }
-    50% {
-        background-color: #cc0000;
-    }
+.footer-links-container {
+    text-align: center;
+    font-size: 14px;
+    color: white;
 }
 
-@keyframes uniformColorAlt {
-    0%, 100% {
-        background-color: #00d1ff;
-    }
-    50% {
-        background-color: #007bff;
-    }
+.footer .footer-content p {
+    margin: 5px 0;
+    font-size: 14px;
 }
 
-@keyframes uniformColorGreen {
-    0%, 100% {
-        background-color: #00ff99;
-    }
-    50% {
-        background-color: #007f5f;
-    }
-}
-
-@keyframes uniformColorPink {
-    0%, 100% {
-        background-color: rgb(255, 118, 237);
-    }
-    50% {
-        background-color: rgb(138, 21, 128);
-    }
-}
-
-.progress-bar.uniform {
-    animation-name: pulse, uniformColor !important;
-}
-
-.progress-bar.uniform-alt {
-    animation-name: pulse, uniformColorAlt !important;
-}
-
-.progress-bar.uniform-green {
-    animation-name: pulse, uniformColorGreen !important;
-}
-
-.progress-bar.uniform-pink {
-    animation-name: pulse, uniformColorPink !important;
-}
-
-@media (max-width: 720px) {
-    .content {
-        padding: 10px;
-    }
-
-    .logo-kasugbong {
-        max-width: 250px;
-    }
-
-    .iframe-container {
-        min-height: 150px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    p {
-        font-size: 0.875em;
-    }
-}
-
-@media (max-width: 360px) {
-    .content {
-        padding: 10px;
-    }
-
-    .logo-kasugbong {
-        max-width: 250px;
-    }
-
-    .iframe-container {
-        min-height: 100px;
-    }
-
-    h1 {
-        font-size: 1.25em;
-    }
-
-    p {
-        font-size: 0.75em;
-    }
+.footer .footer-content p:first-child {
+    font-weight: bold;
 }
