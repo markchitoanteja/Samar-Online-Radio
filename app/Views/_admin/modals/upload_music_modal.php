@@ -23,6 +23,10 @@
                             <label for="music_title" class="form-label">Music Title</label>
                             <input type="text" class="form-control" id="music_title" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="artist_name" class="form-label">Artist Name</label>
+                            <input type="text" class="form-control" id="artist_name">
+                        </div>
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label for="music_duration" class="form-label">Duration</label>

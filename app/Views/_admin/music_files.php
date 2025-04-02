@@ -30,13 +30,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table datatable table-hover">
+                        <table class="table table-hover" id="music_table">
                             <thead class="table-light">
                                 <tr>
                                     <th class="text-center">
                                         <input class="form-check-input" type="checkbox" role="button">
                                     </th>
                                     <th>Music Title</th>
+                                    <th>Artist Name</th>
                                     <th>Duration</th>
                                     <th>Size</th>
                                     <th>Modified</th>
@@ -52,6 +53,7 @@
                                                 <input class="form-check-input" type="checkbox" value="<?= $song['id'] ?>" role="button">
                                             </td>
                                             <td><?= htmlspecialchars($song['title'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($song['artist'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($song['duration'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($song['size'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= date('F j, Y, g:i a', strtotime($song['updated_at'])) ?></td>
@@ -62,7 +64,7 @@
                                                     <small class="text-muted">Not Yet Available</small>
                                                 <?php endif ?>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center" style="white-space: nowrap;">
                                                 <button class="btn btn-sm btn-primary play_music_btn" title="Play Music" data-url="<?= base_url('../public/songs/' . htmlspecialchars($song['filename'], ENT_QUOTES, 'UTF-8')) ?>">
                                                     <i class="bi bi-play-fill"></i>
                                                 </button>

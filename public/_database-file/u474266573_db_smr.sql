@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2025 at 07:21 PM
+-- Generation Time: Apr 02, 2025 at 08:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,6 +48,7 @@ CREATE TABLE `songs` (
   `id` int(11) NOT NULL,
   `uuid` char(36) NOT NULL,
   `title` varchar(255) NOT NULL,
+  `artist` varchar(255) NOT NULL,
   `duration` varchar(255) NOT NULL,
   `size` varchar(5) NOT NULL,
   `playlist_ids` varchar(255) NOT NULL,

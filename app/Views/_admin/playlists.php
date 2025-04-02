@@ -28,7 +28,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 datatable">
+                        <table class="table table-hover mb-0" id="playlists_table">
                             <thead class="table-light">
                                 <tr>
                                     <th>Playlist Name</th>
@@ -45,8 +45,12 @@
                                             <td><?= $playlist['name'] ?></td>
                                             <td><?= $playlist['schedule'] ?></td>
                                             <td><?= date("g:i A", strtotime(explode('-', $playlist['time_range'])[0])) . ' - ' . date("g:i A", strtotime(explode('-', $playlist['time_range'])[1])) ?></td>
-                                            <td><?= ($songCount = count(array_filter(explode(',', trim($playlist['song_ids']))))) === 0 ? "No Song" : ($songCount === 1 ? "1 Song" : "$songCount Songs") ?></td>
-                                            <td class="text-center">
+                                            <td>
+                                                <a href="javascript:void(0)" class="no-function" data-playlist-id="<?= $playlist['id'] ?>">
+                                                    <?= ($songCount = count(array_filter(explode(',', trim($playlist['song_ids']))))) === 0 ? "No Song" : ($songCount === 1 ? "1 Song" : "$songCount Songs") ?>
+                                                </a>
+                                            </td>
+                                            <td class="text-center" style="white-space: nowrap;">
                                                 <button class="btn btn-sm btn-success edit_playlist_btn" title="Edit Playlist" data-id="<?= $playlist['id'] ?>">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>

@@ -17,7 +17,7 @@ class Admin extends BaseController
     {
         if ($music && $music->isValid() && !$music->hasMoved()) {
             $newName = $music->getRandomName();
-            $music->move(FCPATH . 'public/songs/', $newName);
+            $music->move(FCPATH . 'public/songs/uploads/', $newName);
 
             return $newName;
         }
@@ -141,6 +141,14 @@ class Admin extends BaseController
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;
+    }
+
+    public function server_music_player()
+    {
+        session()->set("title", "Server Music Player");
+        session()->set("current_tab", "server_music_player");
+
+        return view('_admin/server_music_player');
     }
 
     public function login()
@@ -279,6 +287,7 @@ class Admin extends BaseController
     public function upload_music()
     {
         $title = $this->request->getPost("title");
+        $artist = $this->request->getPost("artist");
         $duration = $this->request->getPost("duration");
         $size = $this->request->getPost("size");
         $file = $this->request->getFile("file");
@@ -289,6 +298,7 @@ class Admin extends BaseController
             $data = [
                 "uuid" => $this->generate_uuid(),
                 "title" => $title,
+                "artist" => $artist,
                 "duration" => $duration,
                 "size" => $size,
                 "filename" => $uploadedFile,
@@ -327,7 +337,7 @@ class Admin extends BaseController
         $song = $Song_Model->where("id", $id)->findAll(1)[0];
 
         if ($song) {
-            unlink(FCPATH . 'public/songs/' . $song["filename"]);
+            unlink(FCPATH . 'public/songs/uploads/' . $song["filename"]);
 
             $Song_Model->delete($id);
 
@@ -363,6 +373,7 @@ class Admin extends BaseController
     public function update_music()
     {
         $title = $this->request->getPost("title");
+        $artist = $this->request->getPost("artist");
         $duration = $this->request->getPost("duration");
         $size = $this->request->getPost("size");
         $file = $this->request->getFile("file");
@@ -389,6 +400,7 @@ class Admin extends BaseController
         if ($upload_success || !$file) {
             $data = [
                 "title" => $title,
+                "artist" => $artist,
                 "duration" => $duration,
                 "size" => $size,
                 "filename" => $uploadedFile,
@@ -610,5 +622,100 @@ class Admin extends BaseController
             "status" => "success",
             "message" => "Playlist updated successfully!"
         ]);
+    }
+
+    public function sync_data()
+    {
+        $file = 'public/data/audio_data.json';
+
+        $filePath = $this->request->getPost("file");
+        $currentProgress = $this->request->getPost("progress");
+        $duration = $this->request->getPost("duration");
+        $is_playing = $this->request->getPost("is_playing") == "true";
+
+        $filename = basename($filePath);
+
+        $session = session();
+
+        if ($session->get('last_filename') === $filename) {
+            $title = $session->get('last_title');
+            $artist = $session->get('last_artist');
+        } else {
+            $Song_Model = new Song_Model();
+            $song = $Song_Model->where("filename", $filename)->findAll(1);
+
+            if (!empty($song)) {
+                $title = $song[0]["title"];
+                $artist = $song[0]["artist"];
+            } else {
+                $title = "Unknown Track";
+                $artist = "Unknown Artist";
+            }
+
+            $session->set([
+                'last_filename' => $filename,
+                'last_title' => $title,
+                'last_artist' => $artist
+            ]);
+        }
+
+        $newData = [
+            'filename' => $filename,
+            'songTitle' => $title,
+            'artist' => $artist,
+            'duration' => $duration,
+            'currentProgress' => $currentProgress,
+            'timestamp' => time(),
+            'is_playing' => $is_playing,
+        ];
+
+        file_put_contents($file, json_encode($newData, JSON_PRETTY_PRINT));
+
+        return json_encode($title);
+    }
+
+    function get_current_playlist_songs()
+    {
+        $Playlist_Model = new Playlist_Model();
+        $Song_Model = new Song_Model();
+
+        $playlists = $Playlist_Model->findAll();
+
+        $dayMap = [
+            'Mon' => 'M',
+            'Tue' => 'T',
+            'Wed' => 'W',
+            'Thu' => 'Th',
+            'Fri' => 'F',
+            'Sat' => 'Sa',
+            'Sun' => 'Su'
+        ];
+
+        $currentDay = date('D');
+        $currentTime = date('H:i');
+
+        $shortDay = $dayMap[$currentDay] ?? '';
+        $songTitles = ["../public/songs/default_song.mp3"];
+
+        foreach ($playlists as $playlist) {
+            $days = explode('-', $playlist['schedule']);
+
+            if (in_array($shortDay, $days)) {
+                list($startTime, $endTime) = explode(' - ', $playlist['time_range']);
+
+                if ($currentTime >= $startTime && $currentTime <= $endTime) {
+                    $songIds = explode(',', $playlist['song_ids']);
+                    $songs = $Song_Model->whereIn('id', $songIds)->findAll();
+
+                    if (!empty($songs)) {
+                        $songTitles = array_map(fn($song) => "../public/songs/uploads/" . $song['filename'], $songs);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return json_encode($songTitles);
     }
 }

@@ -30,33 +30,33 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Monday" id="edit_monday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Monday" id="edit_monday">
                                         <label role="button" class="form-check-label" for="edit_monday">Monday</label>
                                     </div>
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Tuesday" id="edit_tuesday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Tuesday" id="edit_tuesday">
                                         <label role="button" class="form-check-label" for="edit_tuesday">Tuesday</label>
                                     </div>
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Wednesday" id="edit_wednesday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Wednesday" id="edit_wednesday">
                                         <label role="button" class="form-check-label" for="edit_wednesday">Wednesday</label>
                                     </div>
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Thursday" id="edit_thursday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Thursday" id="edit_thursday">
                                         <label role="button" class="form-check-label" for="edit_thursday">Thursday</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Friday" id="edit_friday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Friday" id="edit_friday">
                                         <label role="button" class="form-check-label" for="edit_friday">Friday</label>
                                     </div>
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Saturday" id="edit_saturday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Saturday" id="edit_saturday">
                                         <label role="button" class="form-check-label" for="edit_saturday">Saturday</label>
                                     </div>
                                     <div class="form-check">
-                                        <input role="button" class="form-check-input day-checkbox ignore-validation" type="checkbox" value="Sunday" id="edit_sunday">
+                                        <input role="button" class="form-check-input edit-day-checkbox ignore-validation" type="checkbox" value="Sunday" id="edit_sunday">
                                         <label role="button" class="form-check-label" for="edit_sunday">Sunday</label>
                                     </div>
                                 </div>

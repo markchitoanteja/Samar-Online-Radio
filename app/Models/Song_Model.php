@@ -11,6 +11,7 @@ class Song_Model extends Model
     protected $allowedFields = [
         'uuid',
         'title',
+        'artist',
         'duration',
         'size',
         'playlist_ids',

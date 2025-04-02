@@ -10,7 +10,6 @@
 
         <script>
             const user_id = "<?= session()->get("user_id") ?>";
-            const base_url = "<?= base_url() ?>";
             const current_tab = "<?= session()->get("current_tab") ?>";
             const notification = <?= json_encode(session()->get("notification") ?? null) ?>;
         </script>
@@ -34,6 +33,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.5.3"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.5.7"></script>
     </body>
 </html>

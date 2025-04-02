@@ -32,7 +32,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />
-    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.3.8" />
+    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.1" />
 </head>
 
 <body>
@@ -70,8 +70,37 @@
 
                 <h3 class="text-center mt-3 mb-0">Samar Online Radio</h3>
             </div>
-            <div class="card-body">
-                <iframe id="music_player" src="https://radio.969fmcanavid.com/public/kasugbongfm/embed?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; border: 0; height: 105px;"></iframe>
+            <div class="card-body w-100">
+                <div class="iframe-container">
+                    <div class="song-details">
+                        <img src="public/img/audio-placeholder.webp?v=1.0.1" alt="Song Image" class="song-image" style="width: auto;">
+
+                        <div class="song-info">
+                            <div class="d-block">
+                                <div class="song-name" id="songTitle">Loading...</div>
+                                <div class="artist-name d-block" id="artist_name">Loading...</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span id="currentTime" class="pr-2">0:00</span>
+                                <div class="progress-container">
+                                    <div class="progress-bar" id="progressBar"></div>
+                                </div>
+                                <span id="duration" class="pl-2">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="divider mt-2 mb-0">
+
+                    <div class="controls mt-0">
+                        <i id="playPauseButton" class="bi bi-play-fill control-btn" style="font-size: 24px;"></i>
+
+                        <div class="volume-controls">
+                            <i id="muteButton" class="bi bi-volume-up-fill control-btn" style="font-size: 24px;"></i>
+                            <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" role="button">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -96,7 +125,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.4.1"></script>
+    <script src="public/home/dist/js/script.js?v=3.4.3"></script>
 </body>
 
 </html>

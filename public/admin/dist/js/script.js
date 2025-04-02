@@ -2,6 +2,7 @@ $(document).ready(function () {
     let is_form_submitting = false;
     let currentAudioPlayer = null;
     let currentButton = null;
+    let is_page_ready = false;
 
     preventDevTools(false);
     preventMobileAccess();
@@ -11,8 +12,8 @@ $(document).ready(function () {
         display_chart();
     }
 
-    if (current_tab != "login") {
-        var table = $('.datatable').DataTable({
+    if ((current_tab != "login") && (current_tab != "server_music_player")) {
+        var table = $('#music_table').DataTable({
             responsive: false,
             autoWidth: false,
             lengthChange: false,
@@ -21,17 +22,36 @@ $(document).ready(function () {
             ordering: false,
             info: true,
             language: {
-                search: 'Search Title:',
+                search: 'Music Title:',
             }
         });
 
-        $('.dataTables_filter input').unbind().on('keyup', function () {
+        $('#music_table_filter input').unbind().on('keyup', function () {
             table.column(1).search(this.value).draw();
+        });
+
+        var table = $('#playlists_table').DataTable({
+            responsive: false,
+            autoWidth: false,
+            lengthChange: false,
+            paging: true,
+            searching: true,
+            ordering: false,
+            info: true,
+            language: {
+                search: 'Playlist Name:',
+            }
+        });
+
+        $('#playlists_table_filter input').unbind().on('keyup', function () {
+            table.column(0).search(this.value).draw();
         });
     }
 
     if (notification) {
-        display_notification(notification);
+        if (is_page_ready) {
+            display_notification(notification);
+        }
     }
 
     $("#current_year").text(new Date().getFullYear());
@@ -257,6 +277,7 @@ $(document).ready(function () {
 
     $("#upload_music_form").submit(function (e) {
         const title = $("#music_title").val();
+        const artist = $.trim($("#artist_name").val() || "") || "Unknown Artist";
         const duration = $("#music_duration").val();
         const size = $("#music_size").val();
         const file = $("#music_file")[0].files[0];
@@ -264,7 +285,9 @@ $(document).ready(function () {
         loading(true);
 
         var formData = new FormData();
+
         formData.append('title', title);
+        formData.append('artist', artist);
         formData.append('duration', duration);
         formData.append('size', size);
         formData.append('file', file);
@@ -388,6 +411,8 @@ $(document).ready(function () {
 
         loading(true);
 
+        $("#edit_music_modal").modal("show");
+
         var formData = new FormData();
 
         formData.append('music_id', music_id);
@@ -402,6 +427,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response) {
                     $("#edit_music_title").val(response.title);
+                    $("#edit_artist_name").val(response.artist === "Unknown Artist" ? "" : response.artist);
                     $("#edit_music_duration").val(response.duration);
                     $("#edit_music_size").val(response.size);
 
@@ -409,8 +435,6 @@ $(document).ready(function () {
                     $("#edit_music_old_file").val(response.filename);
 
                     loading(false);
-
-                    $("#edit_music_modal").modal("show");
                 }
             },
             error: function (_, _, error) {
@@ -421,6 +445,7 @@ $(document).ready(function () {
 
     $("#edit_music_form").submit(function () {
         const title = $("#edit_music_title").val();
+        const artist = $.trim($("#edit_artist_name").val() || "") || "Unknown Artist";
         const duration = $("#edit_music_duration").val();
         const size = $("#edit_music_size").val();
         const file = $("#edit_music_file")[0].files[0];
@@ -433,6 +458,7 @@ $(document).ready(function () {
         var formData = new FormData();
 
         formData.append('title', title);
+        formData.append('artist', artist);
         formData.append('duration', duration);
         formData.append('size', size);
         formData.append('file', file);
@@ -714,11 +740,11 @@ $(document).ready(function () {
     })
 
     $("#edit_checkAllDays").change(function () {
-        $(".day-checkbox").prop("checked", $(this).prop("checked"));
+        $(".edit-day-checkbox").prop("checked", $(this).prop("checked"));
     })
 
-    $(".day-checkbox").change(function () {
-        if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
+    $(".edit-day-checkbox").change(function () {
+        if ($(".edit-day-checkbox:checked").length === $(".edit-day-checkbox").length) {
             $("#edit_checkAllDays").prop("checked", true);
         } else {
             $("#edit_checkAllDays").prop("checked", false);
@@ -730,7 +756,7 @@ $(document).ready(function () {
         const name = $("#edit_playlist_name").val();
         const start_time = $("#edit_playlist_start_time").val();
         const end_time = $("#edit_playlist_end_time").val();
-        const selected_days = $(".day-checkbox:checked").map(function () {
+        const selected_days = $(".edit-day-checkbox:checked").map(function () {
             return $(this).val();
         }).get().join(',');
 
@@ -791,8 +817,12 @@ $(document).ready(function () {
 
     function is_page_loading(enabled) {
         if (enabled) {
+            is_page_ready = false;
+
             $('#loading-overlay').addClass('d-flex').removeClass('d-none');
         } else {
+            is_page_ready = true;
+
             $('#loading-overlay').removeClass('d-flex').addClass('d-none');
         }
     }
