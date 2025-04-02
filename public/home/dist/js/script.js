@@ -1,8 +1,4 @@
 jQuery(document).ready(function () {
-    const $container = $('#progress-bars');
-    const totalBars = 25;
-    const bars = [];
-    let mode = 0;
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
@@ -10,41 +6,6 @@ jQuery(document).ready(function () {
     startSync();
     is_page_loading(false);
     preventDevTools(false);
-
-    for (let i = 0; i < totalBars; i++) {
-        const $bar = $('<div></div>');
-        $bar.addClass('progress-bar');
-
-        const pulseDuration = (Math.random() * 1 + 1).toFixed(2);
-        const colorDuration = (Math.random() * 2 + 1).toFixed(2);
-        const delay = (Math.random() * 1).toFixed(2);
-
-        $bar.css({
-            animation: `pulse ${pulseDuration}s ease-in-out infinite, colorChange ${colorDuration}s linear infinite`,
-            animationDelay: `${delay}s`
-        });
-
-        bars.push($bar);
-        $container.append($bar);
-    }
-
-    setInterval(() => {
-        mode = (mode + 1) % 5;
-
-        bars.forEach($bar => {
-            $bar.removeClass('uniform uniform-alt uniform-green uniform-pink');
-
-            if (mode === 1) {
-                $bar.addClass('uniform');
-            } else if (mode === 2) {
-                $bar.addClass('uniform-alt');
-            } else if (mode === 3) {
-                $bar.addClass('uniform-green');
-            } else if (mode === 4) {
-                $bar.addClass('uniform-pink');
-            }
-        });
-    }, 5000);
 
     $("#current_year").text(new Date().getFullYear());
 
@@ -65,7 +26,9 @@ jQuery(document).ready(function () {
         } = songData;
 
         if (!audioPlayer) {
-            audioPlayer = new Audio("public/songs/uploads/" + filename);
+            let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
+
+            audioPlayer = new Audio(file_location + filename);
             audioPlayer.currentTime = currentProgress;
             audioPlayer.play();
 
@@ -79,8 +42,8 @@ jQuery(document).ready(function () {
                         currentProgress
                     } = songData;
 
-                    if (audioPlayer.src !== "public/songs/uploads/" + filename) {
-                        audioPlayer.src = "public/songs/uploads/" + filename;
+                    if (audioPlayer.src !== file_location + filename) {
+                        audioPlayer.src = file_location + filename;
                         audioPlayer.currentTime = currentProgress;
                         audioPlayer.play();
                     }
