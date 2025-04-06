@@ -1,7 +1,8 @@
-jQuery(document).ready(function () {
+$(document).ready(function () {
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
+    let lastTriggerHour = null;
 
     startSync();
     syncAudioAtTopOfHour();
@@ -19,6 +20,24 @@ jQuery(document).ready(function () {
     })
 
     $("#playPauseButton").click(function () {
+        play_music_btn_clicked();
+    })
+
+    $("#muteButton").click(function () {
+        if (audioPlayer) {
+            audioPlayer.muted = !audioPlayer.muted;
+
+            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
+        }
+    })
+
+    $("#volume").on("input", function () {
+        if (audioPlayer) {
+            audioPlayer.volume = $("#volume").val();
+        }
+    })
+
+    function play_music_btn_clicked() {
         if (!songData) return;
 
         let {
@@ -63,49 +82,27 @@ jQuery(document).ready(function () {
                 $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
             }
         }
-    })
-
-    $("#muteButton").click(function () {
-        if (audioPlayer) {
-            audioPlayer.muted = !audioPlayer.muted;
-
-            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
-        }
-    })
-
-    $("#volume").on("input", function () {
-        if (audioPlayer) {
-            audioPlayer.volume = $("#volume").val();
-        }
-    })
-
-    function syncAudioAtTopOfHour() {
-        setInterval(() => {
-            let now = new Date();
-            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
-                fetchSongData();
-                
-                if (audioPlayer && songData) {
-                    audioPlayer.currentTime = songData.currentProgress;
-                }
-                
-                $("#playPauseButton").click();
-                
-                setTimeout(() => {
-                    $("#playPauseButton").click();
-                }, 200);
-            }
-        }, 1000);
     }
 
     function syncAudioAtTopOfHour() {
         setInterval(() => {
-            let now = new Date();
-            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
-                fetchSongData();
-                if (audioPlayer && songData) {
-                    audioPlayer.currentTime = songData.currentProgress;
-                }
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            if (now.getMinutes() === 0 && now.getSeconds() === 0 && lastTriggerHour !== currentHour) {
+                lastTriggerHour = currentHour;
+
+                let checkDataReady = setInterval(() => {
+                    if (songData) {
+                        play_music_btn_clicked();
+
+                        setTimeout(() => {
+                            play_music_btn_clicked();
+                        }, 500);
+
+                        clearInterval(checkDataReady);
+                    }
+                }, 200);
             }
         }, 1000);
     }

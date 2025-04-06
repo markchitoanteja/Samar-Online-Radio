@@ -93,7 +93,7 @@
                     <hr class="divider mt-2 mb-0">
 
                     <div class="controls mt-0">
-                        <i id="playPauseButton" class="bi bi-play-fill control-btn" style="font-size: 24px;"></i>
+                        <i id="playPauseButton" class="bi bi-play-fill control-btn" style="font-size: 24px;" role="button"></i>
 
                         <div class="volume-controls">
                             <i id="muteButton" class="bi bi-volume-up-fill control-btn" style="font-size: 24px;"></i>
@@ -125,7 +125,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.4.9"></script>
+    <script src="public/home/dist/js/script.js?v=3.5.3"></script>
 </body>
 
 </html>

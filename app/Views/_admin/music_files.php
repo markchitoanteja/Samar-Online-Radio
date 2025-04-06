@@ -65,7 +65,7 @@
                                                 <?php endif ?>
                                             </td>
                                             <td class="text-center" style="white-space: nowrap;">
-                                                <button class="btn btn-sm btn-primary play_music_btn" title="Play Music" data-url="<?= base_url('../public/songs/' . htmlspecialchars($song['filename'], ENT_QUOTES, 'UTF-8')) ?>">
+                                                <button class="btn btn-sm btn-primary play_music_btn" title="Play Music" data-url="<?= base_url('../public/songs/uploads/' . htmlspecialchars($song['filename'], ENT_QUOTES, 'UTF-8')) ?>">
                                                     <i class="bi bi-play-fill"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-success edit_music_btn" title="Edit Music" data-id="<?= $song['id'] ?>">
