@@ -2,7 +2,6 @@ $(document).ready(function () {
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
-    let lastTriggerHour = null;
 
     startSync();
     syncAudioAtTopOfHour();
@@ -20,24 +19,6 @@ $(document).ready(function () {
     })
 
     $("#playPauseButton").click(function () {
-        play_music_btn_clicked();
-    })
-
-    $("#muteButton").click(function () {
-        if (audioPlayer) {
-            audioPlayer.muted = !audioPlayer.muted;
-
-            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
-        }
-    })
-
-    $("#volume").on("input", function () {
-        if (audioPlayer) {
-            audioPlayer.volume = $("#volume").val();
-        }
-    })
-
-    function play_music_btn_clicked() {
         if (!songData) return;
 
         let {
@@ -82,7 +63,21 @@ $(document).ready(function () {
                 $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
             }
         }
-    }
+    })
+
+    $("#muteButton").click(function () {
+        if (audioPlayer) {
+            audioPlayer.muted = !audioPlayer.muted;
+
+            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
+        }
+    })
+
+    $("#volume").on("input", function () {
+        if (audioPlayer) {
+            audioPlayer.volume = $("#volume").val();
+        }
+    })
 
     function syncAudioAtTopOfHour() {
         setInterval(() => {
@@ -90,19 +85,7 @@ $(document).ready(function () {
             const currentHour = now.getHours();
 
             if (now.getMinutes() === 0 && now.getSeconds() === 0 && lastTriggerHour !== currentHour) {
-                lastTriggerHour = currentHour;
-
-                let checkDataReady = setInterval(() => {
-                    if (songData) {
-                        play_music_btn_clicked();
-
-                        setTimeout(() => {
-                            play_music_btn_clicked();
-                        }, 500);
-
-                        clearInterval(checkDataReady);
-                    }
-                }, 200);
+                location.reload();
             }
         }, 1000);
     }
