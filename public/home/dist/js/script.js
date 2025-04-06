@@ -4,6 +4,7 @@ jQuery(document).ready(function () {
     let audioPlayer = null;
 
     startSync();
+    syncAudioAtTopOfHour();
     is_page_loading(false);
     preventDevTools(false);
 
@@ -77,6 +78,37 @@ jQuery(document).ready(function () {
             audioPlayer.volume = $("#volume").val();
         }
     })
+
+    function syncAudioAtTopOfHour() {
+        setInterval(() => {
+            let now = new Date();
+            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
+                fetchSongData();
+                
+                if (audioPlayer && songData) {
+                    audioPlayer.currentTime = songData.currentProgress;
+                }
+                
+                $("#playPauseButton").click();
+                
+                setTimeout(() => {
+                    $("#playPauseButton").click();
+                }, 200);
+            }
+        }, 1000);
+    }
+
+    function syncAudioAtTopOfHour() {
+        setInterval(() => {
+            let now = new Date();
+            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
+                fetchSongData();
+                if (audioPlayer && songData) {
+                    audioPlayer.currentTime = songData.currentProgress;
+                }
+            }
+        }, 1000);
+    }
 
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {

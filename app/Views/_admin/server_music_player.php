@@ -43,6 +43,18 @@
         let is_playing = true;
         let songs = [];
 
+        schedulePageRefresh();
+
+        function schedulePageRefresh() {
+            const now = new Date();
+            const minutesToNextHour = 60 - now.getMinutes();
+            const secondsToNextHour = (minutesToNextHour * 60) - now.getSeconds();
+
+            setTimeout(function() {
+                location.reload();
+            }, secondsToNextHour * 1000);
+        }
+
         function fetchSongsAndPlay() {
             $.ajax({
                 url: '../get_current_playlist_songs',
