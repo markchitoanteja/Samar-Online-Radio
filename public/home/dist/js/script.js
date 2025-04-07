@@ -2,6 +2,8 @@ $(document).ready(function () {
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
+    let lastTriggerHour = -1;
+    let is_audio_playing = false;
 
     startSync();
     syncAudioAtTopOfHour();
@@ -19,50 +21,7 @@ $(document).ready(function () {
     })
 
     $("#playPauseButton").click(function () {
-        if (!songData) return;
-
-        let {
-            filename,
-            currentProgress
-        } = songData;
-
-        if (!audioPlayer) {
-            let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
-
-            audioPlayer = new Audio(file_location + filename);
-            audioPlayer.currentTime = currentProgress;
-            audioPlayer.play();
-
-            $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
-
-            audioPlayer.addEventListener("ended", function () {
-                fetchSongData();
-                if (songData) {
-                    let {
-                        filename,
-                        currentProgress
-                    } = songData;
-
-                    if (audioPlayer.src !== file_location + filename) {
-                        audioPlayer.src = file_location + filename;
-                        audioPlayer.currentTime = currentProgress;
-                        audioPlayer.play();
-                    }
-                }
-            });
-        } else {
-            if (audioPlayer.paused) {
-                audioPlayer.currentTime = songData.currentProgress;
-                audioPlayer.play();
-
-                $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
-            } else {
-                audioPlayer.pause();
-                audioPlayer = null;
-
-                $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
-            }
-        }
+        play_pause_audio();
     })
 
     $("#muteButton").click(function () {
@@ -79,12 +38,68 @@ $(document).ready(function () {
         }
     })
 
+    function play_pause_audio() {
+        if (!songData) return;
+
+        let { filename, currentProgress } = songData;
+
+        let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
+
+        if (!audioPlayer) {
+            audioPlayer = new Audio(file_location + filename);
+            audioPlayer.currentTime = currentProgress;
+
+            audioPlayer.play().then(() => {
+                $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
+            }).catch(error => {
+                console.error("Audio play failed:", error);
+                if (error.name === "NotAllowedError") {
+                    $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                }
+            });
+
+            audioPlayer.addEventListener("ended", function () {
+                fetchSongData();
+                if (songData) {
+                    let { filename, currentProgress } = songData;
+                    if (audioPlayer.src !== file_location + filename) {
+                        audioPlayer.src = file_location + filename;
+                        audioPlayer.currentTime = currentProgress;
+                        audioPlayer.play().catch(error => {
+                            console.error("Audio replay failed:", error);
+                        });
+                    }
+                }
+            });
+        } else {
+            if (audioPlayer.paused) {
+                audioPlayer.currentTime = songData.currentProgress;
+
+                audioPlayer.play().then(() => {
+                    $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
+                }).catch(error => {
+                    console.error("Audio resume failed:", error);
+                    
+                    if (error.name === "NotAllowedError") {
+                        $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                    }
+                });
+            } else {
+                audioPlayer.pause();
+                audioPlayer = null;
+
+                $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+            }
+        }
+    }
+
     function syncAudioAtTopOfHour() {
         setInterval(() => {
             const now = new Date();
             const currentHour = now.getHours();
 
             if (now.getMinutes() === 0 && now.getSeconds() === 0 && lastTriggerHour !== currentHour) {
+                lastTriggerHour = currentHour;
                 location.reload();
             }
         }, 1000);
@@ -99,6 +114,14 @@ $(document).ready(function () {
 
                 if (songData["is_playing"] === "false") {
                     $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                }
+
+                if (!is_audio_playing) {
+                    setTimeout(function () {
+                        play_pause_audio();
+
+                        is_audio_playing = true;
+                    }, 500);
                 }
             }
         }).fail(function (error) {
