@@ -291,17 +291,31 @@ $(document).ready(function () {
         if (!file.type.startsWith('audio/')) {
             $("#music_file").addClass("is-invalid");
             $("#error_music_file").removeClass("d-none");
-
         } else {
             loading(true);
 
-            var formData = new FormData();
-
+            const formData = new FormData();
             formData.append('title', title);
             formData.append('artist', artist);
             formData.append('duration', duration);
             formData.append('size', size);
             formData.append('file', file);
+
+            const coverSrc = $("#music_image").attr("src");
+
+            if (coverSrc && coverSrc.startsWith("data:")) {
+                const byteString = atob(coverSrc.split(',')[1]);
+                const mimeString = coverSrc.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([ab], { type: mimeString });
+                formData.append('cover', blob, 'cover.png');
+            } else {
+                formData.append('cover', '');
+            }
 
             $.ajax({
                 url: '../upload_music',
@@ -319,7 +333,6 @@ $(document).ready(function () {
                 },
                 error: function (_, _, error) {
                     console.error(error);
-
                     loading(false);
                 }
             });
@@ -327,35 +340,45 @@ $(document).ready(function () {
     })
 
     $("#music_file").on("change", function (event) {
-        var file = event.target.files[0];
-
-        $("#music_file").removeClass("is-invalid");
-        $("#error_music_file").addClass("d-none");
+        const file = event.target.files[0];
 
         if (file) {
-            var fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
             $('#music_size').val(fileSize);
 
-            var audio = new Audio();
+            const audio = new Audio();
             audio.src = URL.createObjectURL(file);
 
             audio.onloadedmetadata = function () {
-                var minutes = Math.floor(audio.duration / 60);
-                var seconds = Math.floor(audio.duration % 60);
-                var duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                const minutes = Math.floor(audio.duration / 60);
+                const seconds = Math.floor(audio.duration % 60);
+                const duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
                 $('#music_duration').val(duration);
             };
 
             jsmediatags.read(file, {
                 onSuccess: function (tag) {
-                    var title = tag.tags.title || '';
-                    var artist = tag.tags.artist || '';
-
+                    const title = tag.tags.title || '';
+                    const artist = tag.tags.artist || '';
                     $('#music_title').val(title);
                     $('#artist_name').val(artist);
+
+                    const picture = tag.tags.picture;
+                    if (picture) {
+                        let base64String = "";
+                        for (let i = 0; i < picture.data.length; i++) {
+                            base64String += String.fromCharCode(picture.data[i]);
+                        }
+                        const imageUri = "data:" + picture.format + ";base64," + btoa(base64String);
+                        $('#music_image').attr('src', imageUri);
+                    } else {
+                        $('#music_image').attr('src', '../public/img/audio-placeholder.webp');
+                    }
+
+                    $('#album_art_container').show();
                 },
                 onError: function (error) {
-                    console.log("Error reading metadata: " + error.type);
+                    $('#music_image').attr('src', '../public/img/audio-placeholder.webp');
                 }
             });
         }
@@ -440,7 +463,6 @@ $(document).ready(function () {
         $("#edit_music_modal").modal("show");
 
         var formData = new FormData();
-
         formData.append('music_id', music_id);
 
         $.ajax({
@@ -458,10 +480,7 @@ $(document).ready(function () {
                     $("#edit_music_size").val(response.size);
 
                     $("#edit_music_id").val(response.id);
-                    $("#edit_music_old_file").val(response.filename);
-
-                    $("#edit_music_file").val("");
-
+                    
                     loading(false);
                 }
             },
@@ -476,84 +495,39 @@ $(document).ready(function () {
         const artist = $.trim($("#edit_artist_name").val() || "") || "Unknown Artist";
         const duration = $("#edit_music_duration").val();
         const size = $("#edit_music_size").val();
-        const file = $("#edit_music_file")[0].files[0];
-
+        
         const id = $("#edit_music_id").val();
-        const old_file = $("#edit_music_old_file").val();
 
-        if (!file.type.startsWith('audio/')) {
-            $("#edit_music_file").addClass("is-invalid");
-            $("#error_edit_music_file").removeClass("d-none");
-        } else {
-            loading(true);
+        loading(true);
 
-            var formData = new FormData();
+        var formData = new FormData();
 
-            formData.append('title', title);
-            formData.append('artist', artist);
-            formData.append('duration', duration);
-            formData.append('size', size);
-            formData.append('file', file);
+        formData.append('title', title);
+        formData.append('artist', artist);
+        formData.append('duration', duration);
+        formData.append('size', size);
 
-            formData.append('id', id);
-            formData.append('old_file', old_file);
+        formData.append('id', id);
 
-            $.ajax({
-                url: '../update_music',
-                data: formData,
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response) {
-                        location.reload();
-                    } else {
-                        loading(false);
-                    }
-                },
-                error: function (_, _, error) {
-                    console.error(error);
-
+        $.ajax({
+            url: '../update_music',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                } else {
                     loading(false);
                 }
-            });
-        }
-    })
-
-    $("#edit_music_file").on("change", function (event) {
-        var file = event.target.files[0];
-
-        $("#edit_music_file").removeClass("is-invalid");
-        $("#error_edit_music_file").addClass("d-none");
-
-        if (file) {
-            var fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-            $('#edit_music_size').val(fileSize);
-
-            var audio = new Audio();
-            audio.src = URL.createObjectURL(file);
-
-            audio.onloadedmetadata = function () {
-                var minutes = Math.floor(audio.duration / 60);
-                var seconds = Math.floor(audio.duration % 60);
-                var duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-                $('#edit_music_duration').val(duration);
-            };
-
-            jsmediatags.read(file, {
-                onSuccess: function (tag) {
-                    var title = tag.tags.title || '';
-                    var artist = tag.tags.artist || '';
-
-                    $('#edit_music_title').val(title);
-                    $('#edit_artist_name').val(artist);
-                },
-                onError: function (error) {
-                    console.log("Error reading metadata: " + error.type);
-                }
-            });
-        }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+                loading(false);
+            }
+        });
     })
 
     $("#add_to_playlist_btn").click(function () {

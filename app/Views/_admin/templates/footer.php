@@ -1,4 +1,4 @@
-            <footer class="app-footer">
+<footer class="app-footer">
                 <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
                 <strong>
                     Copyright &copy; 2023-<span id="current_year"></span>
@@ -9,13 +9,15 @@
         </div>
 
         <script>
-            const user_id = "<?= session()->get("user_id") ?>";
-            const current_tab = "<?= session()->get("current_tab") ?>";
+            const user_id = <?= json_encode(session()->get("user_id")) ?>;
+            const current_tab = <?= json_encode(session()->get("current_tab")) ?>;
             const notification = <?= json_encode(session()->get("notification") ?? null) ?>;
-
-            if (current_tab == "playlists"){
-                var existingPlaylists = <?= json_encode($playlists) ?>;
-            }
+        
+            let existingPlaylists = null;
+            
+            <?php if (session()->get("current_tab") === "playlists"): ?>
+                existingPlaylists = <?= json_encode($playlists) ?>;
+            <?php endif; ?>
         </script>
 
         <?php if (is_internet_available()): ?>
@@ -39,6 +41,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.6.9"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.7.1"></script>
     </body>
 </html>

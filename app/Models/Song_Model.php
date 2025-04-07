@@ -16,6 +16,7 @@ class Song_Model extends Model
         'size',
         'playlist_ids',
         'filename',
+        'image',
         'created_at',
         'updated_at',
     ];

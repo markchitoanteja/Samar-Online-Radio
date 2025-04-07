@@ -298,10 +298,27 @@ class Admin extends BaseController
         $duration = $this->request->getPost("duration");
         $size     = $this->request->getPost("size");
         $file     = $this->request->getFile("file");
+        $cover    = $this->request->getFile("cover");
 
         $uuid = $this->generate_uuid();
 
         $uploadedFilePath = $this->upload_music_file($file, $uuid);
+
+        $coverPath = 'public/img/audio-placeholder.webp';
+
+        if ($cover && $cover->isValid() && !$cover->hasMoved()) {
+            $coverName = $uuid . '_cover.' . $cover->getExtension();
+
+            $coverDir = FCPATH . 'public/img/uploads/album_art/' . $uuid . '/';
+
+            if (!is_dir($coverDir)) {
+                mkdir($coverDir, 0755, true);
+            }
+
+            $cover->move($coverDir, $coverName);
+
+            $coverPath = 'public/img/uploads/album_art/' . $uuid . '/' . $coverName;
+        }
 
         if ($uploadedFilePath) {
             $data = [
@@ -311,19 +328,23 @@ class Admin extends BaseController
                 "duration"   => $duration,
                 "size"       => $size,
                 "filename"   => $uploadedFilePath,
+                "image"      => $coverPath,
                 "created_at" => date("Y-m-d H:i:s"),
                 "updated_at" => date("Y-m-d H:i:s")
             ];
 
+            // Insert into the Song_Model
             $Song_Model = new Song_Model();
             $Song_Model->insert($data);
 
+            // Success notification
             $notification = [
                 "title" => "Success!",
                 "text"  => "Music uploaded successfully!",
                 "icon"  => "success",
             ];
         } else {
+            // Error notification if the music file failed to upload
             $notification = [
                 "title" => "Error!",
                 "text"  => "Failed to upload music!",
@@ -331,8 +352,10 @@ class Admin extends BaseController
             ];
         }
 
+        // Store notification message in session
         session()->setFlashdata("notification", $notification);
 
+        // Return success response
         return json_encode(true);
     }
 
@@ -342,54 +365,25 @@ class Admin extends BaseController
         $artist   = $this->request->getPost("artist");
         $duration = $this->request->getPost("duration");
         $size     = $this->request->getPost("size");
-        $file     = $this->request->getFile("file");
-
         $id       = $this->request->getPost("id");
-        $oldFile  = $this->request->getPost("old_file");
 
-        $uploadSuccess = false;
+        $data = [
+            "title"      => $title,
+            "artist"     => $artist,
+            "duration"   => $duration,
+            "size"       => $size,
+            "updated_at" => date("Y-m-d H:i:s")
+        ];
 
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $uuid = basename(dirname(FCPATH . 'public/songs/uploads/' . $oldFile));
+        $Song_Model = new Song_Model();
+        
+        $Song_Model->update($id, $data);
 
-            $this->delete_old_folder($uuid);
-
-            $uploadedFile = $this->upload_music_file($file, $uuid);
-
-            if ($uploadedFile) {
-                $uploadSuccess = true;
-            } else {
-                $uploadSuccess = false;
-            }
-        } else {
-            $uploadedFile = $oldFile;
-        }
-
-        if ($uploadSuccess || !$file) {
-            $data = [
-                "title"      => $title,
-                "artist"     => $artist,
-                "duration"   => $duration,
-                "size"       => $size,
-                "filename"   => $uploadedFile,
-                "updated_at" => date("Y-m-d H:i:s")
-            ];
-
-            $Song_Model = new Song_Model();
-            $Song_Model->update($id, $data);
-
-            $notification = [
-                "title" => "Success!",
-                "text"  => "Music updated successfully!",
-                "icon"  => "success",
-            ];
-        } else {
-            $notification = [
-                "title" => "Error!",
-                "text"  => "Failed to update music!",
-                "icon"  => "error",
-            ];
-        }
+        $notification = [
+            "title" => "Success!",
+            "text"  => "Music updated successfully!",
+            "icon"  => "success",
+        ];
 
         session()->setFlashdata("notification", $notification);
 
@@ -400,26 +394,26 @@ class Admin extends BaseController
     {
         $id = $this->request->getPost("music_id");
 
-        // Fetch the song details from the database
         $Song_Model = new Song_Model();
         $song = $Song_Model->where("id", $id)->first();
 
         if ($song) {
-            // Get the UUID from the file path (folder name)
             $uuid = basename(dirname(FCPATH . 'public/songs/uploads/' . $song["filename"]));
 
-            // Define the path to the song's folder
-            $folderPath = FCPATH . 'public/songs/uploads/' . $uuid;
+            $musicFolderPath = FCPATH . 'public/songs/uploads/' . $uuid;
 
-            // Delete the song folder and its contents
-            if (is_dir($folderPath)) {
-                $this->delete_folder($folderPath);  // Helper function to delete the folder
+            $coverArtFolderPath = FCPATH . 'public/img/uploads/album_art/' . $uuid;
+
+            if (is_dir($musicFolderPath)) {
+                $this->delete_folder($musicFolderPath);
             }
 
-            // Delete the song from the database
+            if (is_dir($coverArtFolderPath)) {
+                $this->delete_folder($coverArtFolderPath);
+            }
+
             $Song_Model->delete($id);
 
-            // Set success notification
             $notification = [
                 "title" => "Success!",
                 "text"  => "Music deleted successfully!",
@@ -440,8 +434,21 @@ class Admin extends BaseController
 
     private function delete_folder($folderPath)
     {
-        array_map('unlink', glob("$folderPath/*"));
-        rmdir($folderPath);
+        if (is_dir($folderPath)) {
+            $files = array_diff(scandir($folderPath), array('.', '..'));
+
+            foreach ($files as $file) {
+                $filePath = $folderPath . DIRECTORY_SEPARATOR . $file;
+
+                if (is_dir($filePath)) {
+                    $this->delete_folder($filePath);
+                } else {
+                    unlink($filePath);
+                }
+            }
+
+            rmdir($folderPath);
+        }
     }
 
     public function get_music_by_id()
