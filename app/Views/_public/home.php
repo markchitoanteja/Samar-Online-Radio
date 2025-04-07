@@ -32,7 +32,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />
-    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.1" />
+    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.3" />
 </head>
 
 <body>

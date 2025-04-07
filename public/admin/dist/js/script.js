@@ -23,10 +23,16 @@ $(document).ready(function () {
             info: true,
             language: {
                 search: 'Music Title:',
-            }
+            },
+            columnDefs: [
+                {
+                    targets: [1],
+                    searchable: true
+                }
+            ]
         });
 
-        $('#music_table_filter input').unbind().on('keyup', function () {
+        $('#music_table_filter input').on('keyup', function () {
             table.column(1).search(this.value).draw();
         });
 
@@ -282,56 +288,76 @@ $(document).ready(function () {
         const size = $("#music_size").val();
         const file = $("#music_file")[0].files[0];
 
-        loading(true);
+        if (!file.type.startsWith('audio/')) {
+            $("#music_file").addClass("is-invalid");
+            $("#error_music_file").removeClass("d-none");
 
-        var formData = new FormData();
+        } else {
+            loading(true);
 
-        formData.append('title', title);
-        formData.append('artist', artist);
-        formData.append('duration', duration);
-        formData.append('size', size);
-        formData.append('file', file);
+            var formData = new FormData();
 
-        $.ajax({
-            url: '../upload_music',
-            data: formData,
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response) {
-                    location.reload();
-                } else {
+            formData.append('title', title);
+            formData.append('artist', artist);
+            formData.append('duration', duration);
+            formData.append('size', size);
+            formData.append('file', file);
+
+            $.ajax({
+                url: '../upload_music',
+                data: formData,
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response) {
+                        location.reload();
+                    } else {
+                        loading(false);
+                    }
+                },
+                error: function (_, _, error) {
+                    console.error(error);
+
                     loading(false);
                 }
-            },
-            error: function (_, _, error) {
-                console.error(error);
-
-                loading(false);
-            }
-        });
+            });
+        }
     })
 
     $("#music_file").on("change", function (event) {
         var file = event.target.files[0];
 
+        $("#music_file").removeClass("is-invalid");
+        $("#error_music_file").addClass("d-none");
+
         if (file) {
             var fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-
             $('#music_size').val(fileSize);
 
             var audio = new Audio();
-
             audio.src = URL.createObjectURL(file);
+
             audio.onloadedmetadata = function () {
                 var minutes = Math.floor(audio.duration / 60);
                 var seconds = Math.floor(audio.duration % 60);
                 var duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-
                 $('#music_duration').val(duration);
             };
+
+            jsmediatags.read(file, {
+                onSuccess: function (tag) {
+                    var title = tag.tags.title || '';
+                    var artist = tag.tags.artist || '';
+
+                    $('#music_title').val(title);
+                    $('#artist_name').val(artist);
+                },
+                onError: function (error) {
+                    console.log("Error reading metadata: " + error.type);
+                }
+            });
         }
     })
 
@@ -434,6 +460,8 @@ $(document).ready(function () {
                     $("#edit_music_id").val(response.id);
                     $("#edit_music_old_file").val(response.filename);
 
+                    $("#edit_music_file").val("");
+
                     loading(false);
                 }
             },
@@ -453,39 +481,79 @@ $(document).ready(function () {
         const id = $("#edit_music_id").val();
         const old_file = $("#edit_music_old_file").val();
 
-        loading(true);
+        if (!file.type.startsWith('audio/')) {
+            $("#edit_music_file").addClass("is-invalid");
+            $("#error_edit_music_file").removeClass("d-none");
+        } else {
+            loading(true);
 
-        var formData = new FormData();
+            var formData = new FormData();
 
-        formData.append('title', title);
-        formData.append('artist', artist);
-        formData.append('duration', duration);
-        formData.append('size', size);
-        formData.append('file', file);
+            formData.append('title', title);
+            formData.append('artist', artist);
+            formData.append('duration', duration);
+            formData.append('size', size);
+            formData.append('file', file);
 
-        formData.append('id', id);
-        formData.append('old_file', old_file);
+            formData.append('id', id);
+            formData.append('old_file', old_file);
 
-        $.ajax({
-            url: '../update_music',
-            data: formData,
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response) {
-                    location.reload();
-                } else {
+            $.ajax({
+                url: '../update_music',
+                data: formData,
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response) {
+                        location.reload();
+                    } else {
+                        loading(false);
+                    }
+                },
+                error: function (_, _, error) {
+                    console.error(error);
+
                     loading(false);
                 }
-            },
-            error: function (_, _, error) {
-                console.error(error);
+            });
+        }
+    })
 
-                loading(false);
-            }
-        });
+    $("#edit_music_file").on("change", function (event) {
+        var file = event.target.files[0];
+
+        $("#edit_music_file").removeClass("is-invalid");
+        $("#error_edit_music_file").addClass("d-none");
+
+        if (file) {
+            var fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            $('#edit_music_size').val(fileSize);
+
+            var audio = new Audio();
+            audio.src = URL.createObjectURL(file);
+
+            audio.onloadedmetadata = function () {
+                var minutes = Math.floor(audio.duration / 60);
+                var seconds = Math.floor(audio.duration % 60);
+                var duration = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                $('#edit_music_duration').val(duration);
+            };
+
+            jsmediatags.read(file, {
+                onSuccess: function (tag) {
+                    var title = tag.tags.title || '';
+                    var artist = tag.tags.artist || '';
+
+                    $('#edit_music_title').val(title);
+                    $('#edit_artist_name').val(artist);
+                },
+                onError: function (error) {
+                    console.log("Error reading metadata: " + error.type);
+                }
+            });
+        }
     })
 
     $("#add_to_playlist_btn").click(function () {
@@ -532,56 +600,84 @@ $(document).ready(function () {
     })
 
     $("#add_playlist_form").submit(function (e) {
+        e.preventDefault();
+
         const name = $("#playlist_name").val();
         const start_time = $("#playlist_start_time").val();
         const end_time = $("#playlist_end_time").val();
         const selected_days = $(".day-checkbox:checked").map(function () {
             return $(this).val();
-        }).get().join(',');
+        }).get();
 
         const time_range = start_time + " - " + end_time;
 
-        const schedule = selected_days.split(',').map(day => {
+        const schedule = selected_days.map(day => {
             if (day.toLowerCase() === 'thursday') return 'Th';
             if (day.toLowerCase() === 'saturday') return 'Sa';
             if (day.toLowerCase() === 'sunday') return 'Su';
             return day.charAt(0).toUpperCase();
         }).join('-');
 
-        const startTime = new Date("1970-01-01T" + start_time + "Z");
-        const endTime = new Date("1970-01-01T" + end_time + "Z");
+        const startTime = parseTimeToDate(start_time);
+        const endTime = parseTimeToDate(end_time);
 
         if (startTime >= endTime) {
             $("#playlist_start_time").addClass("is-invalid");
             $("#playlist_end_time").addClass("is-invalid");
-
             $("#time_error_message").removeClass("d-none");
+            return;
         } else {
-            loading(true);
-
-            var formData = new FormData();
-
-            formData.append('name', name);
-            formData.append('schedule', schedule);
-            formData.append('time_range', time_range);
-
-            $.ajax({
-                url: '../add_playlist',
-                data: formData,
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response) {
-                        location.reload();
-                    }
-                },
-                error: function (_, _, error) {
-                    console.error(error);
-                }
-            });
+            $("#playlist_start_time").removeClass("is-invalid");
+            $("#playlist_end_time").removeClass("is-invalid");
+            $("#time_error_message").addClass("d-none");
         }
+
+        const conflict = existingPlaylists.find(playlist => {
+            const existingDays = playlist.schedule.split('-');
+            if (!daysOverlap(selected_days.map(d => {
+                if (d.toLowerCase() === 'thursday') return 'Th';
+                if (d.toLowerCase() === 'saturday') return 'Sa';
+                if (d.toLowerCase() === 'sunday') return 'Su';
+                return d.charAt(0).toUpperCase();
+            }), existingDays)) {
+                return false;
+            }
+
+            const [existingStartStr, existingEndStr] = playlist.time_range.split(' - ');
+            const existingStart = parseTimeToDate(existingStartStr);
+            const existingEnd = parseTimeToDate(existingEndStr);
+
+            return hasTimeConflict(startTime, endTime, existingStart, existingEnd);
+        });
+
+        if (conflict) {
+            showConflictError(conflict.name);
+            return;
+        }
+
+        loading(true);
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('schedule', schedule);
+        formData.append('time_range', time_range);
+
+        $.ajax({
+            url: '../add_playlist',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
     })
 
     $("#playlist_start_time").on("input", function () {
@@ -752,61 +848,109 @@ $(document).ready(function () {
     })
 
     $("#edit_playlist_form").submit(function (e) {
+        e.preventDefault();
+
         const playlist_id = $("#edit_playlist_id").val();
         const name = $("#edit_playlist_name").val();
         const start_time = $("#edit_playlist_start_time").val();
         const end_time = $("#edit_playlist_end_time").val();
         const selected_days = $(".edit-day-checkbox:checked").map(function () {
             return $(this).val();
-        }).get().join(',');
+        }).get();
 
         const time_range = start_time + " - " + end_time;
 
-        const schedule = selected_days.split(',').map(day => {
+        const schedule = selected_days.map(day => {
             if (day.toLowerCase() === 'thursday') return 'Th';
             if (day.toLowerCase() === 'saturday') return 'Sa';
             if (day.toLowerCase() === 'sunday') return 'Su';
             return day.charAt(0).toUpperCase();
         }).join('-');
 
-        const startTime = new Date("1970-01-01T" + start_time + "Z");
-        const endTime = new Date("1970-01-01T" + end_time + "Z");
+        const startTime = parseTimeToDate(start_time);
+        const endTime = parseTimeToDate(end_time);
 
         if (startTime >= endTime) {
             $("#edit_playlist_start_time").addClass("is-invalid");
             $("#edit_playlist_end_time").addClass("is-invalid");
             $("#edit_time_error_message").removeClass("d-none");
+            return;
         } else {
             $("#edit_playlist_start_time").removeClass("is-invalid");
             $("#edit_playlist_end_time").removeClass("is-invalid");
             $("#edit_time_error_message").addClass("d-none");
-
-            loading(true);
-
-            var formData = new FormData();
-            formData.append('playlist_id', playlist_id);
-            formData.append('name', name);
-            formData.append('schedule', schedule);
-            formData.append('time_range', time_range);
-
-            $.ajax({
-                url: '../edit_playlist',
-                data: formData,
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response) {
-                        location.reload();
-                    }
-                },
-                error: function (_, _, error) {
-                    console.error(error);
-                }
-            });
         }
+
+        // Conflict check (exclude the current playlist)
+        const conflict = existingPlaylists.find(playlist => {
+            if (playlist.id == playlist_id) return false; // Skip self
+
+            const existingDays = playlist.schedule.split('-');
+            const newDays = selected_days.map(d => {
+                if (d.toLowerCase() === 'thursday') return 'Th';
+                if (d.toLowerCase() === 'saturday') return 'Sa';
+                if (d.toLowerCase() === 'sunday') return 'Su';
+                return d.charAt(0).toUpperCase();
+            });
+
+            if (!daysOverlap(newDays, existingDays)) return false;
+
+            const [existingStartStr, existingEndStr] = playlist.time_range.split(' - ');
+            const existingStart = parseTimeToDate(existingStartStr);
+            const existingEnd = parseTimeToDate(existingEndStr);
+
+            return hasTimeConflict(startTime, endTime, existingStart, existingEnd);
+        });
+
+        if (conflict) {
+            showConflictError(conflict.name);
+            return;
+        }
+
+        // No conflicts, proceed
+        loading(true);
+
+        const formData = new FormData();
+        formData.append('playlist_id', playlist_id);
+        formData.append('name', name);
+        formData.append('schedule', schedule);
+        formData.append('time_range', time_range);
+
+        $.ajax({
+            url: '../edit_playlist',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
     })
+
+    function parseTimeToDate(timeStr) {
+        const [hours, minutes] = timeStr.split(":").map(Number);
+
+        return new Date(1970, 0, 1, hours, minutes);
+    }
+
+    function hasTimeConflict(newStart, newEnd, existingStart, existingEnd) {
+        return newStart < existingEnd && newEnd > existingStart;
+    }
+
+    function daysOverlap(newDays, existingDays) {
+        return newDays.some(day => existingDays.includes(day));
+    }
+
+    function showConflictError(conflictingPlaylistName) {
+        alert(`Conflict detected with existing playlist: ${conflictingPlaylistName}`);
+    }
 
     function getNextDay(currentDay) {
         const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

@@ -35,6 +35,7 @@
                         <div class="mb-3">
                             <label for="edit_music_file" class="form-label">Replace Music File</label>
                             <input type="file" class="form-control" id="edit_music_file" accept="audio/*">
+                            <small class="text-danger d-none" id="error_edit_music_file">Only audio files are allowed</small>
                         </div>
                     </form>
                 </div>

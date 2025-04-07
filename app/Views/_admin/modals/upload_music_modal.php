@@ -18,6 +18,7 @@
                         <div class="mb-3">
                             <label for="music_file" class="form-label">Music File</label>
                             <input type="file" class="form-control" id="music_file" accept="audio/*" required>
+                            <small class="text-danger d-none" id="error_music_file">Only audio files are allowed</small>
                         </div>
                         <div class="mb-3">
                             <label for="music_title" class="form-label">Music Title</label>
