@@ -56,7 +56,7 @@
                         <img src="public/img/logo-2.webp?v=1.0.1" class="border" alt="Company 2">
                     </a>
                     <a href="https://www.facebook.com/share/1AFcs2Wxpy/" target="_blank" rel="noopener noreferrer">
-                        <img src="public/img/logo-3.webp?v=1.0.1" class="border" alt="Company 3">
+                        <img src="public/img/logo-3.webp?v=1.0.4" class="border" alt="Company 3">
                     </a>
                 </div>
                 <div class="logo-container">
