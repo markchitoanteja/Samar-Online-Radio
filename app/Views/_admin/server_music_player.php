@@ -43,17 +43,7 @@
         let is_playing = true;
         let songs = [];
 
-        schedulePageRefresh();
-
-        function schedulePageRefresh() {
-            const now = new Date();
-            const minutesToNextHour = 60 - now.getMinutes();
-            const secondsToNextHour = (minutesToNextHour * 60) - now.getSeconds();
-
-            setTimeout(function() {
-                location.reload();
-            }, secondsToNextHour * 1000);
-        }
+        fetchSongsAndPlay();
 
         function fetchSongsAndPlay() {
             $.ajax({
@@ -132,10 +122,31 @@
         }
 
         function onSongEnd() {
-            loadNextSong();
-        }
+            $.ajax({
+                url: '../get_current_playlist_songs',
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    const newSongs = data;
 
-        fetchSongsAndPlay();
+                    const currentList = JSON.stringify(songs);
+                    const newList = JSON.stringify(newSongs);
+
+                    if (currentList !== newList) {
+                        songs = newSongs;
+                        currentSongIndex = 0;
+                        playSong();
+                    } else {
+                        loadNextSong();
+                    }
+                },
+                error: function(_, _, error) {
+                    console.error(error);
+                }
+            });
+        }
     </script>
 </body>
 

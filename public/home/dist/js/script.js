@@ -2,11 +2,8 @@ $(document).ready(function () {
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
-    let lastTriggerHour = -1;
-    let is_audio_playing = false;
 
     startSync();
-    syncAudioAtTopOfHour();
     is_page_loading(false);
     preventDevTools(false);
 
@@ -21,24 +18,6 @@ $(document).ready(function () {
     })
 
     $("#playPauseButton").click(function () {
-        play_pause_audio();
-    })
-
-    $("#muteButton").click(function () {
-        if (audioPlayer) {
-            audioPlayer.muted = !audioPlayer.muted;
-
-            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
-        }
-    })
-
-    $("#volume").on("input", function () {
-        if (audioPlayer) {
-            audioPlayer.volume = $("#volume").val();
-        }
-    })
-
-    function play_pause_audio() {
         if (!songData) return;
 
         let { filename, currentProgress } = songData;
@@ -79,7 +58,7 @@ $(document).ready(function () {
                     $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
                 }).catch(error => {
                     console.error("Audio resume failed:", error);
-                    
+
                     if (error.name === "NotAllowedError") {
                         $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
                     }
@@ -91,19 +70,21 @@ $(document).ready(function () {
                 $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
             }
         }
-    }
+    })
 
-    function syncAudioAtTopOfHour() {
-        setInterval(() => {
-            const now = new Date();
-            const currentHour = now.getHours();
+    $("#muteButton").click(function () {
+        if (audioPlayer) {
+            audioPlayer.muted = !audioPlayer.muted;
 
-            if (now.getMinutes() === 0 && now.getSeconds() === 0 && lastTriggerHour !== currentHour) {
-                lastTriggerHour = currentHour;
-                location.reload();
-            }
-        }, 1000);
-    }
+            $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
+        }
+    })
+
+    $("#volume").on("input", function () {
+        if (audioPlayer) {
+            audioPlayer.volume = $("#volume").val();
+        }
+    })
 
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
@@ -114,14 +95,6 @@ $(document).ready(function () {
 
                 if (songData["is_playing"] === "false") {
                     $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
-                }
-
-                if (!is_audio_playing) {
-                    setTimeout(function () {
-                        play_pause_audio();
-
-                        is_audio_playing = true;
-                    }, 500);
                 }
             }
         }).fail(function (error) {

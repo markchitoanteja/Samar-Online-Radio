@@ -125,7 +125,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.5.7"></script>
+    <script src="public/home/dist/js/script.js?v=3.5.9"></script>
 </body>
 
 </html>
