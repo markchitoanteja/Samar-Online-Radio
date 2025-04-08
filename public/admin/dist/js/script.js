@@ -68,7 +68,7 @@ $(document).ready(function () {
         toggleButtons();
     })
 
-    $('.table tbody input[type="checkbox"]').on('change', function () {
+    $(document).on('change', '.table tbody input[type="checkbox"]', function () {
         let totalCheckboxes = $('.table tbody input[type="checkbox"]').length;
         let checkedCheckboxes = $('.table tbody input[type="checkbox"]').filter(':checked').length;
 
@@ -480,7 +480,7 @@ $(document).ready(function () {
                     $("#edit_music_size").val(response.size);
 
                     $("#edit_music_id").val(response.id);
-                    
+
                     loading(false);
                 }
             },
@@ -495,7 +495,7 @@ $(document).ready(function () {
         const artist = $.trim($("#edit_artist_name").val() || "") || "Unknown Artist";
         const duration = $("#edit_music_duration").val();
         const size = $("#edit_music_size").val();
-        
+
         const id = $("#edit_music_id").val();
 
         loading(true);
@@ -531,7 +531,14 @@ $(document).ready(function () {
     })
 
     $("#add_to_playlist_btn").click(function () {
-        const selectedCheckboxes = $('.table tbody input[type="checkbox"]:checked');
+        const table = $('#music_table').DataTable(); // Replace with your actual table ID
+
+        // Get all checked checkboxes across all pages
+        const selectedCheckboxes = table
+            .rows({ search: 'applied' }) // or use `{}` to get all rows
+            .nodes()
+            .to$()
+            .find('input[type="checkbox"]:checked');
 
         const selectedSongs = selectedCheckboxes.map(function () {
             const row = $(this).closest('tr');
@@ -565,7 +572,7 @@ $(document).ready(function () {
         $(".day-checkbox").prop("checked", $(this).prop("checked"));
     })
 
-    $(".day-checkbox").change(function () {
+    $(document).on("change", ".day-checkbox", function () {
         if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
             $("#checkAllDays").prop("checked", true);
         } else {
@@ -855,9 +862,8 @@ $(document).ready(function () {
             $("#edit_time_error_message").addClass("d-none");
         }
 
-        // Conflict check (exclude the current playlist)
         const conflict = existingPlaylists.find(playlist => {
-            if (playlist.id == playlist_id) return false; // Skip self
+            if (playlist.id == playlist_id) return false;
 
             const existingDays = playlist.schedule.split('-');
             const newDays = selected_days.map(d => {

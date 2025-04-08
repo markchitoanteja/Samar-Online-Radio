@@ -1,4 +1,4 @@
-<footer class="app-footer">
+            <footer class="app-footer">
                 <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
                 <strong>
                     Copyright &copy; 2023-<span id="current_year"></span>
@@ -41,6 +41,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.7.1"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.7.3"></script>
     </body>
 </html>

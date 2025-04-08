@@ -376,7 +376,7 @@ class Admin extends BaseController
         ];
 
         $Song_Model = new Song_Model();
-        
+
         $Song_Model->update($id, $data);
 
         $notification = [
@@ -489,7 +489,7 @@ class Admin extends BaseController
             "updated_at" => date("Y-m-d H:i:s")
         ];
 
-        $Playlist_Model->insert($data);
+        $insert_success = $Playlist_Model->insert($data);
 
         $notification = [
             "title" => "Success!",
@@ -678,6 +678,10 @@ class Admin extends BaseController
 
         $filename = basename($filePath);
 
+        $parts = explode('/', $filePath);
+        $lastTwoParts = array_slice($parts, -2);
+        $filename_not_original = implode('/', $lastTwoParts);
+
         $session = session();
 
         if ($session->get('last_filename') === $filename) {
@@ -685,7 +689,7 @@ class Admin extends BaseController
             $artist = $session->get('last_artist');
         } else {
             $Song_Model = new Song_Model();
-            $song = $Song_Model->where("filename", $filename)->findAll(1);
+            $song = $Song_Model->like('filename', $filename, 'both')->findAll(1);
 
             if (!empty($song)) {
                 $title = $song[0]["title"];
@@ -703,7 +707,7 @@ class Admin extends BaseController
         }
 
         $newData = [
-            'filename' => $filename,
+            'filename' => $filename_not_original,
             'songTitle' => $title,
             'artist' => $artist,
             'duration' => $duration,
