@@ -694,9 +694,11 @@ class Admin extends BaseController
             if (!empty($song)) {
                 $title = $song[0]["title"];
                 $artist = $song[0]["artist"];
+                $image = $song[0]["image"];
             } else {
                 $title = "Unknown Track";
                 $artist = "Unknown Artist";
+                $image = "public/img/audio-placeholder.webp";
             }
 
             $session->set([

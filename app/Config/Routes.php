@@ -16,7 +16,7 @@ $routes->get('/admin', 'Admin::index');
 $routes->get('/admin/dashboard', 'Admin::dashboard');
 $routes->get('/admin/music_files', 'Admin::music_files');
 $routes->get('/admin/playlists', 'Admin::playlists');
-$routes->get('/admin/music_control', 'Admin::server_music_player');
+$routes->get('/admin/server_music_player', 'Admin::server_music_player');
 $routes->get('/admin/login', 'Admin::login');
 $routes->get('/admin/logout', 'Admin::logout');
 

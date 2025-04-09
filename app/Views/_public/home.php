@@ -97,7 +97,7 @@
 
                         <div class="volume-controls">
                             <i id="muteButton" class="bi bi-volume-up-fill control-btn" style="font-size: 24px;"></i>
-                            <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" role="button">
+                            <input type="range" id="volume" min="0" max="1" step="0.01" value="1" role="button">
                         </div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.5.9"></script>
+    <script src="public/home/dist/js/script.js?v=3.6.5"></script>
 </body>
 
 </html>
