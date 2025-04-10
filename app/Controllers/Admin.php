@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\User_Model;
 use App\Models\Song_Model;
 use App\Models\Playlist_Model;
+use App\Models\Now_Playing_Model;
 
 class Admin extends BaseController
 {
@@ -770,18 +771,26 @@ class Admin extends BaseController
         $index = $this->request->getPost("index");
         $playlist = $this->request->getPost("playlist");
 
-        $session = session();
-        $session->set('current_song_index', $index);
-        $session->set('current_playlist_signature', $playlist); // save playlist ID or hash
+        $Now_Playing_Model = new Now_Playing_Model();
+
+        $data = [
+            "current_playlist_signature" => $playlist,
+            "current_song_index" => $index,
+            "updated_at" => date("Y-m-d H:i:s")
+        ];
+
+        $Now_Playing_Model->where("id", 1)->set($data)->update();
 
         return json_encode(true);
     }
 
     public function get_session_index()
     {
-        $session = session();
-        $index = $session->get('current_song_index');
-        $playlist = $session->get('current_playlist_signature');
+        $Now_Playing_Model = new Now_Playing_Model();
+        $sessionData = $Now_Playing_Model->where("id", 1)->findAll(1)[0];
+
+        $index = $sessionData["current_song_index"] ?? 0;
+        $playlist = $sessionData["current_playlist_signature"] ?? null;
 
         return json_encode([
             'index' => $index,

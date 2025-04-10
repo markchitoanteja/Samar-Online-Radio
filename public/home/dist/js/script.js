@@ -2,6 +2,7 @@ $(document).ready(function () {
     let songData = null;
     let lastTimestamp = 0;
     let audioPlayer = null;
+    let is_muted = false;
 
     startSync();
     is_page_loading(false);
@@ -20,8 +21,9 @@ $(document).ready(function () {
     $("#playPauseButton").click(function () {
         if (!songData) return;
 
-        let { filename, currentProgress } = songData;
+        is_page_loading(true);
 
+        let { filename, currentProgress } = songData;
         let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
 
         if (!audioPlayer) {
@@ -29,12 +31,21 @@ $(document).ready(function () {
             audioPlayer.currentTime = currentProgress;
 
             audioPlayer.play().then(() => {
-                $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
+                $("#playPauseButton")
+                    .removeClass("bi-play-fill")
+                    .addClass("bi-stop-fill");
+
+                is_page_loading(false);
             }).catch(error => {
                 console.error("Audio play failed:", error);
+
                 if (error.name === "NotAllowedError") {
-                    $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                    $("#playPauseButton")
+                        .removeClass("bi-stop-fill")
+                        .addClass("bi-play-fill");
                 }
+
+                is_page_loading(false);
             });
 
             audioPlayer.addEventListener("ended", function () {
@@ -55,25 +66,37 @@ $(document).ready(function () {
                 audioPlayer.currentTime = songData.currentProgress;
 
                 audioPlayer.play().then(() => {
-                    $("#playPauseButton").removeClass("bi-play-fill").addClass("bi-stop-fill");
+                    $("#playPauseButton")
+                        .removeClass("bi-play-fill")
+                        .addClass("bi-stop-fill");
+
+                    is_page_loading(false);
                 }).catch(error => {
                     console.error("Audio resume failed:", error);
 
                     if (error.name === "NotAllowedError") {
-                        $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                        $("#playPauseButton")
+                            .removeClass("bi-stop-fill")
+                            .addClass("bi-play-fill");
                     }
+
+                    is_page_loading(false);
                 });
             } else {
                 audioPlayer.pause();
                 audioPlayer = null;
 
-                $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
+                $("#playPauseButton")
+                    .removeClass("bi-stop-fill")
+                    .addClass("bi-play-fill");
+
+                is_page_loading(false);
             }
         }
     })
 
     $("#muteButton").click(function () {
-        if (audioPlayer) {
+        if (audioPlayer && !is_muted) {
             audioPlayer.muted = !audioPlayer.muted;
 
             $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
@@ -83,6 +106,24 @@ $(document).ready(function () {
     $("#volume").on("input", function () {
         if (audioPlayer) {
             audioPlayer.volume = $("#volume").val();
+
+            // Check if the volume is zero
+            if (audioPlayer.volume == 0) {
+                is_muted = true;
+
+                $("#muteButton")
+                    .removeClass("bi-volume-up-fill")
+                    .addClass("bi-volume-mute-fill")
+                    .css("cursor", "not-allowed");  // Optional: Change cursor to indicate it's disabled
+            } else {
+                // Revert the icon and enable the button
+                is_muted = false;
+
+                $("#muteButton")
+                    .removeClass("bi-volume-mute-fill")
+                    .addClass("bi-volume-up-fill")
+                    .css("cursor", "pointer");  // Optional: Change cursor to indicate it's enabled
+            }
         }
     })
 
@@ -97,12 +138,21 @@ $(document).ready(function () {
         $('#full_image_modal').modal('hide');
     })
 
+    let lastSongId = null;
+
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
             if (!songData || data.timestamp !== lastTimestamp) {
                 songData = data;
                 lastTimestamp = data.timestamp;
-                updateUI();
+
+                // Check if song changed
+                if (songData.songTitle !== lastSongId) {
+                    lastSongId = songData.songTitle;
+                    updateSongMetadata(); // Run only once per song
+                }
+
+                updateSongProgress(); // Run every second
 
                 if (songData["is_playing"] === "false") {
                     $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");
@@ -113,37 +163,33 @@ $(document).ready(function () {
         });
     }
 
-    function updateUI() {
-        if (!songData) return;
-
-        let {
-            songTitle,
-            artist,
-            image,
-            duration,
-            currentProgress
-        } = songData;
+    function updateSongMetadata() {
+        let { songTitle, artist, image } = songData;
 
         $("#songTitle").text(songTitle);
         $("#artist_name").text(artist);
         $("#album_art").attr("src", image);
 
+        $(".song-name").each(function () {
+            if (this.offsetWidth < this.scrollWidth || this.offsetHeight < this.scrollHeight) {
+                $(".ellipsis-container").css("cursor", "pointer");
+            }
+        });
+    }
+
+    function updateSongProgress() {
+        if (!songData) return;
+
+        let { duration, currentProgress } = songData;
+
         $("#duration").text(formatTime(duration));
         $("#currentTime").text(formatTime(currentProgress));
 
-        updateProgressBar();
+        updateProgressBar(duration, currentProgress);
     }
 
-    function updateProgressBar() {
-        if (!songData) return;
-
-        let {
-            duration,
-            currentProgress
-        } = songData;
-
+    function updateProgressBar(duration, currentProgress) {
         let progressPercentage = (currentProgress / duration) * 100;
-
         $("#progressBar").css("width", progressPercentage + "%");
         $("#currentTime").text(formatTime(currentProgress));
     }

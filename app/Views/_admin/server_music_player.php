@@ -38,177 +38,218 @@
     <?php endif ?>
 
     <script>
-        let currentSongIndex = 0;
-        let songs = [];
-        let audioElement = $('#audioPlayer')[0];
-        let is_playing = true;
-        let savedSessionData = null;
+        $(document).ready(function() {
+            let currentSongIndex = 0;
+            let songs = [];
+            let audioElement = $('#audioPlayer')[0];
+            let is_playing = true;
+            let savedSessionData = null;
+            let loggingInterval = null;
+            let playbackFailures = 0;
 
-        // Start here
-        fetchSessionIndex();
+            fetchSessionIndex();
 
-        function fetchSessionIndex() {
-            $.ajax({
-                url: '../get_session_index',
-                type: 'GET',
-                dataType: 'JSON',
-                success: function(response) {
-                    savedSessionData = response;
-                    fetchSongsAndPlay();
-                },
-                error: function() {
-                    savedSessionData = null;
-                    fetchSongsAndPlay();
-                }
-            });
-        }
+            function fetchSessionIndex() {
+                $.ajax({
+                    url: '../get_session_index',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function(response) {
+                        savedSessionData = response;
+                        fetchSongsAndPlay();
+                    },
+                    error: function() {
+                        savedSessionData = null;
+                        fetchSongsAndPlay();
+                    }
+                });
+            }
 
-        function fetchSongsAndPlay() {
-            $.ajax({
-                url: '../get_current_playlist_songs',
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                    if (data.length > 0) {
-                        const newPlaylistSignature = JSON.stringify(data);
-                        songs = data;
-
-                        let resumeIndex = 0;
-
-                        // Compare playlist
-                        if (savedSessionData && savedSessionData.playlist === newPlaylistSignature) {
-                            resumeIndex = parseInt(savedSessionData.index) || 0;
-                        } else {
-                            clearSavedSession(); // Reset session if playlist changed
+            function fetchSongsAndPlay() {
+                $.ajax({
+                    url: '../get_current_playlist_songs',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (!data || data.length === 0) {
+                            console.warn("No songs in playlist. Reloading...");
+                            setTimeout(() => location.reload(), 1500);
+                            return;
                         }
 
-                        playSong(newPlaylistSignature, resumeIndex); // 💥 pass resume index here
+                        songs = data.slice(); // make a copy
+                        songs.sort(); // ensure consistency with saved signature
+
+                        const newPlaylistSignature = JSON.stringify(songs);
+                        let resumeIndex = 0;
+
+                        if (
+                            savedSessionData &&
+                            JSON.stringify(JSON.parse(savedSessionData.playlist || "[]").sort()) === newPlaylistSignature
+                        ) {
+                            resumeIndex = parseInt(savedSessionData.index) || 0;
+                        } else {
+                            clearSavedSession();
+                        }
+
+                        playSong(newPlaylistSignature, resumeIndex);
+                    },
+                    error: function(_, _, error) {
+                        console.error("Error fetching songs:", error);
+                        setTimeout(() => location.reload(), 1500);
                     }
-                },
-                error: function(_, _, error) {
-                    console.error(error);
+                });
+            }
+
+            function playSong(playlistSignature, index = null) {
+                if (songs.length === 0) {
+                    is_playing = false;
+                    return;
                 }
-            });
-        }
 
-        function playSong(playlistSignature, index = null) {
-            if (songs.length === 0) {
-                is_playing = false;
-                return;
-            }
-
-            if (index !== null) {
-                currentSongIndex = index;
-            }
-
-            if (currentSongIndex >= songs.length) {
-                currentSongIndex = 0;
-            }
-
-            is_playing = true;
-            audioElement.src = songs[currentSongIndex];
-            audioElement.load();
-            audioElement.play();
-
-            audioElement.onended = onSongEnd;
-            saveSessionIndex(playlistSignature);
-            startLogging();
-        }
-
-        function loadNextSong() {
-            currentSongIndex++;
-            saveSessionIndex(JSON.stringify(songs));
-            if (currentSongIndex < songs.length) {
-                playSong(JSON.stringify(songs));
-            } else {
-                fetchSongsAndPlay();
-            }
-        }
-
-        function saveSessionIndex(playlistSignature) {
-            const formData = new FormData();
-            formData.append('index', currentSongIndex);
-            formData.append('playlist', playlistSignature);
-
-            $.ajax({
-                url: '../save_session_index',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function() {
-                    console.log('Session index and playlist saved');
-                },
-                error: function(error) {
-                    console.error('Error saving session index:', error);
+                if (index !== null) {
+                    currentSongIndex = index;
                 }
-            });
-        }
 
-        function clearSavedSession() {
-            // You can call a separate API to clear the session if needed, or reset it here by re-saving empty
-            saveSessionIndex(""); // Clear playlist signature
-        }
-
-        function logAudioData(audioElement) {
-            const source = audioElement.src;
-            const duration = audioElement.duration || 0;
-            const progress = audioElement.currentTime || 0;
-
-            const data = new FormData();
-            data.append('file', source);
-            data.append('duration', duration);
-            data.append('progress', progress);
-            data.append('is_playing', is_playing);
-
-            $.ajax({
-                url: '../sync_data',
-                type: 'POST',
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    $('#song_title').text(JSON.parse(response));
-                },
-                error: function(error) {
-                    console.error('Error:', error);
+                if (currentSongIndex >= songs.length) {
+                    currentSongIndex = 0;
                 }
-            });
-        }
 
-        function startLogging() {
-            setInterval(function() {
-                logAudioData(audioElement);
-            }, 1000);
-        }
+                is_playing = true;
+                audioElement.src = songs[currentSongIndex];
+                audioElement.load();
 
-        function onSongEnd() {
-            $.ajax({
-                url: '../get_current_playlist_songs',
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                    const newSongs = data;
-                    const currentList = JSON.stringify(songs);
-                    const newList = JSON.stringify(newSongs);
+                audioElement.play().then(() => {
+                    console.log(`Playing: ${songs[currentSongIndex]}`);
+                }).catch(err => {
+                    console.error("Playback failed:", err);
+                    handlePlaybackError();
+                });
 
-                    if (currentList !== newList) {
-                        songs = newSongs;
-                        currentSongIndex = 0;
-                        playSong(newList);
-                    } else {
-                        loadNextSong();
+                audioElement.onended = onSongEnd;
+                audioElement.onerror = handlePlaybackError;
+
+                saveSessionIndex(playlistSignature);
+                startLogging();
+            }
+
+            function loadNextSong() {
+                currentSongIndex++;
+                saveSessionIndex(JSON.stringify(songs));
+
+                if (currentSongIndex < songs.length) {
+                    playSong(JSON.stringify(songs));
+                } else {
+                    fetchSongsAndPlay(); // Reload playlist at end
+                }
+            }
+
+            function saveSessionIndex(playlistSignature) {
+                const formData = new FormData();
+                formData.append('index', currentSongIndex);
+                formData.append('playlist', playlistSignature);
+
+                $.ajax({
+                    url: '../save_session_index',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        console.log('Session index and playlist saved');
+                    },
+                    error: function(error) {
+                        console.error('Error saving session index:', error);
                     }
-                },
-                error: function(_, _, error) {
-                    console.error(error);
+                });
+            }
+
+            function clearSavedSession() {
+                saveSessionIndex(""); // Clear playlist signature
+            }
+
+            function logAudioData(audioElement) {
+                const source = audioElement.src || '';
+                const duration = audioElement.duration || 0;
+                const progress = audioElement.currentTime || 0;
+
+                if (!source) return;
+
+                const data = new FormData();
+                data.append('file', source);
+                data.append('duration', duration);
+                data.append('progress', progress);
+                data.append('is_playing', is_playing);
+
+                $.ajax({
+                    url: '../sync_data',
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        try {
+                            $('#song_title').text(JSON.parse(response));
+                        } catch (e) {
+                            $('#song_title').text(response); // fallback
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error syncing data:', error);
+                    }
+                });
+            }
+
+            function startLogging() {
+                if (loggingInterval) clearInterval(loggingInterval);
+                loggingInterval = setInterval(() => logAudioData(audioElement), 1000);
+            }
+
+            function onSongEnd() {
+                $.ajax({
+                    url: '../get_current_playlist_songs',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (!data || data.length === 0) {
+                            console.warn("No songs returned after song ended. Reloading...");
+                            return location.reload();
+                        }
+
+                        const newSongs = data.slice();
+                        newSongs.sort();
+
+                        const currentList = JSON.stringify(songs.slice().sort());
+                        const newList = JSON.stringify(newSongs);
+
+                        if (currentList !== newList) {
+                            songs = newSongs;
+                            currentSongIndex = 0;
+                            playSong(newList);
+                        } else {
+                            loadNextSong();
+                        }
+                    },
+                    error: function(_, _, error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+            function handlePlaybackError() {
+                console.error("Audio playback or load error.");
+                playbackFailures++;
+                if (playbackFailures >= 3) {
+                    location.reload(); // Final fallback
+                } else {
+                    loadNextSong(); // Try next song
                 }
-            });
-        }
+            }
+        });
     </script>
 </body>
 

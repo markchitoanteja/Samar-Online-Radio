@@ -77,7 +77,7 @@
 
                         <div class="song-info">
                             <div class="d-block">
-                                <div class="ellipsis-container" role="button" onclick="this.classList.toggle('expanded')">
+                                <div class="ellipsis-container" onclick="this.classList.toggle('expanded')">
                                     <div class="song-name" id="songTitle">Loading...</div>
                                 </div>
 
@@ -132,7 +132,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.6.7"></script>
+    <script src="public/home/dist/js/script.js?v=3.7.2"></script>
 </body>
 
 </html>
