@@ -86,6 +86,17 @@ $(document).ready(function () {
         }
     })
 
+    $('#album_art').on('click', function () {
+        const src = $(this).attr('src');
+
+        $('#modalImage').attr('src', src);
+        $('#full_image_modal').modal('show');
+    })
+
+    $('#full_image_modal').on('click', function () {
+        $('#full_image_modal').modal('hide');
+    })
+
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
             if (!songData || data.timestamp !== lastTimestamp) {
@@ -108,12 +119,14 @@ $(document).ready(function () {
         let {
             songTitle,
             artist,
+            image,
             duration,
             currentProgress
         } = songData;
 
         $("#songTitle").text(songTitle);
         $("#artist_name").text(artist);
+        $("#album_art").attr("src", image);
 
         if (songTitle.length > 20) {
             $("#songTitle").addClass("marquee");

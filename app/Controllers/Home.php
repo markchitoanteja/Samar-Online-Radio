@@ -6,6 +6,9 @@ class Home extends BaseController
 {
     public function index()
     {
-        return view('_public/home');
+        $body = view('_public/home');
+        $modals = view('_admin/modals/full_image_modal');
+
+        return $body . $modals;
     }
 }

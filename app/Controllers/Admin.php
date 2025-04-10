@@ -462,16 +462,6 @@ class Admin extends BaseController
         return json_encode($song);
     }
 
-    private function delete_old_folder($uuid)
-    {
-        $folderPath = FCPATH . 'public/songs/uploads/' . $uuid;
-
-        if (is_dir($folderPath)) {
-            array_map('unlink', glob("$folderPath/*"));
-            rmdir($folderPath);
-        }
-    }
-
     public function add_playlist()
     {
         $name = $this->request->getPost("name");
@@ -682,11 +672,16 @@ class Admin extends BaseController
         $lastTwoParts = array_slice($parts, -2);
         $filename_not_original = implode('/', $lastTwoParts);
 
+        if ($filename_not_original == "songs/default_song.mp3") {
+            $filename_not_original = "default_song.mp3";
+        }
+
         $session = session();
 
         if ($session->get('last_filename') === $filename) {
             $title = $session->get('last_title');
             $artist = $session->get('last_artist');
+            $image = $session->get('last_image');
         } else {
             $Song_Model = new Song_Model();
             $song = $Song_Model->like('filename', $filename, 'both')->findAll(1);
@@ -704,7 +699,8 @@ class Admin extends BaseController
             $session->set([
                 'last_filename' => $filename,
                 'last_title' => $title,
-                'last_artist' => $artist
+                'last_artist' => $artist,
+                'last_image' => $image
             ]);
         }
 
@@ -712,6 +708,7 @@ class Admin extends BaseController
             'filename' => $filename_not_original,
             'songTitle' => $title,
             'artist' => $artist,
+            'image' => $image,
             'duration' => $duration,
             'currentProgress' => $currentProgress,
             'timestamp' => time(),
