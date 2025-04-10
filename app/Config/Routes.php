@@ -35,3 +35,5 @@ $routes->post('/get_playlist_by_id', 'Admin::get_playlist_by_id');
 $routes->post('/edit_playlist', 'Admin::edit_playlist');
 $routes->post('/sync_data', 'Admin::sync_data');
 $routes->post('/get_current_playlist_songs', 'Admin::get_current_playlist_songs');
+$routes->post('/save_session_index', 'Admin::save_session_index');
+$routes->get('/get_session_index', 'Admin::get_session_index');

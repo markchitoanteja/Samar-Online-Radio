@@ -720,7 +720,7 @@ class Admin extends BaseController
         return json_encode($title);
     }
 
-    function get_current_playlist_songs()
+    public function get_current_playlist_songs()
     {
         $Playlist_Model = new Playlist_Model();
         $Song_Model = new Song_Model();
@@ -763,5 +763,29 @@ class Admin extends BaseController
         }
 
         return json_encode($songTitles);
+    }
+
+    public function save_session_index()
+    {
+        $index = $this->request->getPost("index");
+        $playlist = $this->request->getPost("playlist");
+
+        $session = session();
+        $session->set('current_song_index', $index);
+        $session->set('current_playlist_signature', $playlist); // save playlist ID or hash
+
+        return json_encode(true);
+    }
+
+    public function get_session_index()
+    {
+        $session = session();
+        $index = $session->get('current_song_index');
+        $playlist = $session->get('current_playlist_signature');
+
+        return json_encode([
+            'index' => $index,
+            'playlist' => $playlist
+        ]);
     }
 }

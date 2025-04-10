@@ -39,11 +39,29 @@
 
     <script>
         let currentSongIndex = 0;
+        let songs = [];
         let audioElement = $('#audioPlayer')[0];
         let is_playing = true;
-        let songs = [];
+        let savedSessionData = null;
 
-        fetchSongsAndPlay();
+        // Start here
+        fetchSessionIndex();
+
+        function fetchSessionIndex() {
+            $.ajax({
+                url: '../get_session_index',
+                type: 'GET',
+                dataType: 'JSON',
+                success: function(response) {
+                    savedSessionData = response;
+                    fetchSongsAndPlay();
+                },
+                error: function() {
+                    savedSessionData = null;
+                    fetchSongsAndPlay();
+                }
+            });
+        }
 
         function fetchSongsAndPlay() {
             $.ajax({
@@ -54,9 +72,19 @@
                 contentType: false,
                 success: function(data) {
                     if (data.length > 0) {
+                        const newPlaylistSignature = JSON.stringify(data);
                         songs = data;
-                        currentSongIndex = 0;
-                        playSong();
+
+                        let resumeIndex = 0;
+
+                        // Compare playlist
+                        if (savedSessionData && savedSessionData.playlist === newPlaylistSignature) {
+                            resumeIndex = parseInt(savedSessionData.index) || 0;
+                        } else {
+                            clearSavedSession(); // Reset session if playlist changed
+                        }
+
+                        playSong(newPlaylistSignature, resumeIndex); // 💥 pass resume index here
                     }
                 },
                 error: function(_, _, error) {
@@ -65,10 +93,18 @@
             });
         }
 
-        function playSong() {
-            if (songs.length === 0 || currentSongIndex >= songs.length) {
+        function playSong(playlistSignature, index = null) {
+            if (songs.length === 0) {
                 is_playing = false;
                 return;
+            }
+
+            if (index !== null) {
+                currentSongIndex = index;
+            }
+
+            if (currentSongIndex >= songs.length) {
+                currentSongIndex = 0;
             }
 
             is_playing = true;
@@ -77,16 +113,43 @@
             audioElement.play();
 
             audioElement.onended = onSongEnd;
+            saveSessionIndex(playlistSignature);
             startLogging();
         }
 
         function loadNextSong() {
             currentSongIndex++;
+            saveSessionIndex(JSON.stringify(songs));
             if (currentSongIndex < songs.length) {
-                playSong();
+                playSong(JSON.stringify(songs));
             } else {
                 fetchSongsAndPlay();
             }
+        }
+
+        function saveSessionIndex(playlistSignature) {
+            const formData = new FormData();
+            formData.append('index', currentSongIndex);
+            formData.append('playlist', playlistSignature);
+
+            $.ajax({
+                url: '../save_session_index',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {
+                    console.log('Session index and playlist saved');
+                },
+                error: function(error) {
+                    console.error('Error saving session index:', error);
+                }
+            });
+        }
+
+        function clearSavedSession() {
+            // You can call a separate API to clear the session if needed, or reset it here by re-saving empty
+            saveSessionIndex(""); // Clear playlist signature
         }
 
         function logAudioData(audioElement) {
@@ -130,14 +193,13 @@
                 contentType: false,
                 success: function(data) {
                     const newSongs = data;
-
                     const currentList = JSON.stringify(songs);
                     const newList = JSON.stringify(newSongs);
 
                     if (currentList !== newList) {
                         songs = newSongs;
                         currentSongIndex = 0;
-                        playSong();
+                        playSong(newList);
                     } else {
                         loadNextSong();
                     }
