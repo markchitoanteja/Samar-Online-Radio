@@ -32,7 +32,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />
-    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.3" />
+    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.4" />
 </head>
 
 <body>
@@ -77,10 +77,13 @@
 
                         <div class="song-info">
                             <div class="d-block">
-                                <div class="song-name" id="songTitle">Loading...</div>
+                                <div class="ellipsis-container" role="button" onclick="this.classList.toggle('expanded')">
+                                    <div class="song-name" id="songTitle">Loading...</div>
+                                </div>
+
                                 <div class="artist-name d-block" id="artist_name">Loading...</div>
                             </div>
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between mt-1">
                                 <span id="currentTime" class="pr-2">0:00</span>
                                 <div class="progress-container">
                                     <div class="progress-bar" id="progressBar"></div>

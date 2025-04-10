@@ -143,8 +143,15 @@
     max-width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
+    overflow: hidden;
     display: inline-block;
     vertical-align: middle;
+}
+
+.ellipsis-container.expanded .song-name {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
 }
 
 .artist-name {

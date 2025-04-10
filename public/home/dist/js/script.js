@@ -128,12 +128,6 @@ $(document).ready(function () {
         $("#artist_name").text(artist);
         $("#album_art").attr("src", image);
 
-        if (songTitle.length > 20) {
-            $("#songTitle").addClass("marquee");
-        } else {
-            $("#songTitle").removeClass("marquee");
-        }
-
         $("#duration").text(formatTime(duration));
         $("#currentTime").text(formatTime(currentProgress));
 
