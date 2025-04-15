@@ -1,14 +1,15 @@
             <footer class="app-footer">
-                <div class="float-end d-none d-sm-inline">Version 1.0.0</div>
+                <div class="float-end d-none d-sm-inline">Version 1.5.0</div>
                 <strong>
                     Copyright &copy; 2023-<span id="current_year"></span>
-                    <a href="https://samaronlineradio.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Integrated News</a>.
+                    <a href="<?= base_url() ?>" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Samar Online Radio</a>.
                 </strong>
                 All rights reserved.
             </footer>
         </div>
 
         <script>
+            const base_url = <?= json_encode(base_url()) ?>;
             const user_id = <?= json_encode(session()->get("user_id")) ?>;
             const current_tab = <?= json_encode(session()->get("current_tab")) ?>;
             const notification = <?= json_encode(session()->get("notification") ?? null) ?>;
@@ -41,6 +42,6 @@
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=3.7.3"></script>
+        <script src="../public/admin/dist/js/script.js?v=3.8.0"></script>
     </body>
 </html>

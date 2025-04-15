@@ -104,7 +104,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="https://samaronlineradio.com" class="nav-link" target="_blank" rel="noopener noreferrer">
+                            <a href="javascript:void(0)" id="public_page" class="nav-link">
                                 <i class="nav-icon bi bi-globe"></i>
                                 <p>
                                     Public Page
@@ -114,7 +114,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="music_files" class="nav-link <?= session()->get("current_tab") == "music_files" ? "active" : null ?>">
-                                <i class="nav-icon bi bi-music-note-list"></i>
+                                <i class="nav-icon bi bi-file-music"></i>
                                 <p>Music Files</p>
                             </a>
                         </li>
@@ -125,10 +125,19 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="https://radio.969fmcanavid.com/public/kasugbongfm/dj" class="nav-link" target="_blank" rel="noopener noreferrer">
+                            <a href="javascript:void(0)" class="nav-link" id="live_streaming">
                                 <i class="nav-icon bi bi-mic"></i>
                                 <p>
-                                    Live Streaming
+                                    Live Streaming  
+                                    <small class="bi bi-box-arrow-up-right ms-1"></small>
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" id="server_music_player" class="nav-link">
+                                <i class="nav-icon bi bi-play-circle"></i>
+                                <p>
+                                    Server Music Player
                                     <small class="bi bi-box-arrow-up-right ms-1"></small>
                                 </p>
                             </a>

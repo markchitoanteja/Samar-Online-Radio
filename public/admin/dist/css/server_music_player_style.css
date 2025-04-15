@@ -1,0 +1,27 @@
+body {
+    background-color: #f4f6f9;
+}
+
+.player-card {
+    border-radius: 1rem;
+}
+
+.playlist-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.375rem;
+}
+
+.btn-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.dataTables_filter {
+    margin-bottom: 10px;
+}

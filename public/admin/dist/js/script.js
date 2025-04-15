@@ -5,15 +5,18 @@ $(document).ready(function () {
     let is_page_ready = false;
 
     preventDevTools(false);
-    preventMobileAccess();
     is_page_loading(false);
 
     if (current_tab == "dashboard") {
         display_chart();
     }
 
-    if ((current_tab != "login") && (current_tab != "server_music_player")) {
-        var table = $('#music_table').DataTable({
+    if (current_tab != "server_music_player" && current_tab != "server_login") {
+        preventMobileAccess();
+    }
+
+    if ((current_tab != "login") && (current_tab != "server_login") && (current_tab != "server_music_player")) {
+        var music_table = $('#music_table').DataTable({
             responsive: false,
             autoWidth: false,
             lengthChange: false,
@@ -33,10 +36,10 @@ $(document).ready(function () {
         });
 
         $('#music_table_filter input').on('keyup', function () {
-            table.column(1).search(this.value).draw();
+            music_table.column(1).search(this.value).draw();
         });
 
-        var table = $('#playlists_table').DataTable({
+        var playlists_table = $('#playlists_table').DataTable({
             responsive: false,
             autoWidth: false,
             lengthChange: false,
@@ -50,7 +53,7 @@ $(document).ready(function () {
         });
 
         $('#playlists_table_filter input').unbind().on('keyup', function () {
-            table.column(0).search(this.value).draw();
+            playlists_table.column(0).search(this.value).draw();
         });
     }
 
@@ -66,7 +69,7 @@ $(document).ready(function () {
         $('.table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
 
         toggleButtons();
-    })
+    });
 
     $(document).on('change', '.table tbody input[type="checkbox"]', function () {
         let totalCheckboxes = $('.table tbody input[type="checkbox"]').length;
@@ -75,7 +78,7 @@ $(document).ready(function () {
         $('.table thead input[type="checkbox"]').prop('checked', totalCheckboxes === checkedCheckboxes);
 
         toggleButtons();
-    })
+    });
 
     $("input:not(.ignore-validation), select:not(.ignore-validation)").each(function () {
         let inputId = $(this).attr("id");
@@ -92,7 +95,7 @@ $(document).ready(function () {
                 }
             }
         }
-    })
+    });
 
     $(document).on('hide.bs.modal', ".modal", function (e) {
         if (is_form_submitting) {
@@ -100,7 +103,7 @@ $(document).ready(function () {
             e.stopImmediatePropagation();
             return false;
         }
-    })
+    });
 
     $(".no-function").click(function () {
         Swal.fire({
@@ -108,7 +111,7 @@ $(document).ready(function () {
             text: "This function is not available yet.",
             icon: "info",
         });
-    })
+    });
 
     $("#login_form").submit(function () {
         const email = $("#login_email").val();
@@ -142,7 +145,7 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $("#forgot_password").click(function () {
         Swal.fire({
@@ -150,7 +153,7 @@ $(document).ready(function () {
             text: "Please contact the administrator to reset your password.",
             icon: "info",
         });
-    })
+    });
 
     $("#profile_image").change(function (e) {
         const file = e.target.files[0];
@@ -163,7 +166,7 @@ $(document).ready(function () {
         } else {
             $('#profile_image_preview').hide();
         }
-    })
+    });
 
     $("#profile").click(function () {
         loading(true);
@@ -199,7 +202,7 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $("#profile_form").submit(function () {
         const name = $("#profile_name").val();
@@ -259,27 +262,27 @@ $(document).ready(function () {
                 }
             });
         }
-    })
+    });
 
     $("#profile_email").keydown(function () {
         $("#profile_email").removeClass("is-invalid");
 
         $("#error_profile_email").addClass("d-none");
-    })
+    });
 
     $("#profile_password").keydown(function () {
         $("#profile_password").removeClass("is-invalid");
         $("#profile_confirm_password").removeClass("is-invalid");
 
         $("#error_profile_password").addClass("d-none");
-    })
+    });
 
     $("#profile_confirm_password").keydown(function () {
         $("#profile_password").removeClass("is-invalid");
         $("#profile_confirm_password").removeClass("is-invalid");
 
         $("#error_profile_password").addClass("d-none");
-    })
+    });
 
     $("#upload_music_form").submit(function (e) {
         const title = $("#music_title").val();
@@ -337,7 +340,7 @@ $(document).ready(function () {
                 }
             });
         }
-    })
+    });
 
     $("#music_file").on("change", function (event) {
         const file = event.target.files[0];
@@ -382,7 +385,7 @@ $(document).ready(function () {
                 }
             });
         }
-    })
+    });
 
     $(document).on("click", ".delete_music_btn", function () {
         const music_id = $(this).data("id");
@@ -421,7 +424,7 @@ $(document).ready(function () {
                 });
             }
         })
-    })
+    });
 
     $(document).on("click", ".play_music_btn", function () {
         const musicUrl = $(this).data("url");
@@ -453,7 +456,7 @@ $(document).ready(function () {
             currentAudioPlayer = null;
             currentButton = null;
         };
-    })
+    });
 
     $(document).on("click", ".edit_music_btn", function () {
         const music_id = $(this).data("id");
@@ -488,7 +491,7 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $("#edit_music_form").submit(function () {
         const title = $("#edit_music_title").val();
@@ -528,7 +531,7 @@ $(document).ready(function () {
                 loading(false);
             }
         });
-    })
+    });
 
     $("#add_to_playlist_btn").click(function () {
         const table = $('#music_table').DataTable(); // Replace with your actual table ID
@@ -566,11 +569,11 @@ $(document).ready(function () {
                 confirmButtonText: "OK"
             });
         }
-    })
+    });
 
     $("#checkAllDays").change(function () {
         $(".day-checkbox").prop("checked", $(this).prop("checked"));
-    })
+    });
 
     $(document).on("change", ".day-checkbox", function () {
         if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
@@ -578,7 +581,7 @@ $(document).ready(function () {
         } else {
             $("#checkAllDays").prop("checked", false);
         }
-    })
+    });
 
     $("#add_playlist_form").submit(function (e) {
         e.preventDefault();
@@ -659,21 +662,21 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $("#playlist_start_time").on("input", function () {
         $("#playlist_start_time").removeClass("is-invalid");
         $("#playlist_end_time").removeClass("is-invalid");
 
         $("#time_error_message").addClass("d-none");
-    })
+    });
 
     $("#playlist_end_time").on("input", function () {
         $("#playlist_start_time").removeClass("is-invalid");
         $("#playlist_end_time").removeClass("is-invalid");
 
         $("#time_error_message").addClass("d-none");
-    })
+    });
 
     $("#add_to_playlist_form").submit(function () {
         const selected_song_ids = $("#add_to_playlist_selected_song_ids").val();
@@ -702,7 +705,7 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $(document).on("click", ".delete_playlist_btn", function () {
         const playlist_id = $(this).data("id");
@@ -741,7 +744,7 @@ $(document).ready(function () {
                 });
             }
         })
-    })
+    });
 
     $(document).on("click", ".edit_playlist_btn", function () {
         const playlist_id = $(this).data("id");
@@ -814,11 +817,11 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
 
     $("#edit_checkAllDays").change(function () {
         $(".edit-day-checkbox").prop("checked", $(this).prop("checked"));
-    })
+    });
 
     $(".edit-day-checkbox").change(function () {
         if ($(".edit-day-checkbox:checked").length === $(".edit-day-checkbox").length) {
@@ -826,7 +829,7 @@ $(document).ready(function () {
         } else {
             $("#edit_checkAllDays").prop("checked", false);
         }
-    })
+    });
 
     $("#edit_playlist_form").submit(function (e) {
         e.preventDefault();
@@ -912,7 +915,37 @@ $(document).ready(function () {
                 console.error(error);
             }
         });
-    })
+    });
+
+    $("#live_streaming").click(function () {
+        is_page_loading(true);
+
+        $.ajax({
+            url: '../live_streaming',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    $("#public_page").click(function () {
+        window.open(base_url, '_blank');
+        location.reload();
+    });
+
+    $("#server_music_player").click(function () {
+        window.open("server_music_player", '_blank');
+        location.reload();
+    });
 
     function parseTimeToDate(timeStr) {
         const [hours, minutes] = timeStr.split(":").map(Number);

@@ -55,7 +55,7 @@
                                             <td><?= htmlspecialchars($song['title'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($song['artist'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($song['duration'], ENT_QUOTES, 'UTF-8') ?></td>
-                                            <td><?= htmlspecialchars($song['size'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($song['size'], ENT_QUOTES, 'UTF-8') ?> MB</td>
                                             <td><?= date('F j, Y, g:i a', strtotime($song['updated_at'])) ?></td>
                                             <td class="text-center">
                                                 <?php if (!empty($song['playlist_ids'])): ?>

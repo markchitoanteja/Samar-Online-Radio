@@ -153,10 +153,29 @@ class Admin extends BaseController
 
     public function server_music_player()
     {
+        if (!session()->get("user_id")) {
+            $response = [
+                "alert_type" => "danger",
+                "message" => "You need to login first!"
+            ];
+
+            session()->setFlashdata("response", $response);
+
+            return redirect()->to(base_url('/admin/server_login'));
+        }
+
         session()->set("title", "Server Music Player");
         session()->set("current_tab", "server_music_player");
 
         return view('_admin/server_music_player');
+    }
+
+    public function server_login()
+    {
+        session()->set("title", "Server Login");
+        session()->set("current_tab", "server_login");
+
+        return view('_admin/server_login');
     }
 
     public function login()
@@ -191,7 +210,7 @@ class Admin extends BaseController
 
         $email_exists = $User_Model->where("email", $email)->findAll();
 
-        $redirect_url = "dashboard";
+        $redirect_url = session()->get("current_tab") == "login" ? "dashboard" : "server_music_player";
         $success = false;
 
         $response = [
@@ -480,7 +499,7 @@ class Admin extends BaseController
             "updated_at" => date("Y-m-d H:i:s")
         ];
 
-        $insert_success = $Playlist_Model->insert($data);
+        $Playlist_Model->insert($data);
 
         $notification = [
             "title" => "Success!",
@@ -595,7 +614,7 @@ class Admin extends BaseController
             ];
         } else {
             $notification = [
-                "title" => "Error!",
+                "title" => "Oops...",
                 "text" => "Failed to delete playlist!",
                 "icon" => "error",
             ];
@@ -796,5 +815,18 @@ class Admin extends BaseController
             'index' => $index,
             'playlist' => $playlist
         ]);
+    }
+
+    public function live_streaming()
+    {
+        $notification = [
+            "title" => "Oops...",
+            "text" => "This is not available yet!",
+            "icon" => "error",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return json_encode(true);
     }
 }
