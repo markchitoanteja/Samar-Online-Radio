@@ -56,6 +56,8 @@ $(document).ready(function () {
                     return;
                 }
 
+                console.log(data);
+
                 songs = data.slice(); // duplicates preserved
                 const newPlaylistSignature = JSON.stringify(songs);
                 let resumeIndex = 0;
