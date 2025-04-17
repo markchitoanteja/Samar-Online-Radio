@@ -50,12 +50,13 @@ $(document).ready(function () {
             });
 
             audioPlayer.addEventListener("ended", function () {
-                // Reset UI
+                // Reset UI while loading next song
                 $("#progressBar").css("width", "0%");
                 $("#currentTime").text("0:00");
                 $("#duration").text("0:00");
                 $("#songTitle").text("Loading next song...");
                 $("#artist_name").text("Please wait...");
+                $("#album_art").attr("src", "public/img/audio-placeholder.webp");
 
                 const waitForServerUpdate = (oldTimestamp, attempts = 0) => {
                     if (attempts > 30) {
@@ -73,20 +74,37 @@ $(document).ready(function () {
                             let { filename, currentProgress } = songData;
                             let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
 
-                            audioPlayer.src = file_location + filename;
-                            audioPlayer.currentTime = currentProgress;
+                            // Stop and reset the current audio to prevent overlap
+                            audioPlayer.pause();
+                            audioPlayer.src = "";
+                            audioPlayer.load(); // Clear previous source
 
-                            audioPlayer.play().then(() => {
-                                $("#playPauseButton")
-                                    .removeClass("bi-play-fill")
-                                    .addClass("bi-stop-fill");
+                            // Wait a tick, then assign new source
+                            setTimeout(() => {
+                                audioPlayer.src = file_location + filename;
 
-                                updateSongMetadata(); // Refresh title, artist, and album art
-                            }).catch(error => {
-                                console.error("Audio replay failed:", error);
-                                $("#songTitle").text("Playback error");
-                                $("#artist_name").text("Check your connection");
-                            });
+                                // When metadata is loaded, set time and play
+                                audioPlayer.addEventListener("loadedmetadata", function handleLoaded() {
+                                    audioPlayer.currentTime = currentProgress;
+
+                                    audioPlayer.play().then(() => {
+                                        $("#playPauseButton")
+                                            .removeClass("bi-play-fill")
+                                            .addClass("bi-stop-fill");
+
+                                        updateSongMetadata(); // Refresh song info
+                                    }).catch(error => {
+                                        console.error("Audio replay failed:", error);
+                                        $("#songTitle").text("Playback error");
+                                        $("#artist_name").text("Check your connection");
+                                    });
+
+                                    // Clean up the event listener
+                                    audioPlayer.removeEventListener("loadedmetadata", handleLoaded);
+                                });
+
+                                audioPlayer.load(); // Load the new audio source
+                            }, 100);
                         } else {
                             setTimeout(() => waitForServerUpdate(oldTimestamp, attempts + 1), 1000);
                         }
