@@ -740,51 +740,6 @@ class Admin extends BaseController
         return json_encode($title);
     }
 
-    // public function get_current_playlist_songs()
-    // {
-    //     $Playlist_Model = new Playlist_Model();
-    //     $Song_Model = new Song_Model();
-
-    //     $playlists = $Playlist_Model->findAll();
-
-    //     $dayMap = [
-    //         'Mon' => 'M',
-    //         'Tue' => 'T',
-    //         'Wed' => 'W',
-    //         'Thu' => 'Th',
-    //         'Fri' => 'F',
-    //         'Sat' => 'Sa',
-    //         'Sun' => 'Su'
-    //     ];
-
-    //     $currentDay = date('D');
-    //     $currentTime = date('H:i');
-
-    //     $shortDay = $dayMap[$currentDay] ?? '';
-    //     $songTitles = ["../public/songs/default_song.mp3"];
-
-    //     foreach ($playlists as $playlist) {
-    //         $days = explode('-', $playlist['schedule']);
-
-    //         if (in_array($shortDay, $days)) {
-    //             list($startTime, $endTime) = explode(' - ', $playlist['time_range']);
-
-    //             if ($currentTime >= $startTime && $currentTime <= $endTime) {
-    //                 $songIds = explode(',', $playlist['song_ids']);
-    //                 $songs = $Song_Model->whereIn('id', $songIds)->findAll();
-
-    //                 if (!empty($songs)) {
-    //                     $songTitles = array_map(fn($song) => "../public/songs/uploads/" . $song['filename'], $songs);
-    //                 }
-
-    //                 break;
-    //             }
-    //         }
-    //     }
-
-    //     return json_encode($songTitles);
-    // }
-
     public function get_current_playlist_songs()
     {
         $Playlist_Model = new Playlist_Model();
@@ -806,7 +761,10 @@ class Admin extends BaseController
         $currentTime = date('H:i');
 
         $shortDay = $dayMap[$currentDay] ?? '';
-        $songTitles = [];
+        $response = [
+            'playlist_name' => null,
+            'songs' => []
+        ];
 
         foreach ($playlists as $playlist) {
             $days = explode('-', $playlist['schedule']);
@@ -816,26 +774,40 @@ class Admin extends BaseController
 
                 if ($currentTime >= $startTime && $currentTime <= $endTime) {
                     $songIds = array_map('trim', explode(',', $playlist['song_ids']));
-                    $songIds = array_reverse($songIds); // Reverse the order
+                    $songIds = array_reverse($songIds);
 
                     foreach ($songIds as $songId) {
                         $song = $Song_Model->find($songId);
 
-                        if ($song && isset($song['filename'])) {
-                            $songTitles[] = "../public/songs/uploads/" . $song['filename'];
+                        if ($song && isset($song['filename'], $song['title'])) {
+                            $response['songs'][] = [
+                                'title' => $song['title'],
+                                'filename' => "../public/songs/uploads/" . $song['filename'],
+                                'artist' => $song['artist'] ?? 'Unknown Artist',
+                                'duration' => $song['duration'] ?? '0:00',
+                                'size' => $song['size'] ?? '0 MB'
+                            ];
                         }
                     }
 
-                    break; // Stop after the first matched playlist
+                    $response['playlist_name'] = $playlist['name'] ?? 'Unnamed Playlist';
+                    break;
                 }
             }
         }
 
-        if (empty($songTitles)) {
-            $songTitles[] = "../public/songs/default_song.mp3";
+        if (empty($response['songs'])) {
+            $response['playlist_name'] = 'Default Playlist';
+            $response['songs'][] = [
+                'title' => 'Default Song',
+                'filename' => "../public/songs/default_song.mp3",
+                'artist' => 'Unknown Artist',
+                'duration' => '0:00',
+                'size' => '0 MB'
+            ];
         }
 
-        return json_encode($songTitles);
+        return json_encode($response);
     }
 
     public function save_session_index()

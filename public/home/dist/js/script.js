@@ -3,6 +3,7 @@ $(document).ready(function () {
     let lastTimestamp = 0;
     let audioPlayer = null;
     let is_muted = false;
+    let lastSongId = null;
 
     startSync();
     is_page_loading(false);
@@ -49,17 +50,53 @@ $(document).ready(function () {
             });
 
             audioPlayer.addEventListener("ended", function () {
-                fetchSongData();
-                if (songData) {
-                    let { filename, currentProgress } = songData;
-                    if (audioPlayer.src !== file_location + filename) {
-                        audioPlayer.src = file_location + filename;
-                        audioPlayer.currentTime = currentProgress;
-                        audioPlayer.play().catch(error => {
-                            console.error("Audio replay failed:", error);
-                        });
+                // Reset UI
+                $("#progressBar").css("width", "0%");
+                $("#currentTime").text("0:00");
+                $("#duration").text("0:00");
+                $("#songTitle").text("Loading next song...");
+                $("#artist_name").text("Please wait...");
+
+                const waitForServerUpdate = (oldTimestamp, attempts = 0) => {
+                    if (attempts > 30) {
+                        console.warn("Server update not detected after 30 tries (~30s). Giving up.");
+                        $("#songTitle").text("Failed to load next song");
+                        $("#artist_name").text("Please try again later");
+                        return;
                     }
-                }
+
+                    $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
+                        if (data.timestamp !== oldTimestamp) {
+                            songData = data;
+                            lastTimestamp = data.timestamp;
+
+                            let { filename, currentProgress } = songData;
+                            let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
+
+                            audioPlayer.src = file_location + filename;
+                            audioPlayer.currentTime = currentProgress;
+
+                            audioPlayer.play().then(() => {
+                                $("#playPauseButton")
+                                    .removeClass("bi-play-fill")
+                                    .addClass("bi-stop-fill");
+
+                                updateSongMetadata(); // Refresh title, artist, and album art
+                            }).catch(error => {
+                                console.error("Audio replay failed:", error);
+                                $("#songTitle").text("Playback error");
+                                $("#artist_name").text("Check your connection");
+                            });
+                        } else {
+                            setTimeout(() => waitForServerUpdate(oldTimestamp, attempts + 1), 1000);
+                        }
+                    }).fail(function (error) {
+                        console.error("Error checking server update:", error);
+                        setTimeout(() => waitForServerUpdate(oldTimestamp, attempts + 1), 1000);
+                    });
+                };
+
+                waitForServerUpdate(lastTimestamp);
             });
         } else {
             if (audioPlayer.paused) {
@@ -137,8 +174,6 @@ $(document).ready(function () {
     $('#full_image_modal').on('click', function () {
         $('#full_image_modal').modal('hide');
     })
-
-    let lastSongId = null;
 
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {

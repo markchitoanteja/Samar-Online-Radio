@@ -26,6 +26,21 @@ $(document).ready(function () {
         music_table.column(0).search(this.value).draw();
     });
 
+    function populateMusicTable() {
+        music_table.clear();
+
+        allSongData.forEach((song, index) => {
+            music_table.row.add([
+                `<span class="${index === currentSongIndex ? 'fw-bold text-primary' : ''}">${song.title}</span>`,
+                `<span class="${index === currentSongIndex ? 'fw-bold text-primary' : ''}">${song.artist}</span>`,
+                `<span class="${index === currentSongIndex ? 'fw-bold text-primary' : ''}">${song.duration}</span>`,
+                `<span class="${index === currentSongIndex ? 'fw-bold text-primary' : ''}">${song.size} MB</span>`
+            ]);
+        });
+
+        music_table.draw();
+    }
+
     function fetchSessionIndex() {
         $.ajax({
             url: '../get_session_index',
@@ -50,15 +65,14 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (data) {
-                if (!data || data.length === 0) {
+                if (!data || !data.songs || data.songs.length === 0) {
                     console.warn("No songs in playlist. Reloading...");
                     setTimeout(() => location.reload(), 1500);
                     return;
                 }
 
-                console.log(data);
-
-                songs = data.slice(); // duplicates preserved
+                allSongData = data.songs;
+                songs = allSongData.map(song => song.filename);
                 const newPlaylistSignature = JSON.stringify(songs);
                 let resumeIndex = 0;
 
@@ -71,7 +85,9 @@ $(document).ready(function () {
                     clearSavedSession();
                 }
 
+                populateMusicTable();
                 playSong(newPlaylistSignature, resumeIndex);
+                $("#playlist_name").text(data.playlist_name || "Unknown Playlist");
             },
             error: function (_, _, error) {
                 console.error("Error fetching songs:", error);
@@ -98,7 +114,9 @@ $(document).ready(function () {
         audioElement.src = songs[currentSongIndex];
         audioElement.load();
 
-        audioElement.play().then(() => {}).catch(err => {
+        populateMusicTable();
+
+        audioElement.play().then(() => { }).catch(err => {
             console.error("Playback failed:", err);
             handlePlaybackError();
         });
@@ -187,12 +205,12 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (data) {
-                if (!data || data.length === 0) {
+                if (!data || !data.songs || data.songs.length === 0) {
                     console.warn("No songs returned after song ended. Reloading...");
                     return location.reload();
                 }
 
-                const newSongs = data.slice();
+                const newSongs = data.songs.map(song => song.filename);
                 const currentList = JSON.stringify(songs);
                 const newList = JSON.stringify(newSongs);
 
@@ -200,12 +218,14 @@ $(document).ready(function () {
                     songs = newSongs;
                     currentSongIndex = 0;
                     playSong(newList);
+
+                    populateMusicTable();
                 } else {
                     loadNextSong();
                 }
             },
             error: function (_, _, error) {
-                console.error(error);
+                console.error("Error checking updated playlist:", error);
             }
         });
     }

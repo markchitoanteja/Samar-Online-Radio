@@ -25,3 +25,8 @@ body {
 .dataTables_filter {
     margin-bottom: 10px;
 }
+
+.fw-bold.text-primary {
+    font-weight: bold !important;
+    color: #0d6efd !important;
+}

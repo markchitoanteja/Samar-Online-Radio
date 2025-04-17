@@ -19,7 +19,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />
-    <link rel="stylesheet" href="../public/admin/dist/css/server_music_player_style.css?v=1.0.0" />
+    <link rel="stylesheet" href="../public/admin/dist/css/server_music_player_style.css?v=1.0.1" />
 </head>
 
 <body class="py-5">
@@ -52,7 +52,7 @@
         <!-- Playlist Title -->
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="playlist-title text-dark">Playlist Name: <span class="text-primary">Test Playlist</span></div>
+                <div class="playlist-title text-dark">Playlist Name: <span class="text-primary" id="playlist_name">Loading...</span></div>
             </div>
         </div>
 
@@ -71,12 +71,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Ocean Drive</td>
-                                    <td>Duke Dumont</td>
-                                    <td>3:25</td>
-                                    <td>4.8 MB</td>
-                                </tr>
+                                <!-- Data from AJAX -->
                             </tbody>
                         </table>
                     </div>
@@ -103,7 +98,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.0.5"></script>
+    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.0.8"></script>
 </body>
 
 </html>
