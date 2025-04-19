@@ -17,7 +17,7 @@ $(document).ready(function () {
             text: "This function is not available yet.",
             icon: "info",
         });
-    })
+    });
 
     $("#playPauseButton").click(function () {
         if (!songData) return;
@@ -50,71 +50,17 @@ $(document).ready(function () {
             });
 
             audioPlayer.addEventListener("ended", function () {
-                // Reset UI while loading next song
-                $("#progressBar").css("width", "0%");
-                $("#currentTime").text("0:00");
-                $("#duration").text("0:00");
-                $("#songTitle").text("Loading next song...");
-                $("#artist_name").text("Please wait...");
-                $("#album_art").attr("src", "public/img/audio-placeholder.webp");
-
-                const waitForServerUpdate = (oldTimestamp, attempts = 0) => {
-                    if (attempts > 30) {
-                        console.warn("Server update not detected after 30 tries (~30s). Giving up.");
-                        $("#songTitle").text("Failed to load next song");
-                        $("#artist_name").text("Please try again later");
-                        return;
+                fetchSongData();
+                if (songData) {
+                    let { filename, currentProgress } = songData;
+                    if (audioPlayer.src !== file_location + filename) {
+                        audioPlayer.src = file_location + filename;
+                        audioPlayer.currentTime = currentProgress;
+                        audioPlayer.play().catch(error => {
+                            console.error("Audio replay failed:", error);
+                        });
                     }
-
-                    $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
-                        if (data.timestamp !== oldTimestamp) {
-                            songData = data;
-                            lastTimestamp = data.timestamp;
-
-                            let { filename, currentProgress } = songData;
-                            let file_location = filename === "default_song.mp3" ? "public/songs/" : "public/songs/uploads/";
-
-                            // Stop and reset the current audio to prevent overlap
-                            audioPlayer.pause();
-                            audioPlayer.src = "";
-                            audioPlayer.load(); // Clear previous source
-
-                            // Wait a tick, then assign new source
-                            setTimeout(() => {
-                                audioPlayer.src = file_location + filename;
-
-                                // When metadata is loaded, set time and play
-                                audioPlayer.addEventListener("loadedmetadata", function handleLoaded() {
-                                    audioPlayer.currentTime = currentProgress;
-
-                                    audioPlayer.play().then(() => {
-                                        $("#playPauseButton")
-                                            .removeClass("bi-play-fill")
-                                            .addClass("bi-stop-fill");
-
-                                        updateSongMetadata(); // Refresh song info
-                                    }).catch(error => {
-                                        console.error("Audio replay failed:", error);
-                                        $("#songTitle").text("Playback error");
-                                        $("#artist_name").text("Check your connection");
-                                    });
-
-                                    // Clean up the event listener
-                                    audioPlayer.removeEventListener("loadedmetadata", handleLoaded);
-                                });
-
-                                audioPlayer.load(); // Load the new audio source
-                            }, 100);
-                        } else {
-                            setTimeout(() => waitForServerUpdate(oldTimestamp, attempts + 1), 1000);
-                        }
-                    }).fail(function (error) {
-                        console.error("Error checking server update:", error);
-                        setTimeout(() => waitForServerUpdate(oldTimestamp, attempts + 1), 1000);
-                    });
-                };
-
-                waitForServerUpdate(lastTimestamp);
+                }
             });
         } else {
             if (audioPlayer.paused) {
@@ -148,7 +94,7 @@ $(document).ready(function () {
                 is_page_loading(false);
             }
         }
-    })
+    });
 
     $("#muteButton").click(function () {
         if (audioPlayer && !is_muted) {
@@ -156,42 +102,40 @@ $(document).ready(function () {
 
             $("#muteButton").toggleClass("bi-volume-up-fill bi-volume-mute-fill");
         }
-    })
+    });
 
     $("#volume").on("input", function () {
         if (audioPlayer) {
             audioPlayer.volume = $("#volume").val();
 
-            // Check if the volume is zero
             if (audioPlayer.volume == 0) {
                 is_muted = true;
 
                 $("#muteButton")
                     .removeClass("bi-volume-up-fill")
                     .addClass("bi-volume-mute-fill")
-                    .css("cursor", "not-allowed");  // Optional: Change cursor to indicate it's disabled
+                    .css("cursor", "not-allowed");
             } else {
-                // Revert the icon and enable the button
                 is_muted = false;
 
                 $("#muteButton")
                     .removeClass("bi-volume-mute-fill")
                     .addClass("bi-volume-up-fill")
-                    .css("cursor", "pointer");  // Optional: Change cursor to indicate it's enabled
+                    .css("cursor", "pointer");
             }
         }
-    })
+    });
 
     $('#album_art').on('click', function () {
         const src = $(this).attr('src');
 
         $('#modalImage').attr('src', src);
         $('#full_image_modal').modal('show');
-    })
+    });
 
     $('#full_image_modal').on('click', function () {
         $('#full_image_modal').modal('hide');
-    })
+    });
 
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
@@ -199,13 +143,12 @@ $(document).ready(function () {
                 songData = data;
                 lastTimestamp = data.timestamp;
 
-                // Check if song changed
                 if (songData.songTitle !== lastSongId) {
                     lastSongId = songData.songTitle;
-                    updateSongMetadata(); // Run only once per song
+                    updateSongMetadata();
                 }
 
-                updateSongProgress(); // Run every second
+                updateSongProgress();
 
                 if (songData["is_playing"] === "false") {
                     $("#playPauseButton").removeClass("bi-stop-fill").addClass("bi-play-fill");

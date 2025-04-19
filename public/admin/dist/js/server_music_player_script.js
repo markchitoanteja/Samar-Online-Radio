@@ -85,7 +85,7 @@ $(document).ready(function () {
                     clearSavedSession();
                 }
 
-                populateMusicTable();
+                populateMusicTable(); // Always refresh the table after loading songs
                 playSong(newPlaylistSignature, resumeIndex);
                 $("#playlist_name").text(data.playlist_name || "Unknown Playlist");
             },

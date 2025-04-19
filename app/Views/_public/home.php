@@ -93,7 +93,7 @@
                         </div>
                     </div>
 
-                    <hr class="divider mt-2 mb-0">
+                    <hr class="divider mt-2 mb-0 w-100">
 
                     <div class="controls mt-0">
                         <i id="playPauseButton" class="bi bi-play-fill control-btn" style="font-size: 24px;"></i>
@@ -132,7 +132,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=3.8.3"></script>
+    <script src="public/home/dist/js/script.js?v=3.9.9"></script>
 </body>
 
 </html>

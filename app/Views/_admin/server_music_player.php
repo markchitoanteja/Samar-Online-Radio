@@ -98,7 +98,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.0.8"></script>
+    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.1.0"></script>
 </body>
 
 </html>
