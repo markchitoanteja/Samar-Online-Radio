@@ -4,6 +4,7 @@ $(document).ready(function () {
     let audioPlayer = null;
     let is_muted = false;
     let lastSongId = null;
+    let globalProgressPercentage = 0;
 
     startSync();
     is_page_loading(false);
@@ -50,17 +51,7 @@ $(document).ready(function () {
             });
 
             audioPlayer.addEventListener("ended", function () {
-                fetchSongData();
-                if (songData) {
-                    let { filename, currentProgress } = songData;
-                    if (audioPlayer.src !== file_location + filename) {
-                        audioPlayer.src = file_location + filename;
-                        audioPlayer.currentTime = currentProgress;
-                        audioPlayer.play().catch(error => {
-                            console.error("Audio replay failed:", error);
-                        });
-                    }
-                }
+                play_next_song(audioPlayer, file_location);
             });
         } else {
             if (audioPlayer.paused) {
@@ -137,6 +128,24 @@ $(document).ready(function () {
         $('#full_image_modal').modal('hide');
     });
 
+    function play_next_song(audioPlayer, file_location) {
+        if (globalProgressPercentage <= 20) {
+            let { filename, currentProgress } = songData;
+
+            if (audioPlayer.src !== file_location + filename) {
+                audioPlayer.src = file_location + filename;
+                audioPlayer.currentTime = currentProgress;
+                audioPlayer.play().catch(error => {
+                    alert("Audio replay failed! Click OK to reload the page.");
+
+                    location.reload();
+                });
+            }
+        } else {
+            setTimeout(() => play_next_song(audioPlayer, file_location), 500);
+        }
+    }
+
     function fetchSongData() {
         $.getJSON('public/data/audio_data.json?t=' + new Date().getTime(), function (data) {
             if (!songData || data.timestamp !== lastTimestamp) {
@@ -186,6 +195,9 @@ $(document).ready(function () {
 
     function updateProgressBar(duration, currentProgress) {
         let progressPercentage = (currentProgress / duration) * 100;
+
+        globalProgressPercentage = progressPercentage;
+
         $("#progressBar").css("width", progressPercentage + "%");
         $("#currentTime").text(formatTime(currentProgress));
     }
