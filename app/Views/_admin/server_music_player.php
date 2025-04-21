@@ -71,12 +71,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                </tr>
+                                <!-- Data from AJAX -->
                             </tbody>
                         </table>
                     </div>
@@ -103,7 +98,7 @@
     <?php endif ?>
 
     <script src="../public/admin/dist/js/adminlte.js"></script>
-    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.1.7"></script>
+    <script src="../public/admin/dist/js/server_music_player_script.js?v=1.2.3"></script>
 </body>
 
 </html>

@@ -123,6 +123,13 @@ $(document).ready(function () {
         $('#modalImage').attr('src', src);
         $('#full_image_modal').modal('show');
     });
+    
+    $('.about_us_image').on('click', function () {
+        const src = $(this).attr('src');
+
+        $('#modalImage').attr('src', src);
+        $('#full_image_modal').modal('show');
+    });
 
     $('#full_image_modal').on('click', function () {
         $('#full_image_modal').modal('hide');

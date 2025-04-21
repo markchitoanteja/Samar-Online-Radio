@@ -113,7 +113,7 @@ class Admin extends BaseController
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/music_files');
-        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/upload_music_modal') . view('_admin/modals/edit_music_modal') . view('_admin/modals/add_to_playlist_modal');
+        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/upload_music_modal') . view('_admin/modals/edit_music_modal') . view('_admin/modals/add_to_playlist_modal') . view('_admin/modals/view_playlists_modal');
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;

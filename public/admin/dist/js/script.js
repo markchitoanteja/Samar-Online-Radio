@@ -947,6 +947,10 @@ $(document).ready(function () {
         location.reload();
     });
 
+    $(document).on("click", ".view-playlists", function () {
+        $("#view_playlists_modal").modal("show");
+    })
+
     function parseTimeToDate(timeStr) {
         const [hours, minutes] = timeStr.split(":").map(Number);
 

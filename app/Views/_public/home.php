@@ -113,7 +113,7 @@
             <p class="mb-0">&copy; 2025 Samar Online Radio.</p>
             <p class="mt-0 mb-2">All rights reserved.</p>
             <p class="footer-links-container">
-                <a class="footer-links no-function" href="javascript:void(0)">About Us</a> |
+                <a class="footer-links" href="about_us" target="_blank" rel="noopener noreferrer">About Us</a> |
                 <a class="footer-links" href="https://www.facebook.com/profile.php?id=61572979705153&mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">Official Facebook Page</a> |
                 <a class="footer-links" href="https://youtube.com/@salvadord.e?si=Q4uZfjo_lp3pDhe6" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
             </p>

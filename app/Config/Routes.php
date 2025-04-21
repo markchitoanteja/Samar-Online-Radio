@@ -10,6 +10,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->get('/home', 'Home::index');
 $routes->get('/public', 'Home::index');
+$routes->get('/about_us', 'Home::about_us');
 
 /*** ADMIN PAGES ***/
 $routes->get('/admin', 'Admin::index');
@@ -18,6 +19,7 @@ $routes->get('/admin/music_files', 'Admin::music_files');
 $routes->get('/admin/playlists', 'Admin::playlists');
 $routes->get('/admin/server_login', 'Admin::server_login');
 $routes->get('/admin/server_music_player', 'Admin::server_music_player');
+// $routes->get('/admin/music_control', 'Admin::server_music_player');
 $routes->get('/admin/login', 'Admin::login');
 $routes->get('/admin/logout', 'Admin::logout');
 

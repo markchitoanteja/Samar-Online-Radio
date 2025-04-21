@@ -1,0 +1,121 @@
+body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    /* background-color: #f8f9fa; */
+    background-color: #FFFFFF;
+    color: #212529;
+    margin: 0;
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #343a40;
+}
+
+.hero-title {
+    background: linear-gradient(90deg, #e52e71, #ff8a00);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    font-size: 2.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.hero-title::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #e52e71, #ff8a00);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+        transform: translateX(-50%) scaleX(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1.2);
+    }
+
+    100% {
+        opacity: 0.5;
+        transform: translateX(-50%) scaleX(1);
+    }
+}
+
+.img-fluid {
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 100%;
+    /* Ensure the images scale properly */
+}
+
+.logo-img {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+}
+
+/* Desktop view adjustments */
+.container {
+    max-width: 1200px;
+    /* Maximum width for desktop */
+    margin: 0 auto;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.footer-links:hover {
+    text-decoration: underline;
+    color: #66b2ff;
+}
+
+.footer-links-container {
+    text-align: center;
+    font-size: 14px;
+    color: white;
+}
+
+.footer .footer-content p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.footer .footer-content p:first-child {
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .footer-links-container {
+        font-size: 13px !important;
+    }
+
+    .logo-img {
+        max-width: 100px;
+    }
+}
