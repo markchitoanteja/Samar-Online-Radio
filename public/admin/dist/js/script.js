@@ -9,6 +9,50 @@ $(document).ready(function () {
 
     if (current_tab == "dashboard") {
         display_chart();
+
+        fetchCounts();
+        fetchUniqueListeners();
+
+        setInterval(() => {
+            fetchCounts();
+            fetchUniqueListeners();
+        }, 1000);
+
+        function fetchCounts() {
+            $.ajax({
+                url: '../get_current_listeners',
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    if (data && data.current_listeners != null) {
+                        $('#current_listeners').text(data.current_listeners);
+                    }
+                },
+                error: () => {
+                    console.error('Error fetching listener counts');
+                },
+            });
+        }
+
+        function fetchUniqueListeners() {
+            $.ajax({
+                url: '../get_unique_listeners',
+                type: 'POST',
+                dataType: 'JSON',
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    if (data && data.unique_listeners != null) {
+                        $('#unique_listeners').text(data.unique_listeners);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching unique listeners:', err);
+                }
+            });
+        }
     }
 
     if (current_tab != "server_music_player" && current_tab != "server_login") {

@@ -10,6 +10,8 @@ $(document).ready(function () {
 
     fetchSessionIndex();
 
+    setInterval(update_listener_activity, 30000);
+
     var music_table = $('#music_table').DataTable({
         responsive: false,
         autoWidth: false,
@@ -26,6 +28,19 @@ $(document).ready(function () {
     $('#music_table_filter input').unbind().on('keyup', function () {
         music_table.column(0).search(this.value).draw();
     });
+
+    function update_listener_activity() {
+        $.ajax({
+            url: '../update_listener_activity',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    }
 
     function populateMusicTable(songs_data) {
         music_table.clear().draw();

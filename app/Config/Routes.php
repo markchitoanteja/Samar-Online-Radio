@@ -24,6 +24,8 @@ $routes->get('/admin/login', 'Admin::login');
 $routes->get('/admin/logout', 'Admin::logout');
 
 /*** SERVER ***/
+$routes->post('/update_user_activity', 'Home::update_user_activity');
+$routes->post('/update_listener_activity', 'Admin::update_listener_activity');
 $routes->post('/get_user_data', 'Admin::get_user_data');
 $routes->post('/get_user_data_by_id', 'Admin::get_user_data_by_id');
 $routes->post('/update_user', 'Admin::update_user');
@@ -41,3 +43,5 @@ $routes->post('/get_current_playlist_songs', 'Admin::get_current_playlist_songs'
 $routes->post('/save_session_index', 'Admin::save_session_index');
 $routes->post('/live_streaming', 'Admin::live_streaming');
 $routes->post('/get_session_index', 'Admin::get_session_index');
+$routes->post('/get_current_listeners', 'Admin::get_current_listeners');
+$routes->post('/get_unique_listeners', 'Admin::get_unique_listeners');

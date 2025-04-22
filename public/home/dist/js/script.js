@@ -123,7 +123,7 @@ $(document).ready(function () {
         $('#modalImage').attr('src', src);
         $('#full_image_modal').modal('show');
     });
-    
+
     $('.about_us_image').on('click', function () {
         const src = $(this).attr('src');
 
@@ -134,6 +134,19 @@ $(document).ready(function () {
     $('#full_image_modal').on('click', function () {
         $('#full_image_modal').modal('hide');
     });
+
+    function update_user_activity() {
+        $.ajax({
+            url: 'update_user_activity',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            error: function(_, _, error) {
+                console.error(error);
+            }
+        });
+    }
 
     function play_next_song(audioPlayer, file_location) {
         if (globalProgressPercentage <= 20) {
@@ -211,6 +224,7 @@ $(document).ready(function () {
 
     function startSync() {
         setInterval(fetchSongData, 1000);
+        setInterval(update_user_activity, 1000);
     }
 
     function formatTime(seconds) {

@@ -32,7 +32,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />
-    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.4" />
+    <link rel="stylesheet" href="public/home/dist/css/styles.css?v=2.4.5" />
 </head>
 
 <body>
@@ -132,7 +132,7 @@
         <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
     <?php endif ?>
 
-    <script src="public/home/dist/js/script.js?v=4.0.9"></script>
+    <script src="public/home/dist/js/script.js?v=4.1.1"></script>
 </body>
 
 </html>

@@ -6,6 +6,7 @@ use App\Models\User_Model;
 use App\Models\Song_Model;
 use App\Models\Playlist_Model;
 use App\Models\Now_Playing_Model;
+use App\Models\Listener_Model;
 
 class Admin extends BaseController
 {
@@ -50,6 +51,25 @@ class Admin extends BaseController
         return bin2hex(random_bytes(16));
     }
 
+    private function calculate_storage_usage()
+    {
+        $storagePath = FCPATH . 'public/songs/uploads/';
+        $totalSize = 0;
+
+        if (is_dir($storagePath)) {
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($storagePath));
+            foreach ($files as $file) {
+                if ($file->isFile()) {
+                    $totalSize += $file->getSize();
+                }
+            }
+        }
+
+        $storage_usage = (round($totalSize / (1024 * 1024), 2) / 30000) * 100;
+
+        return round($storage_usage, 2);
+    }
+
     public function index()
     {
         return session()->get("user_id") ? redirect()->to(base_url('/admin/dashboard')) : redirect()->to(base_url('/admin/login'));
@@ -76,6 +96,7 @@ class Admin extends BaseController
         $User_Model = new User_Model();
 
         $data["user"] = $User_Model->where("id", session()->get("user_id"))->findAll(1)[0];
+        $data["storage_usage"] = $this->calculate_storage_usage();
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/dashboard');
@@ -853,5 +874,35 @@ class Admin extends BaseController
         session()->setFlashdata("notification", $notification);
 
         return json_encode(true);
+    }
+
+    public function update_listener_activity()
+    {
+        $listenerModel = new Listener_Model();
+        $data = [
+            'last_activity' => date('Y-m-d H:i:s'),
+            'is_online'     => 0,
+        ];
+
+        $builder = $listenerModel->builder();
+        $success = $builder->set($data)->where('1=1', null, false)->update();
+
+        return $this->response->setJSON(['success' => (bool) $success]);
+    }
+
+    public function get_current_listeners()
+    {
+        $listenerModel = new Listener_Model();
+        $currentListeners = $listenerModel->where('is_online', 1)->findAll();
+
+        return $this->response->setJSON(['current_listeners' => count($currentListeners)]);
+    }
+
+    public function get_unique_listeners()
+    {
+        $listenerModel = new Listener_Model();
+        $uniqueListeners = $listenerModel->distinct()->select('ip_address')->findAll();
+
+        return $this->response->setJSON(['unique_listeners' => count($uniqueListeners)]);
     }
 }

@@ -20,13 +20,13 @@
                 <div class="col-lg-4">
                     <div class="small-box text-bg-primary">
                         <div class="inner">
-                            <h3>150</h3>
+                            <h3 id="current_listeners">0</h3>
                             <p>Current Listeners</p>
                         </div>
                         <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm6-7h2c1.1 0 2 .9 2 2v3h-2v-3h-2V7zm-2 1h-2V6h2V4h2v2h2v2h-2v2h-2V8z"></path>
                         </svg>
-                        <a href="javascript:void(0)" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                        <a href="javascript:void(0)" class="no-function small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
                             More info <i class="bi bi-link-45deg"></i>
                         </a>
                     </div>
@@ -34,13 +34,13 @@
                 <div class="col-lg-4">
                     <div class="small-box text-bg-success">
                         <div class="inner">
-                            <h3>120</h3>
-                            <p>Average Listeners</p>
+                            <h3 id="unique_listeners">0</h3>
+                            <p>Unique Listeners</p>
                         </div>
                         <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M4 21h16v-2H4v2zm3-4h3v-6H7v6zm5 0h3V9h-3v8zm5 0h3V5h-3v12z"></path>
+                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                         </svg>
-                        <a href="javascript:void(0)" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                        <a href="javascript:void(0)" class="no-function small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
                             More info <i class="bi bi-link-45deg"></i>
                         </a>
                     </div>
@@ -48,13 +48,11 @@
                 <div class="col-lg-4">
                     <div class="small-box text-bg-warning">
                         <div class="inner">
-                            <h3>90</h3>
-                            <p>Unique Listeners</p>
+                            <h3><?= $storage_usage ?>%</h3>
+                            <p>Storage Usage</p>
                         </div>
-                        <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-                        </svg>
-                        <a href="javascript:void(0)" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                        <i class="small-box-icon bi bi-database-fill" style="font-size: 3rem; opacity: .4;" aria-hidden="true"></i>
+                        <a href="javascript:void(0)" class="no-function small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
                             More info <i class="bi bi-link-45deg"></i>
                         </a>
                     </div>
