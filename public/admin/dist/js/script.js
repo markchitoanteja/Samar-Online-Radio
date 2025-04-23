@@ -17,42 +17,6 @@ $(document).ready(function () {
             fetchCounts();
             fetchUniqueListeners();
         }, 1000);
-
-        function fetchCounts() {
-            $.ajax({
-                url: '../get_current_listeners',
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: (data) => {
-                    if (data && data.current_listeners != null) {
-                        $('#current_listeners').text(data.current_listeners);
-                    }
-                },
-                error: () => {
-                    console.error('Error fetching listener counts');
-                },
-            });
-        }
-
-        function fetchUniqueListeners() {
-            $.ajax({
-                url: '../get_unique_listeners',
-                type: 'POST',
-                dataType: 'JSON',
-                processData: false,
-                contentType: false,
-                success: (data) => {
-                    if (data && data.unique_listeners != null) {
-                        $('#unique_listeners').text(data.unique_listeners);
-                    }
-                },
-                error: (err) => {
-                    console.error('Error fetching unique listeners:', err);
-                }
-            });
-        }
     }
 
     if (current_tab != "server_music_player" && current_tab != "server_login") {
@@ -993,7 +957,316 @@ $(document).ready(function () {
 
     $(document).on("click", ".view-playlists", function () {
         $("#view_playlists_modal").modal("show");
+    });
+
+    $("#more_info_current_listeners").click(function () {
+        $("#more_info_current_listeners_modal").modal("show");
+
+        loading(true);
+
+        $.ajax({
+            url: '../get_current_listeners_data',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const tableId = "current_listeners_table";
+                const $table = $("#" + tableId);
+                const tableElem = $table.get(0); // raw DOM element
+
+                // Safely destroy existing DataTable if already initialized
+                if ($.fn.DataTable.isDataTable(tableElem)) {
+                    $table.DataTable().clear().destroy();
+                }
+
+                $table.find("tbody").empty();
+
+                response.forEach(function (listener) {
+                    const ip = listener.ip_address;
+                    const userAgent = listener.user_agent;
+
+                    const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
+                    const humanReadable = lastActivity.toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+
+                    $table.find("tbody").append(`
+                        <tr>
+                            <td>${ip}</td>
+                            <td>${userAgent}</td>
+                            <td>${humanReadable}</td>
+                        </tr>
+                    `);
+                });
+
+                // Initialize DataTable cleanly
+                $table.DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    lengthChange: false,
+                    paging: true,
+                    searching: true,
+                    ordering: false,
+                    info: true,
+                });
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+                loading(false);
+            }
+        });
+    });
+
+
+    $("#more_info_unique_listeners").click(function () {
+        $("#more_info_unique_listeners_modal").modal("show");
+
+        loading(true);
+
+        $.ajax({
+            url: '../get_unique_listeners_data',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const $table = $("#unique_listeners_table");
+
+                // Destroy previous DataTable if exists
+                if ($.fn.DataTable.isDataTable($table)) {
+                    $table.DataTable().clear().destroy();
+                }
+
+                $table.find("tbody").empty();
+
+                if (response.length > 0) {
+                    response.forEach(function (listener) {
+                        const ip = listener.ip_address;
+                        const userAgent = listener.user_agent;
+
+                        const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
+                        const humanReadable = lastActivity.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                        $table.find("tbody").append(`
+                            <tr>
+                                <td>${ip}</td>
+                                <td>${userAgent}</td>
+                                <td>${humanReadable}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    $table.find("tbody").append(`
+                        <tr>
+                            <td colspan="3" class="text-center">No unique listeners</td>
+                        </tr>
+                    `);
+                }
+
+                // Initialize or reinitialize DataTable
+                $table.DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    lengthChange: false,
+                    paging: true,
+                    searching: true,
+                    ordering: false,
+                    info: true,
+                });
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+                loading(false);
+            }
+        });
+    });
+
+    $("#more_info_storage_usage").click(function () {
+        const storageUsage = $("#storage_usage").text();
+        const totalStorage = 30 * 1024;
+        const usedStorage = parseFloat(totalStorage * (storageUsage / 100)).toFixed(2);
+        const freeStorage = parseFloat(totalStorage - usedStorage).toFixed(2);
+
+        Swal.fire({
+            title: 'Storage Usage',
+            html: `
+                <div class="text-center">
+                    <p>Total Storage: <strong>${(totalStorage / 1024).toFixed(2)} GB</strong></p>
+                    <p>Used Storage: <strong>${(usedStorage / 1024).toFixed(2)} GB</strong></p>
+                    <p>Free Storage: <strong>${(freeStorage / 1024).toFixed(2)} GB</strong></p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonColor: '#0d6efd',
+        });
     })
+
+    function fetchCounts(callback) {
+        $.ajax({
+            url: '../get_current_listeners',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (data && data.current_listeners != null) {
+                    $('#current_listeners').text(data.current_listeners);
+                    if (callback) callback(data.current_listeners);
+                }
+            },
+            error: () => {
+                console.error('Error fetching listener counts');
+                if (callback) callback(0); // Optional: fallback to 0
+            },
+        });
+    }
+
+    function fetchUniqueListeners() {
+        $.ajax({
+            url: '../get_unique_listeners',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: (data) => {
+                if (data && data.unique_listeners != null) {
+                    $('#unique_listeners').text(data.unique_listeners);
+                }
+            },
+            error: (err) => {
+                console.error('Error fetching unique listeners:', err);
+            }
+        });
+    }
+
+    function display_chart() {
+        let data = [];
+        let categories = [];
+        let pendingSamples = [];
+
+        // Retrieve previous chart data from localStorage if it exists
+        const savedData = localStorage.getItem('listenerData');
+        if (savedData) {
+            const parsedData = JSON.parse(savedData);
+            data = parsedData.data || [];
+            categories = parsedData.categories || [];
+        }
+
+        const chart = new ApexCharts(document.querySelector("#listeners-chart"), {
+            series: [{ name: 'Current Listeners', data: data }],
+            chart: {
+                height: 300,
+                type: 'area',
+                toolbar: { show: false },
+                animations: {
+                    enabled: true,
+                    easing: 'linear',
+                    dynamicAnimation: { speed: 500 }
+                }
+            },
+            title: {
+                text: 'Live Listeners Over Time',
+                align: 'left',
+                style: { fontSize: '16px', fontWeight: 'bold' }
+            },
+            colors: ['#0d6efd'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth' },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.1,
+                    stops: [0, 90, 100]
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: categories
+            },
+            yaxis: {
+                title: { text: 'Listeners' },
+                min: 0,
+                max: 5  // Default max value
+            },
+            tooltip: {
+                x: { format: 'HH:mm:ss' }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: { chart: { height: 250 } }
+            }]
+        });
+
+        chart.render();
+
+        // 1️⃣ Sample every 1 second
+        setInterval(() => {
+            fetchCounts((count) => {
+                pendingSamples.push(count);
+
+                // Optional: keep buffer short
+                if (pendingSamples.length > 10) {
+                    pendingSamples.shift();
+                }
+
+                $('#current_listeners').text(count); // Still show real-time
+            });
+
+            fetchUniqueListeners();
+        }, 1000);
+
+        // 2️⃣ Every 5 seconds, push averaged/max count to chart
+        setInterval(() => {
+            if (pendingSamples.length === 0) return;
+
+            // Use MAX for reliability (or use average if you prefer)
+            const reliableCount = Math.max(...pendingSamples);
+            const now = new Date().toISOString();
+
+            data.push(reliableCount);
+            categories.push(now);
+
+            if (data.length > 24) {
+                data.shift();
+                categories.shift();
+            }
+
+            // Set Y-Axis max value based on current max data
+            const currentMax = Math.max(...data);
+            const yAxisMax = Math.ceil(currentMax * 1.5); // Increase by 50%
+            chart.updateOptions({
+                yaxis: { max: yAxisMax }
+            });
+
+            chart.updateOptions({ xaxis: { categories } });
+            chart.updateSeries([{ data }]);
+
+            // Save updated data to localStorage
+            localStorage.setItem('listenerData', JSON.stringify({ data, categories }));
+
+            // Clear for next batch
+            pendingSamples = [];
+        }, 5000);
+    }
 
     function parseTimeToDate(timeStr) {
         const [hours, minutes] = timeStr.split(":").map(Number);
@@ -1065,60 +1338,6 @@ $(document).ready(function () {
 
             is_form_submitting = false;
         }
-    }
-
-    function display_chart() {
-        const sales_chart_options = {
-            series: [{
-                name: 'Current Listeners',
-                data: [28, 48, 40, 19, 86, 27, 90],
-            },
-            {
-                name: 'Average Listeners',
-                data: [65, 59, 80, 81, 56, 55, 40],
-            },
-            ],
-            chart: {
-                height: 300,
-                type: 'area',
-                toolbar: {
-                    show: false,
-                },
-            },
-            legend: {
-                show: false,
-            },
-            colors: ['#0d6efd', '#20c997'],
-            dataLabels: {
-                enabled: false,
-            },
-            stroke: {
-                curve: 'smooth',
-            },
-            xaxis: {
-                type: 'datetime',
-                categories: [
-                    '2023-01-01',
-                    '2023-02-01',
-                    '2023-03-01',
-                    '2023-04-01',
-                    '2023-05-01',
-                    '2023-06-01',
-                    '2023-07-01',
-                ],
-            },
-            tooltip: {
-                x: {
-                    format: 'MMMM yyyy',
-                },
-            },
-        };
-
-        const sales_chart = new ApexCharts(
-            document.querySelector('#revenue-chart'),
-            sales_chart_options,
-        );
-        sales_chart.render();
     }
 
     function preventDevTools(enable) {

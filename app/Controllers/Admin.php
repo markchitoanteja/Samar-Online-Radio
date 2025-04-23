@@ -100,7 +100,7 @@ class Admin extends BaseController
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/dashboard');
-        $modals = view('_admin/modals/profile_modal');
+        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/more_info_current_listeners_modal') . view('_admin/modals/more_info_unique_listeners_modal');
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;
@@ -904,5 +904,21 @@ class Admin extends BaseController
         $uniqueListeners = $listenerModel->distinct()->select('ip_address')->findAll();
 
         return $this->response->setJSON(['unique_listeners' => count($uniqueListeners)]);
+    }
+
+    public function get_current_listeners_data()
+    {
+        $listenerModel = new Listener_Model();
+        $currentListeners = $listenerModel->where('is_online', 1)->findAll();
+
+        return json_encode($currentListeners);
+    }
+
+    public function get_unique_listeners_data()
+    {
+        $listenerModel = new Listener_Model();
+        $uniqueListeners = $listenerModel->distinct()->findAll();
+
+        return json_encode($uniqueListeners);
     }
 }

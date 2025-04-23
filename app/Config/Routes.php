@@ -45,3 +45,5 @@ $routes->post('/live_streaming', 'Admin::live_streaming');
 $routes->post('/get_session_index', 'Admin::get_session_index');
 $routes->post('/get_current_listeners', 'Admin::get_current_listeners');
 $routes->post('/get_unique_listeners', 'Admin::get_unique_listeners');
+$routes->post('/get_current_listeners_data', 'Admin::get_current_listeners_data');
+$routes->post('/get_unique_listeners_data', 'Admin::get_unique_listeners_data');
