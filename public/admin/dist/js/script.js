@@ -7,6 +7,12 @@ $(document).ready(function () {
     preventDevTools(false);
     is_page_loading(false);
 
+    if (notification) {
+        if (is_page_ready) {
+            display_notification(notification);
+        }
+    }
+
     if (current_tab == "dashboard") {
         display_chart();
 
@@ -65,28 +71,7 @@ $(document).ready(function () {
         });
     }
 
-    if (notification) {
-        if (is_page_ready) {
-            display_notification(notification);
-        }
-    }
-
     $("#current_year").text(new Date().getFullYear());
-
-    $('.table thead input[type="checkbox"]').on('change', function () {
-        $('.table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
-
-        toggleButtons();
-    });
-
-    $(document).on('change', '.table tbody input[type="checkbox"]', function () {
-        let totalCheckboxes = $('.table tbody input[type="checkbox"]').length;
-        let checkedCheckboxes = $('.table tbody input[type="checkbox"]').filter(':checked').length;
-
-        $('.table thead input[type="checkbox"]').prop('checked', totalCheckboxes === checkedCheckboxes);
-
-        toggleButtons();
-    });
 
     $("input:not(.ignore-validation), select:not(.ignore-validation)").each(function () {
         let inputId = $(this).attr("id");
@@ -105,12 +90,10 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on('hide.bs.modal', ".modal", function (e) {
-        if (is_form_submitting) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        }
+    $('.table thead input[type="checkbox"]').on('change', function () {
+        $('.table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+
+        toggleButtons();
     });
 
     $(".no-function").click(function () {
@@ -395,112 +378,6 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on("click", ".delete_music_btn", function () {
-        const music_id = $(this).data("id");
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#0d6efd',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                is_page_loading(true);
-
-                var formData = new FormData();
-
-                formData.append('music_id', music_id);
-
-                $.ajax({
-                    url: '../delete_music',
-                    data: formData,
-                    type: 'POST',
-                    dataType: 'JSON',
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response) {
-                            location.reload();
-                        }
-                    },
-                    error: function (_, _, error) {
-                        console.error(error);
-                    }
-                });
-            }
-        })
-    });
-
-    $(document).on("click", ".play_music_btn", function () {
-        const musicUrl = $(this).data("url");
-        const playIcon = '<i class="bi bi-play-fill"></i>';
-        const pauseIcon = '<i class="bi bi-stop-fill"></i>';
-
-        if (currentAudioPlayer && currentButton.is(this)) {
-            currentAudioPlayer.pause();
-            currentAudioPlayer.currentTime = 0;
-            currentAudioPlayer = null;
-            currentButton.html(playIcon).attr("title", "Play Music");
-            currentButton = null;
-            return;
-        }
-
-        if (currentAudioPlayer) {
-            currentAudioPlayer.pause();
-            currentAudioPlayer.currentTime = 0;
-            currentButton.html(playIcon).attr("title", "Play Music");
-        }
-
-        currentAudioPlayer = new Audio(musicUrl);
-        currentAudioPlayer.play();
-        $(this).html(pauseIcon).attr("title", "Stop Music");
-        currentButton = $(this);
-
-        currentAudioPlayer.onended = () => {
-            currentButton.html(playIcon).attr("title", "Play Music");
-            currentAudioPlayer = null;
-            currentButton = null;
-        };
-    });
-
-    $(document).on("click", ".edit_music_btn", function () {
-        const music_id = $(this).data("id");
-
-        loading(true);
-
-        $("#edit_music_modal").modal("show");
-
-        var formData = new FormData();
-        formData.append('music_id', music_id);
-
-        $.ajax({
-            url: '../get_music_by_id',
-            data: formData,
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response) {
-                    $("#edit_music_title").val(response.title);
-                    $("#edit_artist_name").val(response.artist === "Unknown Artist" ? "" : response.artist);
-                    $("#edit_music_duration").val(response.duration);
-                    $("#edit_music_size").val(response.size);
-
-                    $("#edit_music_id").val(response.id);
-
-                    loading(false);
-                }
-            },
-            error: function (_, _, error) {
-                console.error(error);
-            }
-        });
-    });
-
     $("#edit_music_form").submit(function () {
         const title = $("#edit_music_title").val();
         const artist = $.trim($("#edit_artist_name").val() || "") || "Unknown Artist";
@@ -542,11 +419,10 @@ $(document).ready(function () {
     });
 
     $("#add_to_playlist_btn").click(function () {
-        const table = $('#music_table').DataTable(); // Replace with your actual table ID
+        const table = $('#music_table').DataTable();
 
-        // Get all checked checkboxes across all pages
         const selectedCheckboxes = table
-            .rows({ search: 'applied' }) // or use `{}` to get all rows
+            .rows({ search: 'applied' })
             .nodes()
             .to$()
             .find('input[type="checkbox"]:checked');
@@ -581,14 +457,6 @@ $(document).ready(function () {
 
     $("#checkAllDays").change(function () {
         $(".day-checkbox").prop("checked", $(this).prop("checked"));
-    });
-
-    $(document).on("change", ".day-checkbox", function () {
-        if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
-            $("#checkAllDays").prop("checked", true);
-        } else {
-            $("#checkAllDays").prop("checked", false);
-        }
     });
 
     $("#add_playlist_form").submit(function (e) {
@@ -715,6 +583,424 @@ $(document).ready(function () {
         });
     });
 
+    $("#edit_checkAllDays").change(function () {
+        $(".edit-day-checkbox").prop("checked", $(this).prop("checked"));
+    });
+
+    $(".edit-day-checkbox").change(function () {
+        if ($(".edit-day-checkbox:checked").length === $(".edit-day-checkbox").length) {
+            $("#edit_checkAllDays").prop("checked", true);
+        } else {
+            $("#edit_checkAllDays").prop("checked", false);
+        }
+    });
+
+    $("#edit_playlist_form").submit(function (e) {
+        e.preventDefault();
+
+        const playlist_id = $("#edit_playlist_id").val();
+        const name = $("#edit_playlist_name").val();
+        const start_time = $("#edit_playlist_start_time").val();
+        const end_time = $("#edit_playlist_end_time").val();
+        const selected_days = $(".edit-day-checkbox:checked").map(function () {
+            return $(this).val();
+        }).get();
+
+        const time_range = start_time + " - " + end_time;
+
+        const schedule = selected_days.map(day => {
+            if (day.toLowerCase() === 'thursday') return 'Th';
+            if (day.toLowerCase() === 'saturday') return 'Sa';
+            if (day.toLowerCase() === 'sunday') return 'Su';
+            return day.charAt(0).toUpperCase();
+        }).join('-');
+
+        const startTime = parseTimeToDate(start_time);
+        const endTime = parseTimeToDate(end_time);
+
+        if (startTime >= endTime) {
+            $("#edit_playlist_start_time").addClass("is-invalid");
+            $("#edit_playlist_end_time").addClass("is-invalid");
+            $("#edit_time_error_message").removeClass("d-none");
+            return;
+        } else {
+            $("#edit_playlist_start_time").removeClass("is-invalid");
+            $("#edit_playlist_end_time").removeClass("is-invalid");
+            $("#edit_time_error_message").addClass("d-none");
+        }
+
+        const conflict = existingPlaylists.find(playlist => {
+            if (playlist.id == playlist_id) return false;
+
+            const existingDays = playlist.schedule.split('-');
+            const newDays = selected_days.map(d => {
+                if (d.toLowerCase() === 'thursday') return 'Th';
+                if (d.toLowerCase() === 'saturday') return 'Sa';
+                if (d.toLowerCase() === 'sunday') return 'Su';
+                return d.charAt(0).toUpperCase();
+            });
+
+            if (!daysOverlap(newDays, existingDays)) return false;
+
+            const [existingStartStr, existingEndStr] = playlist.time_range.split(' - ');
+            const existingStart = parseTimeToDate(existingStartStr);
+            const existingEnd = parseTimeToDate(existingEndStr);
+
+            return hasTimeConflict(startTime, endTime, existingStart, existingEnd);
+        });
+
+        if (conflict) {
+            showConflictError(conflict.name);
+            return;
+        }
+
+        loading(true);
+
+        const formData = new FormData();
+        formData.append('playlist_id', playlist_id);
+        formData.append('name', name);
+        formData.append('schedule', schedule);
+        formData.append('time_range', time_range);
+
+        $.ajax({
+            url: '../edit_playlist',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    $("#live_streaming").click(function () {
+        is_page_loading(true);
+
+        $.ajax({
+            url: '../live_streaming',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    $("#public_page").click(function () {
+        window.open(base_url, '_blank');
+        location.reload();
+    });
+
+    $("#server_music_player").click(function () {
+        window.open("server_music_player", '_blank');
+        location.reload();
+    });
+
+    $("#more_info_current_listeners").click(function () {
+        $("#more_info_current_listeners_modal").modal("show");
+
+        loading(true);
+
+        $.ajax({
+            url: '../get_current_listeners_data',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const tableId = "current_listeners_table";
+                const $table = $("#" + tableId);
+                const tableElem = $table.get(0);
+
+                if ($.fn.DataTable.isDataTable(tableElem)) {
+                    $table.DataTable().clear().destroy();
+                }
+
+                $table.find("tbody").empty();
+
+                if (response.length > 0) {
+                    response.forEach(function (listener) {
+                        const ip = listener.ip_address;
+                        const userAgent = listener.user_agent;
+
+                        const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
+                        const humanReadable = lastActivity.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                        $table.find("tbody").append(`
+                            <tr>
+                                <td>${ip}</td>
+                                <td>${userAgent}</td>
+                                <td>${humanReadable}</td>
+                            </tr>
+                        `);
+                    });
+                }
+
+                $table.DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    lengthChange: false,
+                    paging: true,
+                    searching: true,
+                    ordering: false,
+                    info: true,
+                });
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+                loading(false);
+            }
+        });
+    });
+
+    $("#more_info_unique_listeners").click(function () {
+        $("#more_info_unique_listeners_modal").modal("show");
+
+        loading(true);
+
+        $.ajax({
+            url: '../get_unique_listeners_data',
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const $table = $("#unique_listeners_table");
+
+                if ($.fn.DataTable.isDataTable($table)) {
+                    $table.DataTable().clear().destroy();
+                }
+
+                $table.find("tbody").empty();
+
+                if (response.length > 0) {
+                    response.forEach(function (listener) {
+                        const ip = listener.ip_address;
+                        const userAgent = listener.user_agent;
+
+                        const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
+                        const humanReadable = lastActivity.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                        $table.find("tbody").append(`
+                            <tr>
+                                <td>${ip}</td>
+                                <td>${userAgent}</td>
+                                <td>${humanReadable}</td>
+                            </tr>
+                        `);
+                    });
+                }
+
+                $table.DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    lengthChange: false,
+                    paging: true,
+                    searching: true,
+                    ordering: false,
+                    info: true,
+                });
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+                loading(false);
+            }
+        });
+    });
+
+    $("#more_info_storage_usage").click(function () {
+        const storageUsage = $("#storage_usage").text();
+        const totalStorage = 30 * 1024;
+        const usedStorage = parseFloat(totalStorage * (storageUsage / 100)).toFixed(2);
+        const freeStorage = parseFloat(totalStorage - usedStorage).toFixed(2);
+
+        Swal.fire({
+            title: 'Storage Usage',
+            html: `
+                <div class="text-center">
+                    <p>Total Storage: <strong>${(totalStorage / 1024).toFixed(2)} GB</strong></p>
+                    <p>Used Storage: <strong>${(usedStorage / 1024).toFixed(2)} GB</strong></p>
+                    <p>Free Storage: <strong>${(freeStorage / 1024).toFixed(2)} GB</strong></p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonColor: '#0d6efd',
+        });
+    })
+
+    $(document).on("click", ".remove-playlist", function () {
+        const $btn = $(this);
+        const playlist_id = $btn.data("playlist_id");
+        const song_id = $btn.data("song_id");
+
+        $(".confirm-remove-buttons").each(function () {
+            const $group = $(this);
+            const pid = $group.find(".confirm-remove").data("playlist_id");
+            const sid = $group.find(".confirm-remove").data("song_id");
+            $group.replaceWith(`
+                <button class="btn btn-outline-danger btn-sm remove-playlist" data-playlist_id="${pid}" data-song_id="${sid}">
+                    Remove
+                </button>
+            `);
+        });
+
+        const confirmCancelHtml = `
+            <div class="confirm-remove-buttons d-flex gap-2">
+            <button class="btn btn-outline-danger btn-sm cancel-remove">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm confirm-remove" data-playlist_id="${playlist_id}" data-song_id="${song_id}">
+                    <i class="bi bi-check-lg"></i>
+                </button>
+            </div>
+        `;
+
+        $btn.replaceWith(confirmCancelHtml);
+    });
+
+    $(document).on("click", ".cancel-remove", function () {
+        const $parent = $(this).closest(".confirm-remove-buttons");
+        const playlist_id = $parent.find(".confirm-remove").data("playlist_id");
+        const song_id = $parent.find(".confirm-remove").data("song_id");
+
+        const originalBtn = `
+            <button class="btn btn-outline-danger btn-sm remove-playlist" data-playlist_id="${playlist_id}" data-song_id="${song_id}">
+                Remove
+            </button>
+        `;
+
+        $parent.replaceWith(originalBtn);
+    });
+
+    $(document).on("click", ".confirm-remove", function () {
+        const playlist_id = $(this).data("playlist_id");
+        const song_id = $(this).data("song_id");
+
+        const $btn = $(this);
+        $btn.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`).prop("disabled", true);
+
+        $(".cancel-remove").remove();
+        $(".remove-playlist").attr("disabled", true);
+
+        is_form_submitting = true;
+
+        var formData = new FormData();
+
+        formData.append('playlist_id', playlist_id);
+        formData.append('song_id', song_id);
+
+        $.ajax({
+            url: '../remove_playlist_from_the_song',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    $(document).on("click", ".view-playlists", function () {
+        var id = $(this).data("id");
+        var playlistIds = $(this).data("playlistIds");
+
+        $("#view_playlists_modal").modal("show");
+
+        loading(true);
+
+        var formData = new FormData();
+
+        formData.append('song_id', id);
+        formData.append('playlistIds', playlistIds);
+
+        $.ajax({
+            url: '../get_playlists_by_ids',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const container = $("#view_playlists_modal .playlist-list");
+                container.empty();
+
+                const song_id = response.song_id;
+                const playlists = response.playlists || [];
+
+                if (playlists.length > 0) {
+                    playlists.forEach(function (playlist) {
+                        const cardHtml = `
+                            <div class="card mb-3 playlist-card">
+                                <div class="card-body d-flex align-items-start">
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <img src="../public/img/audio-placeholder.webp" alt="Playlist Cover" class="playlist-thumb me-3">
+                                        <div>
+                                            <h5 class="mb-1 fw-semibold">${playlist.name} 
+                                                <span class="badge bg-success ms-2">Public</span>
+                                            </h5>
+                                            <small class="text-muted">${playlist.song_ids.split(',').length} songs · Created on ${new Date(playlist.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-end ms-3">
+                                        <button class="btn btn-outline-danger btn-sm align-self-start remove-playlist" data-playlist_id="${playlist.id}" data-song_id="${song_id}">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        container.append(cardHtml);
+                    });
+                } else {
+                    container.append('<h3 class="text-center py-5 text-muted">This song is not in any playlist yet.</h3>');
+                }
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
     $(document).on("click", ".delete_playlist_btn", function () {
         const playlist_id = $(this).data("id");
 
@@ -827,88 +1113,97 @@ $(document).ready(function () {
         });
     });
 
-    $("#edit_checkAllDays").change(function () {
-        $(".edit-day-checkbox").prop("checked", $(this).prop("checked"));
-    });
-
-    $(".edit-day-checkbox").change(function () {
-        if ($(".edit-day-checkbox:checked").length === $(".edit-day-checkbox").length) {
-            $("#edit_checkAllDays").prop("checked", true);
+    $(document).on("change", ".day-checkbox", function () {
+        if ($(".day-checkbox:checked").length === $(".day-checkbox").length) {
+            $("#checkAllDays").prop("checked", true);
         } else {
-            $("#edit_checkAllDays").prop("checked", false);
+            $("#checkAllDays").prop("checked", false);
         }
     });
 
-    $("#edit_playlist_form").submit(function (e) {
-        e.preventDefault();
+    $(document).on("click", ".delete_music_btn", function () {
+        const music_id = $(this).data("id");
 
-        const playlist_id = $("#edit_playlist_id").val();
-        const name = $("#edit_playlist_name").val();
-        const start_time = $("#edit_playlist_start_time").val();
-        const end_time = $("#edit_playlist_end_time").val();
-        const selected_days = $(".edit-day-checkbox:checked").map(function () {
-            return $(this).val();
-        }).get();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                is_page_loading(true);
 
-        const time_range = start_time + " - " + end_time;
+                var formData = new FormData();
 
-        const schedule = selected_days.map(day => {
-            if (day.toLowerCase() === 'thursday') return 'Th';
-            if (day.toLowerCase() === 'saturday') return 'Sa';
-            if (day.toLowerCase() === 'sunday') return 'Su';
-            return day.charAt(0).toUpperCase();
-        }).join('-');
+                formData.append('music_id', music_id);
 
-        const startTime = parseTimeToDate(start_time);
-        const endTime = parseTimeToDate(end_time);
+                $.ajax({
+                    url: '../delete_music',
+                    data: formData,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response) {
+                            location.reload();
+                        }
+                    },
+                    error: function (_, _, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        })
+    });
 
-        if (startTime >= endTime) {
-            $("#edit_playlist_start_time").addClass("is-invalid");
-            $("#edit_playlist_end_time").addClass("is-invalid");
-            $("#edit_time_error_message").removeClass("d-none");
-            return;
-        } else {
-            $("#edit_playlist_start_time").removeClass("is-invalid");
-            $("#edit_playlist_end_time").removeClass("is-invalid");
-            $("#edit_time_error_message").addClass("d-none");
-        }
+    $(document).on("click", ".play_music_btn", function () {
+        const musicUrl = $(this).data("url");
+        const playIcon = '<i class="bi bi-play-fill"></i>';
+        const pauseIcon = '<i class="bi bi-stop-fill"></i>';
 
-        const conflict = existingPlaylists.find(playlist => {
-            if (playlist.id == playlist_id) return false;
-
-            const existingDays = playlist.schedule.split('-');
-            const newDays = selected_days.map(d => {
-                if (d.toLowerCase() === 'thursday') return 'Th';
-                if (d.toLowerCase() === 'saturday') return 'Sa';
-                if (d.toLowerCase() === 'sunday') return 'Su';
-                return d.charAt(0).toUpperCase();
-            });
-
-            if (!daysOverlap(newDays, existingDays)) return false;
-
-            const [existingStartStr, existingEndStr] = playlist.time_range.split(' - ');
-            const existingStart = parseTimeToDate(existingStartStr);
-            const existingEnd = parseTimeToDate(existingEndStr);
-
-            return hasTimeConflict(startTime, endTime, existingStart, existingEnd);
-        });
-
-        if (conflict) {
-            showConflictError(conflict.name);
+        if (currentAudioPlayer && currentButton.is(this)) {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            currentAudioPlayer = null;
+            currentButton.html(playIcon).attr("title", "Play Music");
+            currentButton = null;
             return;
         }
 
-        // No conflicts, proceed
+        if (currentAudioPlayer) {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            currentButton.html(playIcon).attr("title", "Play Music");
+        }
+
+        currentAudioPlayer = new Audio(musicUrl);
+        currentAudioPlayer.play();
+        $(this).html(pauseIcon).attr("title", "Stop Music");
+        currentButton = $(this);
+
+        currentAudioPlayer.onended = () => {
+            currentButton.html(playIcon).attr("title", "Play Music");
+            currentAudioPlayer = null;
+            currentButton = null;
+        };
+    });
+
+    $(document).on("click", ".edit_music_btn", function () {
+        const music_id = $(this).data("id");
+
         loading(true);
 
-        const formData = new FormData();
-        formData.append('playlist_id', playlist_id);
-        formData.append('name', name);
-        formData.append('schedule', schedule);
-        formData.append('time_range', time_range);
+        $("#edit_music_modal").modal("show");
+
+        var formData = new FormData();
+        formData.append('music_id', music_id);
 
         $.ajax({
-            url: '../edit_playlist',
+            url: '../get_music_by_id',
             data: formData,
             type: 'POST',
             dataType: 'JSON',
@@ -916,7 +1211,14 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 if (response) {
-                    location.reload();
+                    $("#edit_music_title").val(response.title);
+                    $("#edit_artist_name").val(response.artist === "Unknown Artist" ? "" : response.artist);
+                    $("#edit_music_duration").val(response.duration);
+                    $("#edit_music_size").val(response.size);
+
+                    $("#edit_music_id").val(response.id);
+
+                    loading(false);
                 }
             },
             error: function (_, _, error) {
@@ -925,198 +1227,22 @@ $(document).ready(function () {
         });
     });
 
-    $("#live_streaming").click(function () {
-        is_page_loading(true);
-
-        $.ajax({
-            url: '../live_streaming',
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response) {
-                    location.reload();
-                }
-            },
-            error: function (_, _, error) {
-                console.error(error);
-            }
-        });
+    $(document).on('hide.bs.modal', ".modal", function (e) {
+        if (is_form_submitting) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
     });
 
-    $("#public_page").click(function () {
-        window.open(base_url, '_blank');
-        location.reload();
+    $(document).on('change', '.table tbody input[type="checkbox"]', function () {
+        let totalCheckboxes = $('.table tbody input[type="checkbox"]').length;
+        let checkedCheckboxes = $('.table tbody input[type="checkbox"]').filter(':checked').length;
+
+        $('.table thead input[type="checkbox"]').prop('checked', totalCheckboxes === checkedCheckboxes);
+
+        toggleButtons();
     });
-
-    $("#server_music_player").click(function () {
-        window.open("server_music_player", '_blank');
-        location.reload();
-    });
-
-    $(document).on("click", ".view-playlists", function () {
-        $("#view_playlists_modal").modal("show");
-    });
-
-    $("#more_info_current_listeners").click(function () {
-        $("#more_info_current_listeners_modal").modal("show");
-
-        loading(true);
-
-        $.ajax({
-            url: '../get_current_listeners_data',
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                const tableId = "current_listeners_table";
-                const $table = $("#" + tableId);
-                const tableElem = $table.get(0); // raw DOM element
-
-                // Safely destroy existing DataTable if already initialized
-                if ($.fn.DataTable.isDataTable(tableElem)) {
-                    $table.DataTable().clear().destroy();
-                }
-
-                $table.find("tbody").empty();
-
-                response.forEach(function (listener) {
-                    const ip = listener.ip_address;
-                    const userAgent = listener.user_agent;
-
-                    const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
-                    const humanReadable = lastActivity.toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                    });
-
-                    $table.find("tbody").append(`
-                        <tr>
-                            <td>${ip}</td>
-                            <td>${userAgent}</td>
-                            <td>${humanReadable}</td>
-                        </tr>
-                    `);
-                });
-
-                // Initialize DataTable cleanly
-                $table.DataTable({
-                    responsive: true,
-                    autoWidth: false,
-                    lengthChange: false,
-                    paging: true,
-                    searching: true,
-                    ordering: false,
-                    info: true,
-                });
-
-                loading(false);
-            },
-            error: function (_, _, error) {
-                console.error(error);
-                loading(false);
-            }
-        });
-    });
-
-
-    $("#more_info_unique_listeners").click(function () {
-        $("#more_info_unique_listeners_modal").modal("show");
-
-        loading(true);
-
-        $.ajax({
-            url: '../get_unique_listeners_data',
-            type: 'POST',
-            dataType: 'JSON',
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                const $table = $("#unique_listeners_table");
-
-                // Destroy previous DataTable if exists
-                if ($.fn.DataTable.isDataTable($table)) {
-                    $table.DataTable().clear().destroy();
-                }
-
-                $table.find("tbody").empty();
-
-                if (response.length > 0) {
-                    response.forEach(function (listener) {
-                        const ip = listener.ip_address;
-                        const userAgent = listener.user_agent;
-
-                        const lastActivity = new Date(listener.last_activity.replace(' ', 'T'));
-                        const humanReadable = lastActivity.toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            hour12: true
-                        });
-
-                        $table.find("tbody").append(`
-                            <tr>
-                                <td>${ip}</td>
-                                <td>${userAgent}</td>
-                                <td>${humanReadable}</td>
-                            </tr>
-                        `);
-                    });
-                } else {
-                    $table.find("tbody").append(`
-                        <tr>
-                            <td colspan="3" class="text-center">No unique listeners</td>
-                        </tr>
-                    `);
-                }
-
-                // Initialize or reinitialize DataTable
-                $table.DataTable({
-                    responsive: true,
-                    autoWidth: false,
-                    lengthChange: false,
-                    paging: true,
-                    searching: true,
-                    ordering: false,
-                    info: true,
-                });
-
-                loading(false);
-            },
-            error: function (_, _, error) {
-                console.error(error);
-                loading(false);
-            }
-        });
-    });
-
-    $("#more_info_storage_usage").click(function () {
-        const storageUsage = $("#storage_usage").text();
-        const totalStorage = 30 * 1024;
-        const usedStorage = parseFloat(totalStorage * (storageUsage / 100)).toFixed(2);
-        const freeStorage = parseFloat(totalStorage - usedStorage).toFixed(2);
-
-        Swal.fire({
-            title: 'Storage Usage',
-            html: `
-                <div class="text-center">
-                    <p>Total Storage: <strong>${(totalStorage / 1024).toFixed(2)} GB</strong></p>
-                    <p>Used Storage: <strong>${(usedStorage / 1024).toFixed(2)} GB</strong></p>
-                    <p>Free Storage: <strong>${(freeStorage / 1024).toFixed(2)} GB</strong></p>
-                </div>
-            `,
-            icon: 'info',
-            confirmButtonColor: '#0d6efd',
-        });
-    })
 
     function fetchCounts(callback) {
         $.ajax({
@@ -1133,7 +1259,7 @@ $(document).ready(function () {
             },
             error: () => {
                 console.error('Error fetching listener counts');
-                if (callback) callback(0); // Optional: fallback to 0
+                if (callback) callback(0);
             },
         });
     }
@@ -1161,7 +1287,6 @@ $(document).ready(function () {
         let categories = [];
         let pendingSamples = [];
 
-        // Retrieve previous chart data from localStorage if it exists
         const savedData = localStorage.getItem('listenerData');
         if (savedData) {
             const parsedData = JSON.parse(savedData);
@@ -1205,7 +1330,7 @@ $(document).ready(function () {
             yaxis: {
                 title: { text: 'Listeners' },
                 min: 0,
-                max: 5  // Default max value
+                max: 5
             },
             tooltip: {
                 x: { format: 'HH:mm:ss' }
@@ -1218,27 +1343,23 @@ $(document).ready(function () {
 
         chart.render();
 
-        // 1️⃣ Sample every 1 second
         setInterval(() => {
             fetchCounts((count) => {
                 pendingSamples.push(count);
 
-                // Optional: keep buffer short
                 if (pendingSamples.length > 10) {
                     pendingSamples.shift();
                 }
 
-                $('#current_listeners').text(count); // Still show real-time
+                $('#current_listeners').text(count);
             });
 
             fetchUniqueListeners();
         }, 1000);
 
-        // 2️⃣ Every 5 seconds, push averaged/max count to chart
         setInterval(() => {
             if (pendingSamples.length === 0) return;
 
-            // Use MAX for reliability (or use average if you prefer)
             const reliableCount = Math.max(...pendingSamples);
             const now = new Date().toISOString();
 
@@ -1250,9 +1371,8 @@ $(document).ready(function () {
                 categories.shift();
             }
 
-            // Set Y-Axis max value based on current max data
             const currentMax = Math.max(...data);
-            const yAxisMax = Math.ceil(currentMax * 1.5); // Increase by 50%
+            const yAxisMax = Math.ceil(currentMax * 1.5);
             chart.updateOptions({
                 yaxis: { max: yAxisMax }
             });
@@ -1260,10 +1380,8 @@ $(document).ready(function () {
             chart.updateOptions({ xaxis: { categories } });
             chart.updateSeries([{ data }]);
 
-            // Save updated data to localStorage
             localStorage.setItem('listenerData', JSON.stringify({ data, categories }));
 
-            // Clear for next batch
             pendingSamples = [];
         }, 5000);
     }
@@ -1391,4 +1509,4 @@ $(document).ready(function () {
             </div>`;
         }
     }
-})
+});

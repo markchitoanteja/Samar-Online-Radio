@@ -5,23 +5,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Samar Online Radio - Connecting Samar to the World</title>
+    <title>Samar Online Radio | Connecting Samar to the World</title>
 
-    <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!" />
-    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio" />
+    <meta name="description" content="Samar Online Radio brings you 24/7 music, live DJ shows, and updates from Samar and the Philippines. Listen live now!" />
+    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Filipino Music, Philippines Radio" />
     <meta name="author" content="Samar Online Radio Team" />
     <meta name="robots" content="index, follow" />
 
-    <meta property="og:title" content="Samar Online Radio - Connecting Samar to the World" />
-    <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!" />
-    <meta property="og:image" content="public/img/cover.webp" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Samar Online Radio | Connecting Samar to the World" />
+    <meta property="og:description" content="Samar Online Radio offers 24/7 music, DJ sessions, and news from the Philippines. Tune in now!" />
+    <meta property="og:image" content="https://samaronlineradio.com/public/img/cover.webp" />
     <meta property="og:url" content="https://samaronlineradio.com" />
     <meta property="og:type" content="website" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Samar Online Radio - Connecting Samar to the World" />
-    <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio." />
-    <meta name="twitter:image" content="public/img/cover.webp" />
+    <meta name="twitter:title" content="Samar Online Radio | Connecting Samar to the World" />
+    <meta name="twitter:description" content="Enjoy nonstop Filipino music and live DJ sessions. Streaming 24/7 from Samar!" />
+    <meta name="twitter:image" content="https://samaronlineradio.com/public/img/cover.webp" />
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "RadioStation",
+            "name": "Samar Online Radio",
+            "url": "https://samaronlineradio.com",
+            "logo": "https://samaronlineradio.com/public/img/logo.webp",
+            "sameAs": [
+                "https://www.facebook.com/profile.php?id=61572979705153",
+                "https://youtube.com/@salvadord.e"
+            ],
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Samar",
+                "addressCountry": "PH"
+            }
+        }
+    </script>
+
+    <link rel="canonical" href="https://samaronlineradio.com/" />
 
     <link rel="shortcut icon" href="favicon.ico?v=3.3.3" type="image/x-icon" />
 

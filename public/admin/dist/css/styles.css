@@ -28,3 +28,41 @@
 .dataTables_filter {
     margin-bottom: 10px;
 }
+
+.playlist-list {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.playlist-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.playlist-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.playlist-list .playlist-card {
+    border-radius: 1rem;
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease;
+    background-color: #fdfdfd;
+}
+
+.playlist-list .playlist-card:hover {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.playlist-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.playlist-badge {
+    font-size: 0.7rem;
+    vertical-align: middle;
+}

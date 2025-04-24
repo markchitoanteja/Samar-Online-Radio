@@ -873,7 +873,7 @@ class Admin extends BaseController
 
         session()->setFlashdata("notification", $notification);
 
-        return json_encode(true);
+        return $this->response->setJSON(true);
     }
 
     public function update_listener_activity()
@@ -920,5 +920,76 @@ class Admin extends BaseController
         $uniqueListeners = $listenerModel->distinct()->findAll();
 
         return json_encode($uniqueListeners);
+    }
+
+    public function get_playlists_by_ids()
+    {
+        $song_id = $this->request->getPost("song_id");
+        $playlist_ids = $this->request->getPost("playlistIds");
+
+        $Playlist_Model = new Playlist_Model();
+
+        if (!is_array($playlist_ids)) {
+            $playlist_ids = !empty($playlist_ids) ? explode(",", $playlist_ids) : [];
+        }
+
+        $playlists = $Playlist_Model->whereIn('id', $playlist_ids)->findAll();
+
+        $response = [
+            "song_id" => $song_id,
+            "playlists" => $playlists,
+        ];
+
+        return json_encode($response);
+    }
+
+    public function remove_playlist_from_the_song()
+    {
+        $playlist_id = trim((string) $this->request->getPost("playlist_id"));
+        $song_id = trim((string) $this->request->getPost("song_id"));
+
+        $Playlist_Model = new Playlist_Model();
+        $Song_Model = new Song_Model();
+
+        // Remove playlist_id from song's playlist_ids
+        $song = $Song_Model->find($song_id);
+        if ($song) {
+            $playlist_ids = !empty($song['playlist_ids']) ? array_map('trim', explode(',', $song['playlist_ids'])) : [];
+
+            $updated_playlist_ids = array_filter($playlist_ids, function ($pid) use ($playlist_id) {
+                return $pid !== $playlist_id;
+            });
+
+            $Song_Model->update($song_id, [
+                'playlist_ids' => implode(',', $updated_playlist_ids),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        // Remove song_id from playlist's song_ids
+        $playlist = $Playlist_Model->find($playlist_id);
+        if ($playlist) {
+            $song_ids = !empty($playlist['song_ids']) ? array_map('trim', explode(',', $playlist['song_ids'])) : [];
+
+            $updated_song_ids = array_filter($song_ids, function ($sid) use ($song_id) {
+                return $sid !== $song_id;
+            });
+
+            $Playlist_Model->update($playlist_id, [
+                'song_ids' => implode(',', $updated_song_ids),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        // Flash message for feedback
+        $notification = [
+            "title" => "Success!",
+            "text" => "Playlist is removed from the song successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        return $this->response->setJSON(true);
     }
 }

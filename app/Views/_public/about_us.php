@@ -4,28 +4,25 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Samar Online Radio - About Us</title>
 
-    <!-- Meta tags -->
-    <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!" />
-    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio" />
+    <title>Samar Online Radio | About Us - Connecting Samar to the World</title>
+
+    <meta name="description" content="Learn more about Samar Online Radio. We bring you non-stop music, live DJ sessions, and the latest hits from Samar and the Philippines." />
+    <meta name="keywords" content="Samar Online Radio, About Us, Filipino Radio, Live DJ, Music Streaming, Philippines Radio, Samar Radio Station" />
     <meta name="author" content="Samar Online Radio Team" />
     <meta name="robots" content="index, follow" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Samar Online Radio - Connecting Samar to the World" />
-    <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!" />
-    <meta property="og:image" content="public/img/cover.webp" />
-    <meta property="og:url" content="https://samaronlineradio.com" />
+    <meta property="og:title" content="Samar Online Radio | About Us - Connecting Samar to the World" />
+    <meta property="og:description" content="Discover Samar Online Radio's mission, values, and how we connect Samar to the world through music, live DJ shows, and cultural vibes." />
+    <meta property="og:image" content="https://samaronlineradio.com/public/img/cover.webp" />
+    <meta property="og:url" content="https://samaronlineradio.com/about_us" />
     <meta property="og:type" content="website" />
 
-    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Samar Online Radio - Connecting Samar to the World" />
-    <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio." />
-    <meta name="twitter:image" content="public/img/cover.webp" />
+    <meta name="twitter:title" content="Samar Online Radio | About Us - Connecting Samar to the World" />
+    <meta name="twitter:description" content="Learn more about Samar Online Radio's mission and our journey to connect the world with Samar's music and culture." />
+    <meta name="twitter:image" content="https://samaronlineradio.com/public/img/cover.webp" />
 
-    <!-- Favicon -->
     <link rel="shortcut icon" href="favicon.ico?v=3.3.3" type="image/x-icon" />
 
     <link rel="stylesheet" href="public/admin/dist/css/adminlte.css?v=1.0.1" />

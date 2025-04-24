@@ -59,7 +59,7 @@
                                             <td><?= date('F j, Y, g:i a', strtotime($song['updated_at'])) ?></td>
                                             <td class="text-center">
                                                 <?php if (!empty($song['playlist_ids'])): ?>
-                                                    <a class="view-playlists btn btn-outline-primary btn-sm" href="javascript:void(0)" data-playlist-ids="<?= $song['playlist_ids'] ?>">View</a>
+                                                    <a class="view-playlists btn btn-outline-primary btn-sm" href="javascript:void(0)" data-playlist-ids="<?= $song['playlist_ids'] ?>" data-id="<?= $song['id'] ?>">View</a>
                                                 <?php else: ?>
                                                     <small class="text-muted">Not Yet Available</small>
                                                 <?php endif ?>

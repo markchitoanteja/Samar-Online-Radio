@@ -1,15 +1,14 @@
 $(document).ready(function () {
     let currentSongIndex = 0;
     let songs = [];
-    let audioElement = $('#audioPlayer')[0];
     let is_playing = true;
     let savedSessionData = null;
     let loggingInterval = null;
     let playbackFailures = 0;
     let current_songs_data = null;
+    let audioElement = $('#audioPlayer')[0];
 
     fetchSessionIndex();
-
     setInterval(update_listener_activity, 30000);
 
     var music_table = $('#music_table').DataTable({

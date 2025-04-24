@@ -7,21 +7,7 @@
 
     <title>Samar Online Radio - <?= session()->get("title") ?></title>
 
-    <meta name="description" content="Listen to Samar Online Radio for non-stop music, latest hits, and live DJ sessions. Connecting Samar to the World!">
-    <meta name="keywords" content="Samar Online Radio, Online Radio, Live DJ, Music Streaming, Philippines Radio">
-    <meta name="author" content="Samar Online Radio Team">
-    <meta name="robots" content="index, follow">
-
-    <meta property="og:title" content="Samar Online Radio - <?= session()->get("title") ?>">
-    <meta property="og:description" content="Tune in for non-stop music, latest hits, and live DJ sessions. Join the vibe now!">
-    <meta property="og:image" content="../public/img/cover.webp">
-    <meta property="og:url" content="https://samaronlineradio.com">
-    <meta property="og:type" content="website">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Samar Online Radio - <?= session()->get("title") ?>">
-    <meta name="twitter:description" content="Listen to the latest hits and live DJ sessions at Samar Online Radio.">
-    <meta name="twitter:image" content="../public/img/cover.webp">
+    <meta name="robots" content="noindex, nofollow">
 
     <link rel="shortcut icon" href="../favicon.ico?v=1.0.0" type="image/x-icon">
 
@@ -42,7 +28,7 @@
     <?php endif ?>
 
     <link rel="stylesheet" href="../public/admin/dist/css/adminlte.css?v=1.0.0" />
-    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.0" />
+    <link rel="stylesheet" href="../public/admin/dist/css/styles.css?v=1.0.1" />
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -128,7 +114,7 @@
                             <a href="javascript:void(0)" class="nav-link" id="live_streaming">
                                 <i class="nav-icon bi bi-mic"></i>
                                 <p>
-                                    Live Streaming  
+                                    Live Streaming
                                     <small class="bi bi-box-arrow-up-right ms-1"></small>
                                 </p>
                             </a>
