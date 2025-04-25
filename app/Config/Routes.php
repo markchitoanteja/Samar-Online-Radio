@@ -49,3 +49,5 @@ $routes->post('/get_current_listeners_data', 'Admin::get_current_listeners_data'
 $routes->post('/get_unique_listeners_data', 'Admin::get_unique_listeners_data');
 $routes->post('/get_playlists_by_ids', 'Admin::get_playlists_by_ids');
 $routes->post('/remove_playlist_from_the_song', 'Admin::remove_playlist_from_the_song');
+$routes->post('/get_songs_by_playlist_id', 'Admin::get_songs_by_playlist_id');
+$routes->post('/update_playlist_order', 'Admin::update_playlist_order');

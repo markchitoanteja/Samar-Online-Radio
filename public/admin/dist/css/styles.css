@@ -30,7 +30,7 @@
 }
 
 .playlist-list {
-    max-height: 320px;
+    max-height: 400px;
     overflow-y: auto;
     padding-right: 5px;
 }
@@ -40,8 +40,8 @@
 }
 
 .playlist-list::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
 }
 
 .playlist-list .playlist-card {
@@ -65,4 +65,51 @@
 .playlist-badge {
     font-size: 0.7rem;
     vertical-align: middle;
+}
+
+.song-card {
+    border-radius: 12px;
+    cursor: grab;
+    transition: box-shadow 0.2s ease, background-color 0.2s ease;
+    background-color: #ffffff;
+}
+
+.song-card:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sortable-chosen {
+    background-color: #e9ecef !important;
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+}
+
+.drag-handle {
+    cursor: grab;
+    user-select: none;
+}
+
+#sortableSongs::-webkit-scrollbar {
+    width: 6px;
+}
+
+#sortableSongs::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+#sortableSongs {
+    scrollbar-width: thin;
+}
+
+.remove-song-btn {
+    transition: background-color 0.2s ease;
+}
+
+.remove-song-btn:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
 }

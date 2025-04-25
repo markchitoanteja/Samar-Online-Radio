@@ -46,7 +46,7 @@
                                             <td><?= $playlist['schedule'] ?></td>
                                             <td><?= date("g:i A", strtotime(explode('-', $playlist['time_range'])[0])) . ' - ' . date("g:i A", strtotime(explode('-', $playlist['time_range'])[1])) ?></td>
                                             <td>
-                                                <a href="javascript:void(0)" class="no-function" data-playlist-id="<?= $playlist['id'] ?>">
+                                                <a href="javascript:void(0)" class="view-songs" data-playlist_id="<?= $playlist['id'] ?>" data-song_ids="<?= $playlist['song_ids'] ?>">
                                                     <?= ($songCount = count(array_filter(explode(',', trim($playlist['song_ids']))))) === 0 ? "No Song" : ($songCount === 1 ? "1 Song" : "$songCount Songs") ?>
                                                 </a>
                                             </td>

@@ -3,6 +3,7 @@ $(document).ready(function () {
     let currentAudioPlayer = null;
     let currentButton = null;
     let is_page_ready = false;
+    let initialOrder = [];
 
     preventDevTools(false);
     is_page_loading(false);
@@ -858,7 +859,40 @@ $(document).ready(function () {
             icon: 'info',
             confirmButtonColor: '#0d6efd',
         });
-    })
+    });
+
+    $('#save_playlist_changes').on('click', function () {
+        const playlist_id = $("#view_songs_playlist_id").val();
+        const newOrder = [];
+
+        loading(true);
+
+        $('#sortableSongs .song-card').each(function () {
+            newOrder.push($(this).data('id'));
+        });
+
+        var formData = new FormData();
+
+        formData.append('playlist_id', playlist_id);
+        formData.append('song_ids', newOrder);
+
+        $.ajax({
+            url: '../update_playlist_order',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response) {
+                    location.reload();
+                }
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
 
     $(document).on("click", ".remove-playlist", function () {
         const $btn = $(this);
@@ -1243,6 +1277,103 @@ $(document).ready(function () {
 
         toggleButtons();
     });
+
+    $(document).on("click", ".view-songs", function () {
+        const playlist_id = $(this).data("playlist_id");
+
+        $("#view_songs_modal").modal("show");
+
+        loading(true);
+
+        var formData = new FormData();
+        formData.append('playlist_id', playlist_id);
+
+        $.ajax({
+            url: '../get_songs_by_playlist_id',
+            data: formData,
+            type: 'POST',
+            dataType: 'JSON',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                const $songsContainer = $("#sortableSongs");
+                $songsContainer.empty();
+
+                const songs = response;
+
+                if (songs.length === 0) {
+                    $songsContainer.html(`
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-music-note-off fs-1"></i>
+                            <p class="mt-3 mb-0">No songs found in this playlist.</p>
+                        </div>
+                    `);
+                } else {
+                    $("#view_songs_playlist_id").val(playlist_id);
+
+                    songs.forEach(song => {
+                        const songCard = `
+                            <div class="card song-card border-0 shadow-sm p-3 position-relative d-flex" data-id="${song.id}">
+                                <div class="d-flex align-items-start w-100">
+                                    <div class="drag-handle me-3 text-secondary fs-5 mt-1" title="Drag to reorder">
+                                        <i class="bi bi-grip-vertical"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold fs-6 mb-1">${song.title}</div>
+                                        <div class="text-muted small"><strong>Artist:</strong> ${song.artist}</div>
+                                        <div class="text-muted small"><strong>Duration:</strong> ${song.duration}</div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger border-0 ms-3 remove-song-btn" title="Remove Song">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        $songsContainer.append(songCard);
+                    });
+                }
+
+                enableSortable();
+
+                initialOrder = songs.map(song => song.id);
+
+                loading(false);
+            },
+            error: function (_, _, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    $(document).on('click', '.remove-song-btn', function () {
+        $(this).closest('.song-card').remove();
+        $('#save_playlist_changes').removeClass('d-none');
+    });
+
+    function checkOrderChange() {
+        const currentOrder = [];
+
+        $('#sortableSongs .song-card').each(function () {
+            currentOrder.push($(this).data('id'));
+        });
+
+        if (JSON.stringify(initialOrder) !== JSON.stringify(currentOrder)) {
+            $('#save_playlist_changes').removeClass('d-none');
+        } else {
+            $('#save_playlist_changes').addClass('d-none');
+        }
+    }
+
+    function enableSortable() {
+        new Sortable(document.getElementById('sortableSongs'), {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onEnd: function () {
+                checkOrderChange();
+            }
+        });
+    }
 
     function fetchCounts(callback) {
         $.ajax({

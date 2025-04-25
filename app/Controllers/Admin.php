@@ -166,7 +166,7 @@ class Admin extends BaseController
 
         $header = view('_admin/templates/header', $data);
         $body = view('_admin/playlists');
-        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/add_playlist_modal') . view('_admin/modals/edit_playlist_modal');
+        $modals = view('_admin/modals/profile_modal') . view('_admin/modals/add_playlist_modal') . view('_admin/modals/edit_playlist_modal') . view('_admin/modals/view_songs_modal');
         $footer = view('_admin/templates/footer');
 
         return $header . $body . $modals . $footer;
@@ -374,18 +374,16 @@ class Admin extends BaseController
                 "updated_at" => date("Y-m-d H:i:s")
             ];
 
-            // Insert into the Song_Model
             $Song_Model = new Song_Model();
             $Song_Model->insert($data);
 
-            // Success notification
             $notification = [
                 "title" => "Success!",
                 "text"  => "Music uploaded successfully!",
                 "icon"  => "success",
             ];
         } else {
-            // Error notification if the music file failed to upload
+
             $notification = [
                 "title" => "Error!",
                 "text"  => "Failed to upload music!",
@@ -393,10 +391,8 @@ class Admin extends BaseController
             ];
         }
 
-        // Store notification message in session
         session()->setFlashdata("notification", $notification);
 
-        // Return success response
         return json_encode(true);
     }
 
@@ -551,17 +547,15 @@ class Admin extends BaseController
             if ($song) {
                 $current_playlist_ids = !empty($song["playlist_ids"]) ? explode(",", $song["playlist_ids"]) : [];
 
-                if (!in_array($playlist_id, $current_playlist_ids)) {
-                    $current_playlist_ids[] = $playlist_id;
+                $current_playlist_ids[] = $playlist_id;
 
-                    $data = [
-                        "playlist_ids" => implode(",", $current_playlist_ids),
-                        "updated_at" => date("Y-m-d H:i:s")
-                    ];
+                $data = [
+                    "playlist_ids" => implode(",", $current_playlist_ids),
+                    "updated_at" => date("Y-m-d H:i:s")
+                ];
 
-                    if (!$Song_Model->update($song_id, $data)) {
-                        error_log("Failed to update song_id: $song_id");
-                    }
+                if (!$Song_Model->update($song_id, $data)) {
+                    error_log("Failed to update song_id: $song_id");
                 }
             }
         }
@@ -572,9 +566,7 @@ class Admin extends BaseController
             $current_song_ids = !empty($playlist["song_ids"]) ? explode(",", $playlist["song_ids"]) : [];
 
             foreach ($song_ids as $song_id) {
-                if (!in_array($song_id, $current_song_ids)) {
-                    $current_song_ids[] = $song_id;
-                }
+                $current_song_ids[] = $song_id;
             }
 
             $playlist_data = [
@@ -951,7 +943,6 @@ class Admin extends BaseController
         $Playlist_Model = new Playlist_Model();
         $Song_Model = new Song_Model();
 
-        // Remove playlist_id from song's playlist_ids
         $song = $Song_Model->find($song_id);
         if ($song) {
             $playlist_ids = !empty($song['playlist_ids']) ? array_map('trim', explode(',', $song['playlist_ids'])) : [];
@@ -966,7 +957,6 @@ class Admin extends BaseController
             ]);
         }
 
-        // Remove song_id from playlist's song_ids
         $playlist = $Playlist_Model->find($playlist_id);
         if ($playlist) {
             $song_ids = !empty($playlist['song_ids']) ? array_map('trim', explode(',', $playlist['song_ids'])) : [];
@@ -981,7 +971,6 @@ class Admin extends BaseController
             ]);
         }
 
-        // Flash message for feedback
         $notification = [
             "title" => "Success!",
             "text" => "Playlist is removed from the song successfully!",
@@ -990,6 +979,74 @@ class Admin extends BaseController
 
         session()->setFlashdata("notification", $notification);
 
+        return $this->response->setJSON(true);
+    }
+
+    public function get_songs_by_playlist_id()
+    {
+        $playlist_id = $this->request->getPost("playlist_id");
+
+        $Playlist_Model = new Playlist_Model();
+        $Song_Model = new Song_Model();
+
+        $playlist = $Playlist_Model->find($playlist_id);
+
+        if ($playlist) {
+            $song_ids = !empty($playlist['song_ids']) ? array_map('trim', explode(',', $playlist['song_ids'])) : [];
+
+            $all_songs = $Song_Model->whereIn('id', $song_ids)->findAll();
+
+            $song_map = [];
+            foreach ($all_songs as $song) {
+                $song_map[$song['id']] = $song;
+            }
+
+            $song_ids = array_reverse($song_ids);
+
+            $ordered_songs = [];
+            foreach ($song_ids as $id) {
+                if (isset($song_map[$id])) {
+                    $ordered_songs[] = $song_map[$id];
+                }
+            }
+
+            return $this->response->setJSON($ordered_songs);
+        }
+
+        return $this->response->setJSON([]);
+    }
+
+    public function update_playlist_order()
+    {
+        $playlist_id = $this->request->getPost("playlist_id");
+        $song_ids = $this->request->getPost("song_ids");
+
+        $Playlist_Model = new Playlist_Model();
+
+        // Check if song_ids is a string, then convert to an array
+        if (!is_array($song_ids)) {
+            $song_ids = !empty($song_ids) ? explode(",", $song_ids) : [];
+        }
+
+        // Reverse the song IDs array before updating
+        $song_ids = array_reverse($song_ids);
+
+        // Update the playlist with the reversed song IDs
+        $Playlist_Model->update($playlist_id, [
+            'song_ids' => implode(',', $song_ids),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        // Notification for success
+        $notification = [
+            "title" => "Success!",
+            "text" => "Playlist order updated successfully!",
+            "icon" => "success",
+        ];
+
+        session()->setFlashdata("notification", $notification);
+
+        // Return a response indicating success
         return $this->response->setJSON(true);
     }
 }

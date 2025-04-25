@@ -233,14 +233,10 @@ $(document).ready(function () {
                     songs = newSongs;
                     currentSongIndex = 0;
 
-                    console.log("Playlist updated. Fetching new songs...");
-
                     fetchSongsAndPlay();
 
                     playSong(newList);
                 } else {
-                    console.log("Playlist unchanged. Continuing playback.");
-
                     populateMusicTable(current_songs_data);
 
                     loadNextSong();

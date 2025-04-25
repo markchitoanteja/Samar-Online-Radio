@@ -30,6 +30,7 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" integrity="sha384-k5vbMeKHbxEZ0AEBTSdR7UjAgWCcUfrS8c0c5b2AfIh7olfhNkyCZYwOfzOQhauK" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/jsmediatags/dist/jsmediatags.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <?php else: ?>
             <script src="../public/admin/dist/js/overlayscrollbars.browser.es6.min.js"></script>
             <script src="../public/admin/dist/js/popper.min.js"></script>
@@ -39,9 +40,10 @@
             <script src="../public/admin/dist/js/sweetalert2@11.js"></script>
             <script src="../public/admin/dist/js/jquery.dataTables.min.js"></script>
             <script src="../public/admin/dist/js/jsmediatags.min.js"></script>
+            <script src="../public/admin/dist/js/Sortable.min.js"></script>
         <?php endif ?>
 
         <script src="../public/admin/dist/js/adminlte.js"></script>
-        <script src="../public/admin/dist/js/script.js?v=4.0.4"></script>
+        <script src="../public/admin/dist/js/script.js?v=4.1.1"></script>
     </body>
 </html>
