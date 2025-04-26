@@ -110,7 +110,7 @@
                                 <p>Playlists</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-none">
                             <a href="javascript:void(0)" class="nav-link" id="live_streaming">
                                 <i class="nav-icon bi bi-mic"></i>
                                 <p>
